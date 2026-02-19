@@ -9,10 +9,18 @@ export default function BuildingA() {
   const [isAdmin] = useState(() => localStorage.getItem("isAdmin") === "true");
   const [showAddItemModal, setShowAddItemModal] = useState(false);
   const [showRoomInfoModal, setShowRoomInfoModal] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState<string>("");
 
   const openAddItemModal = useCallback(() => setShowAddItemModal(true), []);
   const closeAddItemModal = useCallback(() => setShowAddItemModal(false), []);
-  const closeInfoModal = useCallback(() => setShowRoomInfoModal(false), []);
+  const openRoom = useCallback((roomId: string) => {
+    setSelectedRoom(roomId);
+    setShowRoomInfoModal(true);
+  }, []);
+  const closeInfoModal = useCallback(() => {
+    setShowRoomInfoModal(false);
+    setSelectedRoom("");
+  }, []);
 
   const goHome = () => { window.location.href = "/"; };
   const goB = () => { window.location.href = "/building-b"; };
@@ -97,7 +105,14 @@ export default function BuildingA() {
           {/* ===== BUILDING STRUCTURE (exact dimensions preserved) ===== */}
           <div className="room two-line">
             <div className="floor-section">
-              <div className="building">
+              <div className="building" onClick={(e) => {
+                const target = e.target as HTMLElement;
+                const roomEl = target.closest('.room') as HTMLElement | null;
+                if (roomEl) {
+                  const text = roomEl.textContent?.split('\n')[0]?.trim() || "Room";
+                  openRoom(text);
+                }
+              }} style={{ cursor: "pointer" }}>
 
                 {/* Floor 21 (small 770px) */}
                 <div className="floor small">
@@ -409,7 +424,7 @@ export default function BuildingA() {
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
                     <span style={{ fontSize: 28 }}>🏠</span>
-                    <h1 id="infoRoomTitle" style={{ margin: 0, fontSize: 24, fontWeight: 800, color: "#fff", fontFamily: "'Playfair Display',serif" }}>Room</h1>
+                    <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800, color: "#fff", fontFamily: "'Playfair Display',serif" }}>Room {selectedRoom}</h1>
                   </div>
                   <p style={{ margin: 0, color: "rgba(255,255,255,0.85)", fontSize: 13 }}>Room <span id="infoRoomIdDisplay">#000</span></p>
                 </div>
