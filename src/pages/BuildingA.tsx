@@ -428,8 +428,8 @@ export default function BuildingA() {
                   </div>
                 </div>
                 <div style={{ display: "flex", gap: 8 }}>
-                  <button onClick={openAddItemModal} style={{ background: "#10b981", border: "none", color: "#fff", padding: "10px 18px", borderRadius: 10, fontWeight: 700, cursor: "pointer", fontSize: 13 }}>+ Add Item</button>
-                  <button onClick={closeInfoModal} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#fff", width: 36, height: 36, borderRadius: 8, cursor: "pointer", fontSize: 18, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 2 }}>✕</button>
+                  <button onClick={(e) => { e.stopPropagation(); openAddItemModal(); }} style={{ background: "#10b981", border: "none", color: "#fff", padding: "10px 18px", borderRadius: 10, fontWeight: 700, cursor: "pointer", fontSize: 13 }}>+ Add Item</button>
+                  <button onClick={(e) => { e.stopPropagation(); closeInfoModal(); }} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#fff", width: 36, height: 36, borderRadius: 8, cursor: "pointer", fontSize: 18, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 2 }}>✕</button>
                 </div>
               </div>
             </div>
@@ -446,7 +446,7 @@ export default function BuildingA() {
         <div style={{ background: "#fff", borderRadius: 24, width: "100%", maxWidth: 480, overflow: "hidden", boxShadow: "0 30px 80px rgba(0,0,0,0.25)", position: "relative", zIndex: 1 }}>
           <div style={{ background: "linear-gradient(135deg, hsl(235,65%,50%), hsl(260,65%,58%))", padding: "18px 24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: "#fff", fontFamily: "'Playfair Display',serif" }}>Add New Item</h2>
-            <button onClick={closeAddItemModal} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#fff", width: 36, height: 36, borderRadius: 8, cursor: "pointer", fontSize: 18, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, position: "relative", zIndex: 2 }}>✕</button>
+            <button onClick={(e) => { e.stopPropagation(); closeAddItemModal(); }} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#fff", width: 36, height: 36, borderRadius: 8, cursor: "pointer", fontSize: 18, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, position: "relative", zIndex: 2 }}>✕</button>
           </div>
           <div style={{ padding: 24, maxHeight: "75vh", overflowY: "auto" }}>
             <div style={{ marginBottom: 16 }}>
