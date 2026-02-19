@@ -252,18 +252,9 @@
     display: flex;
     margin: 0 auto;
     font-size: 11px;
+    overflow: visible;
   }
-
-  .floor.small .half {
-    width: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-right: 1px solid hsl(220 15% 65%);
-  }
-  .floor.small .half:last-child { border-right: none; }
-
-  /* ---- Floor: large (920px) ---- */
+...
   .floor.large {
     width: 920px;
     height: 40px;
@@ -275,6 +266,7 @@
     align-items: center;
     font-weight: 700;
     font-size: 11px;
+    overflow: visible;
   }
 
   /* ---- Floor 19 (920px) ---- */
@@ -723,6 +715,12 @@
   .level4 .r10 { width: 100px; }
   .level4 .r11 { width: 100px; }
   .level4 .r12 { width: 110px; }
+
+  /* ---- Ensure floor containers never clip hovering rooms ---- */
+  .floor, .floor19, .floor.small, .floor.large,
+  [class*="level"], .plan-wrapper > div {
+    overflow: visible !important;
+  }
 
   /* ---- Room base styles ---- */
   .room {
