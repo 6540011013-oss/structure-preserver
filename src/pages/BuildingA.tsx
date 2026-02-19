@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 
 /* ================================================================
    Building A – Floor Plan (React port)
@@ -7,6 +7,12 @@ import { useState } from "react";
 
 export default function BuildingA() {
   const [isAdmin] = useState(() => localStorage.getItem("isAdmin") === "true");
+  const [showAddItemModal, setShowAddItemModal] = useState(false);
+  const [showRoomInfoModal, setShowRoomInfoModal] = useState(false);
+
+  const openAddItemModal = useCallback(() => setShowAddItemModal(true), []);
+  const closeAddItemModal = useCallback(() => setShowAddItemModal(false), []);
+  const closeInfoModal = useCallback(() => setShowRoomInfoModal(false), []);
 
   const goHome = () => { window.location.href = "/"; };
   const goB = () => { window.location.href = "/building-b"; };
@@ -394,8 +400,8 @@ export default function BuildingA() {
       </div>
 
       {/* Room Info Modal */}
-      <div id="roomInfoModal" className="hidden" style={{ position: "fixed", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, zIndex: 20000 }}>
-        <div className="absolute inset-0" style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(6px)" }} onClick={() => (document.getElementById("roomInfoModal") as HTMLElement)?.classList.add("hidden")}></div>
+      <div id="roomInfoModal" style={{ display: showRoomInfoModal ? "flex" : "none", position: "fixed", inset: 0, alignItems: "center", justifyContent: "center", padding: 16, zIndex: 20000 }}>
+        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(6px)" }} onClick={closeInfoModal}></div>
         <div className="modal-content-box" style={{ background: "#fff", borderRadius: 24, boxShadow: "0 30px 80px rgba(0,0,0,0.25)", width: "100%", maxWidth: 900, maxHeight: "90vh", overflow: "hidden", display: "flex", flexDirection: "column", position: "relative", zIndex: 10 }}>
           <div style={{ padding: "16px 20px 0" }}>
             <div style={{ background: "linear-gradient(135deg, hsl(235,65%,50%), hsl(260,65%,58%))", borderRadius: 16, padding: "20px 24px" }}>
@@ -405,53 +411,28 @@ export default function BuildingA() {
                     <span style={{ fontSize: 28 }}>🏠</span>
                     <h1 id="infoRoomTitle" style={{ margin: 0, fontSize: 24, fontWeight: 800, color: "#fff", fontFamily: "'Playfair Display',serif" }}>Room</h1>
                   </div>
-                  <p style={{ margin: 0, color: "rgba(255,255,255,0.85)", fontSize: 13 }}>Room <span id="infoRoomIdDisplay">#000</span> • <span id="itemCount">0</span> items</p>
+                  <p style={{ margin: 0, color: "rgba(255,255,255,0.85)", fontSize: 13 }}>Room <span id="infoRoomIdDisplay">#000</span></p>
                 </div>
                 <div style={{ display: "flex", gap: 8 }}>
-                  <button onClick={() => { if (typeof (window as any).openAddItemModal === "function") (window as any).openAddItemModal(); }} style={{ background: "#10b981", border: "none", color: "#fff", padding: "10px 18px", borderRadius: 10, fontWeight: 700, cursor: "pointer", fontSize: 13 }}>+ Add Item</button>
-                  <button onClick={() => { if (typeof (window as any).closeInfoModal === "function") (window as any).closeInfoModal(); }} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#fff", padding: "10px 12px", borderRadius: 10, cursor: "pointer", fontSize: 16 }}>✕</button>
+                  <button onClick={openAddItemModal} style={{ background: "#10b981", border: "none", color: "#fff", padding: "10px 18px", borderRadius: 10, fontWeight: 700, cursor: "pointer", fontSize: 13 }}>+ Add Item</button>
+                  <button onClick={closeInfoModal} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#fff", padding: "10px 12px", borderRadius: 10, cursor: "pointer", fontSize: 16 }}>✕</button>
                 </div>
               </div>
             </div>
           </div>
-          <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px 20px", position: "relative" }}>
-            <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 12 }} id="category-filters"></div>
-            <div id="items-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 14, paddingBottom: 40 }}></div>
-            <div id="empty-state" className="hidden" style={{ textAlign: "center", padding: "60px 0" }}>
-              <div style={{ fontSize: 56, marginBottom: 12 }}>📭</div>
-              <h3 style={{ color: "hsl(220 25% 40%)", fontSize: 18, fontWeight: 700, marginBottom: 8 }}>No items yet</h3>
-              <button onClick={() => { if (typeof (window as any).openAddItemModal === "function") (window as any).openAddItemModal(); }} style={{ background: "#10b981", border: "none", color: "#fff", padding: "10px 20px", borderRadius: 10, fontWeight: 700, cursor: "pointer" }}>Add First Item</button>
-            </div>
-            <button id="room-info-note-toggle-btn" onClick={() => { if (typeof (window as any).toggleRoomInfoNotePanel === "function") (window as any).toggleRoomInfoNotePanel(); }} style={{ position: "absolute", bottom: 12, right: 12, width: 38, height: 38, borderRadius: "50%", background: "#fef3c7", color: "#92400e", border: "none", cursor: "pointer", fontSize: 16, boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }} title="Room Note">📌</button>
-            <div id="room-info-note-panel" className="hidden" style={{ position: "absolute", bottom: 60, right: 12, width: 300, background: "#fff", borderRadius: 14, border: "1px solid hsl(220 20% 88%)", padding: 16, boxShadow: "0 8px 32px rgba(0,0,0,0.12)", zIndex: 30 }}>
-              <div id="room-info-note-view">
-                <div style={{ fontSize: 13, fontWeight: 700, color: "hsl(220 25% 25%)", marginBottom: 8 }}>Room Note</div>
-                <div id="room-info-note-text" style={{ minHeight: 60, fontSize: 13, color: "hsl(220 20% 40%)", background: "hsl(220 20% 97%)", borderRadius: 8, border: "1px solid hsl(220 20% 88%)", padding: 10 }}>ยังไม่มีโน้ตห้อง</div>
-                <div style={{ marginTop: 10, display: "flex", justifyContent: "flex-end", gap: 6 }}>
-                  <button id="room-info-note-edit-btn" onClick={() => { if (typeof (window as any).enterRoomInfoNoteEdit === "function") (window as any).enterRoomInfoNoteEdit(); }} style={{ padding: "6px 12px", borderRadius: 8, background: "#4f46e5", color: "#fff", border: "none", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Edit</button>
-                  <button onClick={() => { if (typeof (window as any).toggleRoomInfoNotePanel === "function") (window as any).toggleRoomInfoNotePanel(false); }} style={{ padding: "6px 12px", borderRadius: 8, background: "hsl(220 20% 90%)", color: "hsl(220 25% 30%)", border: "none", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Close</button>
-                </div>
-              </div>
-              <div id="room-info-note-editor" className="hidden">
-                <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "hsl(220 25% 25%)", marginBottom: 6 }}>Edit Note</label>
-                <textarea id="room-info-note-input" rows={4} style={{ width: "100%", padding: 10, borderRadius: 8, border: "1px solid hsl(220 20% 85%)", fontSize: 13, outline: "none", resize: "vertical", boxSizing: "border-box" }} />
-                <div style={{ marginTop: 10, display: "flex", justifyContent: "flex-end", gap: 6 }}>
-                  <button id="room-info-note-save-btn" onClick={() => { if (typeof (window as any).saveRoomInfoNote === "function") (window as any).saveRoomInfoNote(); }} style={{ padding: "6px 12px", borderRadius: 8, background: "#10b981", color: "#fff", border: "none", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Save</button>
-                  <button onClick={() => { if (typeof (window as any).cancelRoomInfoNoteEdit === "function") (window as any).cancelRoomInfoNoteEdit(); }} style={{ padding: "6px 12px", borderRadius: 8, background: "hsl(220 20% 90%)", color: "hsl(220 25% 30%)", border: "none", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Cancel</button>
-                </div>
-              </div>
-            </div>
+          <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px 20px" }}>
+            <div id="items-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 14 }}></div>
           </div>
         </div>
       </div>
 
       {/* Add Item Modal */}
-      <div id="addItemModal" className="hidden" style={{ position: "fixed", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, zIndex: 21000 }}>
-        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(6px)" }} onClick={() => { if (typeof (window as any).closeAddItemModal === "function") (window as any).closeAddItemModal(); }}></div>
+      <div id="addItemModal" style={{ display: showAddItemModal ? "flex" : "none", position: "fixed", inset: 0, alignItems: "center", justifyContent: "center", padding: 16, zIndex: 21000 }}>
+        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(6px)" }} onClick={closeAddItemModal}></div>
         <div className="modal-content-box" style={{ background: "#fff", borderRadius: 24, width: "100%", maxWidth: 480, overflow: "hidden", boxShadow: "0 30px 80px rgba(0,0,0,0.25)", position: "relative", zIndex: 10 }}>
           <div style={{ background: "linear-gradient(135deg, hsl(235,65%,50%), hsl(260,65%,58%))", padding: "18px 24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: "#fff", fontFamily: "'Playfair Display',serif" }}>Add New Item</h2>
-            <button onClick={() => { if (typeof (window as any).closeAddItemModal === "function") (window as any).closeAddItemModal(); }} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#fff", width: 32, height: 32, borderRadius: 8, cursor: "pointer", fontSize: 16 }}>✕</button>
+            <button onClick={closeAddItemModal} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#fff", width: 32, height: 32, borderRadius: 8, cursor: "pointer", fontSize: 16 }}>✕</button>
           </div>
           <div style={{ padding: 24, maxHeight: "75vh", overflowY: "auto" }}>
             <div style={{ marginBottom: 16 }}>
