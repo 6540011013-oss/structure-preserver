@@ -738,14 +738,48 @@
     flex-direction: column;
     text-align: center;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, filter 0.18s ease;
+    user-select: none;
   }
 
   .room:hover {
     z-index: 1000;
-    transform: scale(1.12);
-    box-shadow: var(--room-hover-shadow) !important;
-    border: 1.5px solid hsl(var(--gold)) !important;
+    transform: scale(1.10);
+    box-shadow: 0 6px 20px hsla(40, 85%, 45%, 0.45), 0 0 0 2px hsl(var(--gold)) !important;
+    border: 2px solid hsl(var(--gold)) !important;
+    filter: brightness(1.08);
+  }
+
+  .room:active {
+    transform: scale(0.97);
+    filter: brightness(0.95);
+  }
+
+  /* Tooltip hint on hover */
+  .room::after {
+    content: "คลิกเพื่อดูรายละเอียด";
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%) scale(0.85);
+    background: hsl(222 50% 12%);
+    color: hsl(44 80% 88%);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    padding: 3px 8px;
+    border-radius: 5px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    z-index: 9999;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  .room:hover::after {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
   }
 
   .room .guest-label,
