@@ -239,7 +239,8 @@
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    overflow: auto;
+    overflow-x: auto;
+    overflow-y: visible;
     background: hsl(var(--hotel-bg));
   }
 
@@ -742,14 +743,12 @@
 
   .room:hover {
     z-index: 1000;
-    transform: scale(1.10);
-    box-shadow: 0 6px 20px hsla(40, 85%, 45%, 0.45), 0 0 0 2px hsl(var(--gold)) !important;
+    box-shadow: 0 6px 20px hsla(40, 85%, 45%, 0.55), 0 0 0 2.5px hsl(var(--gold)) !important;
     border: 2px solid hsl(var(--gold)) !important;
     filter: brightness(1.08);
   }
 
   .room:active {
-    transform: scale(0.97);
     filter: brightness(0.95);
   }
 
