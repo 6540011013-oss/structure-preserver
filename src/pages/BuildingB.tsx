@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 /* ================================================================
    Building B – Floor Plan (React port)
@@ -7,8 +8,9 @@ import { useState } from "react";
 
 export default function BuildingB() {
   const [isAdmin] = useState(() => localStorage.getItem("isAdmin") === "true");
-  const goHome = () => { window.location.href = "/"; };
-  const goA = () => { window.location.href = "/building-a"; };
+  const navigate = useNavigate();
+  const goHome = () => { navigate("/"); };
+  const goA = () => { navigate("/building-a"); };
 
   return (
     <div style={{ fontFamily: "'Inter', sans-serif", background: "hsl(220 22% 96%)", minHeight: "100vh" }}>

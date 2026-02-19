@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 
 /* ================================================================
    Building A – Floor Plan (React port)
@@ -10,6 +11,7 @@ export default function BuildingA() {
   const [showAddItemModal, setShowAddItemModal] = useState(false);
   const [showRoomInfoModal, setShowRoomInfoModal] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<string>("");
+  const navigate = useNavigate();
 
   const openAddItemModal = useCallback(() => setShowAddItemModal(true), []);
   const closeAddItemModal = useCallback(() => setShowAddItemModal(false), []);
@@ -22,8 +24,12 @@ export default function BuildingA() {
     setSelectedRoom("");
   }, []);
 
-  const goHome = () => { window.location.href = "/"; };
-  const goB = () => { window.location.href = "/building-b"; };
+  const goHome = () => { navigate("/"); };
+  const goB = () => {
+    setShowRoomInfoModal(false);
+    setShowAddItemModal(false);
+    navigate("/building-b");
+  };
 
   return (
     <div style={{ fontFamily: "'Inter', sans-serif", background: "hsl(220 22% 96%)", minHeight: "100vh" }}>
