@@ -416,8 +416,8 @@ export default function BuildingA() {
 
       {/* Room Info Modal */}
       <div id="roomInfoModal" style={{ display: showRoomInfoModal ? "flex" : "none", position: "fixed", inset: 0, alignItems: "center", justifyContent: "center", padding: 16, zIndex: 20000 }}>
-        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(6px)" }} onClick={closeInfoModal}></div>
-        <div className="modal-content-box" style={{ background: "#fff", borderRadius: 24, boxShadow: "0 30px 80px rgba(0,0,0,0.25)", width: "100%", maxWidth: 900, maxHeight: "90vh", overflow: "hidden", display: "flex", flexDirection: "column", position: "relative", zIndex: 10 }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(6px)", zIndex: 0 }} onClick={closeInfoModal}></div>
+        <div style={{ background: "#fff", borderRadius: 24, boxShadow: "0 30px 80px rgba(0,0,0,0.25)", width: "100%", maxWidth: 900, maxHeight: "90vh", overflow: "hidden", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
           <div style={{ padding: "16px 20px 0" }}>
             <div style={{ background: "linear-gradient(135deg, hsl(235,65%,50%), hsl(260,65%,58%))", borderRadius: 16, padding: "20px 24px" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
@@ -426,11 +426,10 @@ export default function BuildingA() {
                     <span style={{ fontSize: 28 }}>🏠</span>
                     <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800, color: "#fff", fontFamily: "'Playfair Display',serif" }}>Room {selectedRoom}</h1>
                   </div>
-                  <p style={{ margin: 0, color: "rgba(255,255,255,0.85)", fontSize: 13 }}>Room <span id="infoRoomIdDisplay">#000</span></p>
                 </div>
                 <div style={{ display: "flex", gap: 8 }}>
                   <button onClick={openAddItemModal} style={{ background: "#10b981", border: "none", color: "#fff", padding: "10px 18px", borderRadius: 10, fontWeight: 700, cursor: "pointer", fontSize: 13 }}>+ Add Item</button>
-                  <button onClick={closeInfoModal} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#fff", padding: "10px 12px", borderRadius: 10, cursor: "pointer", fontSize: 16 }}>✕</button>
+                  <button onClick={closeInfoModal} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#fff", width: 36, height: 36, borderRadius: 8, cursor: "pointer", fontSize: 18, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 2 }}>✕</button>
                 </div>
               </div>
             </div>
@@ -443,11 +442,11 @@ export default function BuildingA() {
 
       {/* Add Item Modal */}
       <div id="addItemModal" style={{ display: showAddItemModal ? "flex" : "none", position: "fixed", inset: 0, alignItems: "center", justifyContent: "center", padding: 16, zIndex: 21000 }}>
-        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(6px)" }} onClick={closeAddItemModal}></div>
-        <div className="modal-content-box" style={{ background: "#fff", borderRadius: 24, width: "100%", maxWidth: 480, overflow: "hidden", boxShadow: "0 30px 80px rgba(0,0,0,0.25)", position: "relative", zIndex: 10 }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(6px)", zIndex: 0 }} onClick={closeAddItemModal}></div>
+        <div style={{ background: "#fff", borderRadius: 24, width: "100%", maxWidth: 480, overflow: "hidden", boxShadow: "0 30px 80px rgba(0,0,0,0.25)", position: "relative", zIndex: 1 }}>
           <div style={{ background: "linear-gradient(135deg, hsl(235,65%,50%), hsl(260,65%,58%))", padding: "18px 24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: "#fff", fontFamily: "'Playfair Display',serif" }}>Add New Item</h2>
-            <button onClick={closeAddItemModal} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#fff", width: 32, height: 32, borderRadius: 8, cursor: "pointer", fontSize: 16 }}>✕</button>
+            <button onClick={closeAddItemModal} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#fff", width: 36, height: 36, borderRadius: 8, cursor: "pointer", fontSize: 18, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, position: "relative", zIndex: 2 }}>✕</button>
           </div>
           <div style={{ padding: 24, maxHeight: "75vh", overflowY: "auto" }}>
             <div style={{ marginBottom: 16 }}>
