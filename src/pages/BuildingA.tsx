@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { LogIn, Check, Settings, Building2, LayoutDashboard, Calendar, ChevronLeft, Hotel } from "lucide-react";
 import EditRoomModal from "@/components/index/EditRoomModal";
 import SettingsModal from "@/components/index/SettingsModal";
+import ServiceStatus from "@/components/index/ServiceStatus";
+import { MaintenanceCategory, DEFAULT_CATEGORIES } from "@/data/maintenanceCategories";
 
 /* ================================================================
    Building A – Floor Plan (React port)
@@ -17,6 +19,8 @@ export default function BuildingA() {
   const [selectedRoom, setSelectedRoom] = useState<string>("");
   const [editMode, setEditMode] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [categories, setCategories] = useState<MaintenanceCategory[]>(DEFAULT_CATEGORIES);
+  const [roomServices, setRoomServices] = useState<Record<string, string[]>>({});
   const navigate = useNavigate();
 
   const openAddItemModal = useCallback(() => setShowAddItemModal(true), []);
@@ -130,7 +134,7 @@ export default function BuildingA() {
 
           <div className="legend-block left-info-panel">
             <h4 className="text-sm font-bold text-gray-800 mb-3 border-b pb-2 uppercase tracking-wider">Service Status</h4>
-            <div id="service-sidebar-list" className="flex flex-col gap-3"></div>
+            <ServiceStatus categories={categories} roomServices={roomServices} />
           </div>
 
           {/* ===== BUILDING STRUCTURE (exact dimensions preserved) ===== */}
@@ -666,8 +670,11 @@ export default function BuildingA() {
         <EditRoomModal
           roomId={selectedRoom}
           onClose={() => { setShowEditModal(false); setSelectedRoom(""); }}
+          categories={categories}
+          activeServices={roomServices[selectedRoom] || []}
           onSave={(data) => {
             console.log("Save room:", selectedRoom, data);
+            setRoomServices(prev => ({ ...prev, [selectedRoom]: data.services }));
             setShowEditModal(false);
             setSelectedRoom("");
           }}
@@ -676,7 +683,11 @@ export default function BuildingA() {
 
       {/* Settings Modal */}
       {showSettings && (
-        <SettingsModal onClose={() => setShowSettings(false)} />
+        <SettingsModal
+          onClose={() => setShowSettings(false)}
+          categories={categories}
+          onCategoriesChange={setCategories}
+        />
       )}
 
       {/* JS helper */}
