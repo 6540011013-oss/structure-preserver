@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { LogIn, Check, Lock, Settings, Building2, LayoutDashboard, Calendar, ChevronLeft, Hotel } from "lucide-react";
 
 /* ================================================================
    Building A – Floor Plan (React port)
@@ -32,47 +33,68 @@ export default function BuildingA() {
   };
 
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif", background: "#f9fafb", minHeight: "100vh" }}>
-      {/* ===== NAVBAR (light theme matching original) ===== */}
-      <header className="page-navbar">
-        <div className="nav-left">
-          <button onClick={goHome} className="back-link" style={{ background: "none", border: "none", fontFamily: "inherit" }}>
-            ← Back to Home
-          </button>
-          <div className="nav-title">
-            <h1>Building A – ABSH</h1>
-            <span>Building A</span>
+    <div style={{ fontFamily: "'Inter', sans-serif", background: "#f1f5f9", minHeight: "100vh" }}>
+      {/* ===== PMS-STYLE NAVBAR ===== */}
+      <header className="sticky top-0 z-[3000] bg-[#1e293b] shadow-lg">
+        {/* Top bar */}
+        <div className="flex items-center justify-between px-5 h-14">
+          {/* Left: Logo + Building name */}
+          <div className="flex items-center gap-4">
+            <button onClick={goHome} className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors border-none bg-transparent cursor-pointer">
+              <ChevronLeft className="h-4 w-4" />
+              <span className="text-xs font-medium hidden sm:inline">HOME</span>
+            </button>
+            <div className="h-6 w-px bg-slate-600" />
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+                <Hotel className="h-4 w-4 text-white" />
+              </div>
+              <div>
+                <h1 className="text-sm font-bold text-white leading-none tracking-wide">Building A</h1>
+                <span className="text-[10px] text-slate-400 font-medium tracking-widest uppercase">ABSH • Ocean View</span>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div className="flex items-center gap-2.5">
-          {/* Edit mode */}
-          <button className="edit-mode-base nav-btn-shape" id="edit-mode-btn">
-            <span id="edit-icon">🔒</span>
-            <span id="edit-mode-text"> LOCK MODE</span>
-          </button>
+          {/* Center: Nav actions */}
+          <div className="flex items-center gap-1.5">
+            <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide text-slate-300 hover:bg-slate-700 hover:text-white transition-all border-none bg-transparent cursor-pointer">
+              <Lock className="h-3.5 w-3.5" />
+              <span className="hidden md:inline">Lock Mode</span>
+            </button>
 
-          {/* Admin settings */}
-          <button id="admin-btn-canva" className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-xl hover:shadow-lg hover:shadow-violet-200 transition-all duration-200 border-none cursor-pointer text-[11px] font-black uppercase tracking-wide">
-            ⚙️ SYSTEM SETTINGS
-          </button>
+            <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide text-slate-300 hover:bg-slate-700 hover:text-white transition-all border-none bg-transparent cursor-pointer">
+              <Settings className="h-3.5 w-3.5" />
+              <span className="hidden md:inline">Settings</span>
+            </button>
 
-          {/* Staff login */}
-          <button id="adminBtn" className={`flex items-center gap-2 px-5 py-2 rounded-full text-[11px] font-black transition-all duration-200 ${
+            <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide text-slate-300 hover:bg-slate-700 hover:text-white transition-all border-none bg-transparent cursor-pointer">
+              <LayoutDashboard className="h-3.5 w-3.5" />
+              <span className="hidden md:inline">Dashboard</span>
+            </button>
+
+            <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide text-slate-300 hover:bg-slate-700 hover:text-white transition-all border-none bg-transparent cursor-pointer">
+              <Calendar className="h-3.5 w-3.5" />
+              <span className="hidden md:inline">Date</span>
+            </button>
+
+            <div className="h-6 w-px bg-slate-600 mx-1" />
+
+            <button onClick={goB} className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide bg-rose-500/15 text-rose-400 hover:bg-rose-500/25 hover:text-rose-300 transition-all border-none cursor-pointer">
+              <Building2 className="h-3.5 w-3.5" />
+              <span className="hidden md:inline">Building B</span>
+            </button>
+          </div>
+
+          {/* Right: Auth */}
+          <button id="adminBtn" className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide transition-all border-none cursor-pointer ${
             isAdmin
-              ? "bg-emerald-500 border-2 border-emerald-500 text-white hover:bg-emerald-600 shadow-sm shadow-emerald-200"
-              : "border-2 border-slate-300 text-slate-600 hover:border-slate-500 hover:text-slate-800 bg-white"
+              ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30"
+              : "bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-white"
           }`}>
-            <span id="btnText">{isAdmin ? "✓ ADMIN ACTIVE" : "STAFF LOGIN"}</span>
+            {isAdmin ? <Check className="h-3.5 w-3.5" /> : <LogIn className="h-3.5 w-3.5" />}
+            <span>{isAdmin ? "Admin Active" : "Staff Login"}</span>
           </button>
-
-          {/* Go to Building B */}
-          <button onClick={goB} className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 text-white border-none cursor-pointer text-[11px] font-black uppercase tracking-wide hover:shadow-lg hover:shadow-rose-200 transition-all duration-200">
-            🏢 BUILDING B
-          </button>
-
-          <button className="dashboard-fab dashboard-fab-inline" id="dashboardBtn">Dashboard</button>
-          <button id="open-date-picker-btn" className="h-9 w-9 rounded-xl bg-indigo-500 text-white hover:bg-indigo-600 hover:shadow-lg hover:shadow-indigo-200 transition-all duration-200 text-sm font-black border-none cursor-pointer" title="Select Date">📅</button>
         </div>
       </header>
 
