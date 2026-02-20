@@ -1,22 +1,25 @@
 import { useState } from "react";
-import { X, Palette, Package, KeyRound, SlidersHorizontal, Plus, Trash2, GripVertical } from "lucide-react";
+import { X, Palette, Wrench, KeyRound, SlidersHorizontal, Plus, Trash2, GripVertical } from "lucide-react";
+import {
+  MaintenanceCategory,
+  DEFAULT_CATEGORIES,
+  AVAILABLE_ICONS,
+  CATEGORY_COLORS,
+  getIconComponent,
+} from "@/data/maintenanceCategories";
 
 interface SettingsModalProps {
   onClose: () => void;
+  categories: MaintenanceCategory[];
+  onCategoriesChange: (cats: MaintenanceCategory[]) => void;
 }
 
-type Tab = "room-types" | "item-categories" | "admin" | "general";
+type Tab = "room-types" | "maintenance" | "admin" | "general";
 
 interface RoomTypeItem {
   id: string;
   label: string;
   color: string;
-}
-
-interface CategoryItem {
-  id: string;
-  name: string;
-  icon: string;
 }
 
 const DEFAULT_ROOM_TYPES: RoomTypeItem[] = [
@@ -29,24 +32,16 @@ const DEFAULT_ROOM_TYPES: RoomTypeItem[] = [
   { id: "lux", label: "Luxury / Royal", color: "hsl(45,90%,50%)" },
 ];
 
-const DEFAULT_CATEGORIES: CategoryItem[] = [
-  { id: "furniture", name: "เฟอร์นิเจอร์", icon: "🛋️" },
-  { id: "appliances", name: "เครื่องใช้ไฟฟ้า", icon: "💡" },
-  { id: "decor", name: "ของตกแต่ง", icon: "🖼️" },
-  { id: "other", name: "อื่นๆ", icon: "📦" },
-];
-
 const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: "room-types", label: "Room Types", icon: <Palette className="h-4 w-4" /> },
-  { id: "item-categories", label: "Item Categories", icon: <Package className="h-4 w-4" /> },
+  { id: "maintenance", label: "Maintenance", icon: <Wrench className="h-4 w-4" /> },
   { id: "admin", label: "Admin Password", icon: <KeyRound className="h-4 w-4" /> },
   { id: "general", label: "General", icon: <SlidersHorizontal className="h-4 w-4" /> },
 ];
 
-export default function SettingsModal({ onClose }: SettingsModalProps) {
+export default function SettingsModal({ onClose, categories, onCategoriesChange }: SettingsModalProps) {
   const [activeTab, setActiveTab] = useState<Tab>("room-types");
   const [roomTypes, setRoomTypes] = useState<RoomTypeItem[]>(DEFAULT_ROOM_TYPES);
-  const [categories, setCategories] = useState<CategoryItem[]>(DEFAULT_CATEGORIES);
   const [hotelName, setHotelName] = useState("Andaman Beach Suites");
   const [language, setLanguage] = useState("th");
 
@@ -61,7 +56,8 @@ export default function SettingsModal({ onClose }: SettingsModalProps) {
 
   // New category form
   const [newCatName, setNewCatName] = useState("");
-  const [newCatIcon, setNewCatIcon] = useState("📦");
+  const [newCatIcon, setNewCatIcon] = useState("snowflake");
+  const [newCatColor, setNewCatColor] = useState(CATEGORY_COLORS[0]);
 
   const addRoomType = () => {
     if (!newRTLabel.trim()) return;
@@ -78,13 +74,14 @@ export default function SettingsModal({ onClose }: SettingsModalProps) {
   const addCategory = () => {
     if (!newCatName.trim()) return;
     const id = newCatName.trim().toLowerCase().replace(/\s+/g, "-");
-    setCategories([...categories, { id, name: newCatName.trim(), icon: newCatIcon }]);
+    onCategoriesChange([...categories, { id, name: newCatName.trim(), icon: newCatIcon, color: newCatColor }]);
     setNewCatName("");
-    setNewCatIcon("📦");
+    setNewCatIcon("snowflake");
+    setNewCatColor(CATEGORY_COLORS[0]);
   };
 
   const removeCategory = (id: string) => {
-    setCategories(categories.filter(c => c.id !== id));
+    onCategoriesChange(categories.filter(c => c.id !== id));
   };
 
   const handleChangePassword = () => {
@@ -206,55 +203,98 @@ export default function SettingsModal({ onClose }: SettingsModalProps) {
               </div>
             )}
 
-            {/* Item Categories Tab */}
-            {activeTab === "item-categories" && (
+            {/* Maintenance Categories Tab */}
+            {activeTab === "maintenance" && (
               <div>
-                <h3 className="text-base font-extrabold text-slate-800 mb-1">Item Categories</h3>
-                <p className="text-sm text-slate-500 mb-5">จัดการหมวดหมู่ของในห้อง (เฟอร์นิเจอร์, เครื่องใช้ไฟฟ้า ฯลฯ)</p>
+                <h3 className="text-base font-extrabold text-slate-800 mb-1">🛠️ Maintenance Categories</h3>
+                <p className="text-sm text-slate-500 mb-5">จัดการหมวดหมู่งานซ่อมบำรุง — ไอคอนจะแสดงใน Service Status</p>
 
+                {/* Existing categories */}
                 <div className="space-y-2 mb-5">
-                  {categories.map(cat => (
-                    <div key={cat.id} className="flex items-center gap-3 px-4 py-3 bg-slate-50 rounded-xl group hover:bg-slate-100 transition-colors">
-                      <GripVertical className="h-4 w-4 text-slate-300" />
-                      <span className="text-xl">{cat.icon}</span>
-                      <span className="flex-1 text-sm font-semibold text-slate-700">{cat.name}</span>
-                      <button
-                        onClick={() => removeCategory(cat.id)}
-                        className="opacity-0 group-hover:opacity-100 w-7 h-7 rounded-lg flex items-center justify-center text-red-400 hover:bg-red-50 hover:text-red-600 transition-all border-none bg-transparent cursor-pointer"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-                  ))}
+                  {categories.map(cat => {
+                    const IconComp = getIconComponent(cat.icon);
+                    return (
+                      <div key={cat.id} className="flex items-center gap-3 px-4 py-3 bg-slate-50 rounded-xl group hover:bg-slate-100 transition-colors">
+                        <span
+                          className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                          style={{ background: `${cat.color}30`, border: `2px solid ${cat.color}` }}
+                        >
+                          {IconComp && <IconComp size={16} style={{ color: cat.color }} />}
+                        </span>
+                        <span className="flex-1 text-sm font-semibold text-slate-700">{cat.name}</span>
+                        <button
+                          onClick={() => removeCategory(cat.id)}
+                          className="opacity-0 group-hover:opacity-100 w-7 h-7 rounded-lg flex items-center justify-center text-red-400 hover:bg-red-50 hover:text-red-600 transition-all border-none bg-transparent cursor-pointer"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
 
-                <div className="flex items-end gap-3 p-4 bg-emerald-50/50 rounded-xl border border-emerald-100">
-                  <div className="w-16">
-                    <label className="block text-xs font-bold text-slate-600 mb-1">Icon</label>
-                    <input
-                      type="text"
-                      value={newCatIcon}
-                      onChange={(e) => setNewCatIcon(e.target.value)}
-                      maxLength={4}
-                      className="w-full px-3 py-2 rounded-lg border border-slate-200 text-center text-lg outline-none focus:border-emerald-400"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <label className="block text-xs font-bold text-slate-600 mb-1">Name</label>
+                {/* Add new category */}
+                <div className="p-4 bg-purple-50/50 rounded-xl border border-purple-100 space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 mb-1">Category Name</label>
                     <input
                       type="text"
                       value={newCatName}
                       onChange={(e) => setNewCatName(e.target.value)}
                       maxLength={50}
-                      placeholder="e.g. ผ้าปูที่นอน"
-                      className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-emerald-400"
+                      placeholder="e.g., Electrical System"
+                      className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-purple-400"
                     />
                   </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 mb-2">Select Icon</label>
+                    <div className="flex flex-wrap gap-2">
+                      {AVAILABLE_ICONS.map(ic => {
+                        const IC = ic.icon;
+                        const isSelected = newCatIcon === ic.key;
+                        return (
+                          <button
+                            key={ic.key}
+                            onClick={() => setNewCatIcon(ic.key)}
+                            title={ic.label}
+                            className={`w-10 h-10 rounded-xl flex items-center justify-center border-2 cursor-pointer transition-all ${
+                              isSelected
+                                ? "border-purple-500 bg-purple-100 shadow-md scale-110"
+                                : "border-slate-200 bg-white hover:border-purple-300 hover:bg-purple-50"
+                            }`}
+                          >
+                            <IC size={18} className={isSelected ? "text-purple-600" : "text-slate-500"} />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 mb-2">Color</label>
+                    <div className="flex gap-2">
+                      {CATEGORY_COLORS.map(c => (
+                        <button
+                          key={c}
+                          onClick={() => setNewCatColor(c)}
+                          className={`w-8 h-8 rounded-full cursor-pointer border-2 transition-all ${
+                            newCatColor === c ? "scale-125 shadow-lg" : "hover:scale-110"
+                          }`}
+                          style={{
+                            background: c,
+                            borderColor: newCatColor === c ? "hsl(220,20%,30%)" : "transparent",
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
                   <button
                     onClick={addCategory}
-                    className="h-9 px-4 rounded-lg bg-emerald-600 text-white text-sm font-bold border-none cursor-pointer hover:bg-emerald-700 transition-colors flex items-center gap-1.5"
+                    className="w-full py-2.5 rounded-xl bg-purple-600 text-white text-sm font-bold border-none cursor-pointer hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
                   >
-                    <Plus className="h-3.5 w-3.5" /> Add
+                    <Plus className="h-4 w-4" /> Add Category
                   </button>
                 </div>
               </div>

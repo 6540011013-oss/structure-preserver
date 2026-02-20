@@ -356,6 +356,7 @@ export default function BuildingB() {
         <EditRoomModal
           roomId={selectedRoom}
           onClose={() => { setShowEditModal(false); setSelectedRoom(""); }}
+          categories={[]}
           onSave={(data) => {
             console.log("Save room:", selectedRoom, data);
             setShowEditModal(false);

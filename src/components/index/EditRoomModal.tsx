@@ -1,18 +1,21 @@
 import { useState, useEffect, useRef } from "react";
+import { MaintenanceCategory, getIconComponent } from "@/data/maintenanceCategories";
 
 interface EditRoomModalProps {
   roomId: string;
   onClose: () => void;
   onSave: (data: RoomEditData) => void;
+  categories: MaintenanceCategory[];
+  activeServices?: string[]; // currently assigned category ids
 }
 
 export interface RoomEditData {
   guestName: string;
   roomType: string;
-  maintStatus: string;
   maintNote: string;
   hasAP: boolean;
   apInstallDate: string;
+  services: string[]; // selected category ids
 }
 
 const ROOM_TYPES = [
@@ -25,22 +28,14 @@ const ROOM_TYPES = [
   { value: "lux", label: "Luxury / Royal", color: "hsl(45,90%,50%)" },
 ];
 
-const MAINT_OPTIONS = [
-  { value: "", label: "(None)", icon: "" },
-  { value: "wifi", label: "WiFi / Network", icon: "📶" },
-  { value: "air", label: "Aircon", icon: "❄️" },
-  { value: "clean", label: "Housekeeping", icon: "🧹" },
-  { value: "fix", label: "General Repair", icon: "🔧" },
-];
-
-export default function EditRoomModal({ roomId, onClose, onSave }: EditRoomModalProps) {
+export default function EditRoomModal({ roomId, onClose, onSave, categories, activeServices = [] }: EditRoomModalProps) {
   const [guestName, setGuestName] = useState("");
   const [roomType, setRoomType] = useState("");
-  const [maintStatus, setMaintStatus] = useState("");
   const [maintNote, setMaintNote] = useState("");
   const [hasAP, setHasAP] = useState(false);
   const [apInstallDate, setApInstallDate] = useState("");
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
+  const [selectedServices, setSelectedServices] = useState<string[]>(activeServices);
   const nameRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -49,8 +44,14 @@ export default function EditRoomModal({ roomId, onClose, onSave }: EditRoomModal
 
   const selectedType = ROOM_TYPES.find(t => t.value === roomType);
 
+  const toggleService = (catId: string) => {
+    setSelectedServices(prev =>
+      prev.includes(catId) ? prev.filter(id => id !== catId) : [...prev, catId]
+    );
+  };
+
   const handleSave = () => {
-    onSave({ guestName: guestName.trim(), roomType, maintStatus, maintNote: maintNote.trim(), hasAP, apInstallDate });
+    onSave({ guestName: guestName.trim(), roomType, maintNote: maintNote.trim(), hasAP, apInstallDate, services: selectedServices });
   };
 
   return (
@@ -58,10 +59,8 @@ export default function EditRoomModal({ roomId, onClose, onSave }: EditRoomModal
       className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      {/* Backdrop */}
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
-      {/* Modal */}
       <div
         className="relative w-full max-w-[640px] bg-white rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.25)] overflow-hidden animate-[popIn_0.25s_cubic-bezier(0.175,0.885,0.32,1.275)]"
         onClick={(e) => e.stopPropagation()}
@@ -140,22 +139,6 @@ export default function EditRoomModal({ roomId, onClose, onSave }: EditRoomModal
                   )}
                 </div>
               </div>
-
-              {/* Maintenance */}
-              <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1.5">🛠️ Maintenance Category</label>
-                <select
-                  value={maintStatus}
-                  onChange={(e) => setMaintStatus(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 text-sm text-slate-700 bg-white outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all cursor-pointer"
-                >
-                  {MAINT_OPTIONS.map(o => (
-                    <option key={o.value} value={o.value}>
-                      {o.icon ? `${o.icon} ${o.label}` : o.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
             </div>
 
             {/* Right Column */}
@@ -171,7 +154,6 @@ export default function EditRoomModal({ roomId, onClose, onSave }: EditRoomModal
                   placeholder="e.g., install date / assigned staff / details"
                   className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 text-sm text-slate-700 outline-none resize-vertical focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
                 />
-                <p className="text-xs text-slate-400 mt-1">This note appears when hovering the maintenance icon.</p>
               </div>
 
               {/* Access Point */}
@@ -200,6 +182,45 @@ export default function EditRoomModal({ roomId, onClose, onSave }: EditRoomModal
               </div>
             </div>
           </div>
+
+          {/* Service Icons - full width below the grid */}
+          {categories.length > 0 && (
+            <div className="mt-5 pt-5 border-t border-slate-200">
+              <label className="block text-sm font-bold text-slate-700 mb-3">🛠️ Service Icons (เลือกได้หลายอัน)</label>
+              <div className="flex flex-wrap gap-2">
+                {categories.map(cat => {
+                  const IconComp = getIconComponent(cat.icon);
+                  const isSelected = selectedServices.includes(cat.id);
+                  return (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => toggleService(cat.id)}
+                      className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border-2 text-sm font-semibold cursor-pointer transition-all ${
+                        isSelected
+                          ? "shadow-md scale-105"
+                          : "bg-white hover:bg-slate-50 border-slate-200 text-slate-500"
+                      }`}
+                      style={isSelected ? {
+                        borderColor: cat.color,
+                        background: `${cat.color}18`,
+                        color: "hsl(220,20%,30%)",
+                      } : undefined}
+                    >
+                      {IconComp && (
+                        <IconComp
+                          size={16}
+                          style={{ color: isSelected ? cat.color : undefined }}
+                        />
+                      )}
+                      {cat.name}
+                      {isSelected && <span className="text-green-500 text-xs">✓</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Footer */}
