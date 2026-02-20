@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { LogIn, Check, Settings, Building2, LayoutDashboard, Calendar, ChevronLeft, Hotel } from "lucide-react";
 import EditRoomModal from "@/components/index/EditRoomModal";
+import SettingsModal from "@/components/index/SettingsModal";
 
 /* ================================================================
    Building A – Floor Plan (React port)
@@ -15,6 +16,7 @@ export default function BuildingA() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<string>("");
   const [editMode, setEditMode] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const navigate = useNavigate();
 
   const openAddItemModal = useCallback(() => setShowAddItemModal(true), []);
@@ -76,7 +78,10 @@ export default function BuildingA() {
               <span className="hidden md:inline">{editMode ? "Edit Mode: ON" : "Lock Mode"}</span>
             </button>
 
-            <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide text-slate-300 hover:bg-slate-700 hover:text-white transition-all border-none bg-transparent cursor-pointer">
+            <button
+              onClick={() => setShowSettings(true)}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide text-slate-300 hover:bg-slate-700 hover:text-white transition-all border-none bg-transparent cursor-pointer"
+            >
               <Settings className="h-3.5 w-3.5" />
               <span className="hidden md:inline">Settings</span>
             </button>
@@ -669,6 +674,12 @@ export default function BuildingA() {
         />
       )}
 
+      {/* Settings Modal */}
+      {showSettings && (
+        <SettingsModal onClose={() => setShowSettings(false)} />
+      )}
+
+      {/* JS helper */}
       <script dangerouslySetInnerHTML={{ __html: `
         function toggleAPDate() {
           var hasAP = document.getElementById('hasAP');
