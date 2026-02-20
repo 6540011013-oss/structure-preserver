@@ -135,7 +135,8 @@ export default function BuildingA() {
                 const target = e.target as HTMLElement;
                 const roomEl = target.closest('.room') as HTMLElement | null;
                 if (roomEl) {
-                  const text = roomEl.textContent?.split('\n')[0]?.trim() || "Room";
+                  const firstText = roomEl.childNodes[0]?.textContent?.trim() || "Room";
+                  const text = firstText.replace(/\s+/g, ' ');
                   setSelectedRoom(text);
                   if (editMode && isAdmin) {
                     setShowEditModal(true);
