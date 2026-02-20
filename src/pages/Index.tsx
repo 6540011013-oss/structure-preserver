@@ -125,43 +125,54 @@ export default function Index() {
         </div>
 
         {/* Buildings Section */}
-        <div className="mb-6 max-w-3xl mx-auto">
+        <div className="mb-8">
           <div className="flex items-center gap-3 mb-5">
             <Building2 className="h-5 w-5 text-slate-400" />
             <h3 className="text-lg font-bold text-white">Buildings Overview</h3>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 gap-5">
             {/* Building A */}
             <Link to="/building-a" className="no-underline group">
-              <div className="bg-[#1e293b] rounded-2xl border border-slate-700/50 overflow-hidden hover:border-violet-500/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(139,92,246,0.1)]">
-                <div className="h-2 bg-gradient-to-r from-violet-500 to-purple-600" />
-                <div className="p-6">
+              <div className="bg-[#1e293b] rounded-2xl border border-slate-700/50 overflow-hidden hover:border-violet-500/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(139,92,246,0.15)]">
+                <div className="h-1.5 bg-gradient-to-r from-violet-500 to-purple-600" />
+                <div className="p-5">
                   <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-lg font-bold text-white shadow-lg shadow-violet-500/20">
+                    <div className="flex items-center gap-3">
+                      <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-base font-bold text-white shadow-lg shadow-violet-500/20">
                         A
                       </div>
                       <div>
-                        <h4 className="text-base font-bold text-white">Building A — ABSH</h4>
-                        <p className="text-xs text-slate-400 mt-0.5">Ocean View • Main Building</p>
+                        <h4 className="text-sm font-bold text-white">Building A — ABSH</h4>
+                        <p className="text-[11px] text-slate-400 mt-0.5">Ocean View • Main Building</p>
                       </div>
                     </div>
-                    <ArrowRight className="h-5 w-5 text-slate-500 group-hover:text-violet-400 group-hover:translate-x-1 transition-all" />
+                    <ArrowRight className="h-4 w-4 text-slate-500 group-hover:text-violet-400 group-hover:translate-x-1 transition-all" />
                   </div>
 
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="bg-slate-800/50 rounded-xl p-3 text-center">
-                      <p className="text-lg font-bold text-white">104</p>
-                      <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Rooms</p>
+                  {/* Occupancy Bar */}
+                  <div className="mb-4">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Occupancy</span>
+                      <span className="text-xs font-bold text-emerald-400">68%</span>
                     </div>
-                    <div className="bg-slate-800/50 rounded-xl p-3 text-center">
-                      <p className="text-lg font-bold text-white">9</p>
-                      <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Floors</p>
+                    <div className="h-1.5 bg-slate-700/60 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-violet-500 to-emerald-400 rounded-full transition-all duration-500" style={{ width: "68%" }} />
                     </div>
-                    <div className="bg-slate-800/50 rounded-xl p-3 text-center">
-                      <p className="text-lg font-bold text-emerald-400">68%</p>
-                      <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Occupied</p>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="bg-slate-800/50 rounded-lg p-2.5 text-center">
+                      <p className="text-base font-bold text-white">104</p>
+                      <p className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold">Rooms</p>
+                    </div>
+                    <div className="bg-slate-800/50 rounded-lg p-2.5 text-center">
+                      <p className="text-base font-bold text-white">9</p>
+                      <p className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold">Floors</p>
+                    </div>
+                    <div className="bg-slate-800/50 rounded-lg p-2.5 text-center">
+                      <p className="text-base font-bold text-emerald-400">71</p>
+                      <p className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold">Guests</p>
                     </div>
                   </div>
                 </div>
@@ -170,34 +181,45 @@ export default function Index() {
 
             {/* Building B */}
             <Link to="/building-b" className="no-underline group">
-              <div className="bg-[#1e293b] rounded-2xl border border-slate-700/50 overflow-hidden hover:border-rose-500/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(244,63,94,0.1)]">
-                <div className="h-2 bg-gradient-to-r from-pink-500 to-rose-500" />
-                <div className="p-6">
+              <div className="bg-[#1e293b] rounded-2xl border border-slate-700/50 overflow-hidden hover:border-rose-500/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(244,63,94,0.15)]">
+                <div className="h-1.5 bg-gradient-to-r from-pink-500 to-rose-500" />
+                <div className="p-5">
                   <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center text-lg font-bold text-white shadow-lg shadow-rose-500/20">
+                    <div className="flex items-center gap-3">
+                      <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center text-base font-bold text-white shadow-lg shadow-rose-500/20">
                         B
                       </div>
                       <div>
-                        <h4 className="text-base font-bold text-white">Building B — ABSC</h4>
-                        <p className="text-xs text-slate-400 mt-0.5">City View • Condo Wing</p>
+                        <h4 className="text-sm font-bold text-white">Building B — ABSC</h4>
+                        <p className="text-[11px] text-slate-400 mt-0.5">City View • Condo Wing</p>
                       </div>
                     </div>
-                    <ArrowRight className="h-5 w-5 text-slate-500 group-hover:text-rose-400 group-hover:translate-x-1 transition-all" />
+                    <ArrowRight className="h-4 w-4 text-slate-500 group-hover:text-rose-400 group-hover:translate-x-1 transition-all" />
                   </div>
 
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="bg-slate-800/50 rounded-xl p-3 text-center">
-                      <p className="text-lg font-bold text-white">40</p>
-                      <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Rooms</p>
+                  {/* Occupancy Bar */}
+                  <div className="mb-4">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Occupancy</span>
+                      <span className="text-xs font-bold text-emerald-400">45%</span>
                     </div>
-                    <div className="bg-slate-800/50 rounded-xl p-3 text-center">
-                      <p className="text-lg font-bold text-white">4</p>
-                      <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Floors</p>
+                    <div className="h-1.5 bg-slate-700/60 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-rose-500 to-emerald-400 rounded-full transition-all duration-500" style={{ width: "45%" }} />
                     </div>
-                    <div className="bg-slate-800/50 rounded-xl p-3 text-center">
-                      <p className="text-lg font-bold text-emerald-400">45%</p>
-                      <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Occupied</p>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="bg-slate-800/50 rounded-lg p-2.5 text-center">
+                      <p className="text-base font-bold text-white">40</p>
+                      <p className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold">Rooms</p>
+                    </div>
+                    <div className="bg-slate-800/50 rounded-lg p-2.5 text-center">
+                      <p className="text-base font-bold text-white">4</p>
+                      <p className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold">Floors</p>
+                    </div>
+                    <div className="bg-slate-800/50 rounded-lg p-2.5 text-center">
+                      <p className="text-base font-bold text-emerald-400">18</p>
+                      <p className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold">Guests</p>
                     </div>
                   </div>
                 </div>
@@ -209,16 +231,18 @@ export default function Index() {
         {/* Quick Actions */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {[
-            { icon: CalendarCheck, label: "Today's Check-in", value: "12 guests", color: "text-blue-400" },
-            { icon: DoorOpen, label: "Today's Check-out", value: "8 guests", color: "text-amber-400" },
-            { icon: BedDouble, label: "Housekeeping", value: "6 pending", color: "text-violet-400" },
-            { icon: AlertTriangle, label: "Alerts", value: "2 issues", color: "text-rose-400" },
+            { icon: CalendarCheck, label: "Today's Check-in", value: "12 guests", color: "text-blue-400", border: "hover:border-blue-500/30" },
+            { icon: DoorOpen, label: "Today's Check-out", value: "8 guests", color: "text-amber-400", border: "hover:border-amber-500/30" },
+            { icon: BedDouble, label: "Housekeeping", value: "6 pending", color: "text-violet-400", border: "hover:border-violet-500/30" },
+            { icon: AlertTriangle, label: "Alerts", value: "2 issues", color: "text-rose-400", border: "hover:border-rose-500/30" },
           ].map((action) => (
-            <div key={action.label} className="bg-[#1e293b]/60 rounded-xl p-4 border border-slate-700/30 flex items-center gap-3">
-              <action.icon className={`h-5 w-5 ${action.color} flex-shrink-0`} />
+            <div key={action.label} className={`bg-[#1e293b]/60 rounded-xl p-4 border border-slate-700/30 flex items-center gap-3 transition-all duration-200 hover:bg-[#1e293b] cursor-pointer ${action.border}`}>
+              <div className="w-9 h-9 rounded-lg bg-slate-800/80 flex items-center justify-center flex-shrink-0">
+                <action.icon className={`h-4 w-4 ${action.color}`} />
+              </div>
               <div>
                 <p className="text-xs font-semibold text-slate-300">{action.label}</p>
-                <p className="text-[11px] text-slate-500">{action.value}</p>
+                <p className="text-sm font-bold text-white">{action.value}</p>
               </div>
             </div>
           ))}
