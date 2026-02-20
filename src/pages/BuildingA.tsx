@@ -4,6 +4,7 @@ import { LogIn, Check, Settings, Building2, LayoutDashboard, Calendar, ChevronLe
 import EditRoomModal from "@/components/index/EditRoomModal";
 import SettingsModal from "@/components/index/SettingsModal";
 import ServiceStatus from "@/components/index/ServiceStatus";
+import DatePickerModal from "@/components/index/DatePickerModal";
 import { MaintenanceCategory, DEFAULT_CATEGORIES } from "@/data/maintenanceCategories";
 import { DEFAULT_ROOM_TYPES, RoomTypeItem } from "@/data/roomTypes";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -22,6 +23,8 @@ export default function BuildingA() {
   const [selectedRoom, setSelectedRoom] = useState<string>("");
   const [editMode, setEditMode] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [categories, setCategories] = useState<MaintenanceCategory[]>(DEFAULT_CATEGORIES);
   const [roomServices, setRoomServices] = useState<Record<string, string[]>>({});
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
@@ -186,7 +189,7 @@ export default function BuildingA() {
               <span className="hidden md:inline">{t("nav.dashboard")}</span>
             </button>
 
-            <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide text-slate-600 hover:bg-slate-100 hover:text-slate-800 transition-all border-none bg-transparent cursor-pointer">
+            <button onClick={() => setShowDatePicker(true)} className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide text-slate-600 hover:bg-slate-100 hover:text-slate-800 transition-all border-none bg-transparent cursor-pointer">
               <Calendar className="h-3.5 w-3.5" />
               <span className="hidden md:inline">{t("nav.date")}</span>
             </button>
@@ -935,6 +938,14 @@ export default function BuildingA() {
           onCategoriesChange={setCategories}
         />
       )}
+
+      {/* Date Picker Modal */}
+      <DatePickerModal
+        open={showDatePicker}
+        onClose={() => setShowDatePicker(false)}
+        onSelect={(date) => { setSelectedDate(date); setShowDatePicker(false); }}
+        selectedDate={selectedDate}
+      />
 
       {/* JS helper */}
       <script dangerouslySetInnerHTML={{ __html: `
