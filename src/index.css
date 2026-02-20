@@ -180,14 +180,15 @@
     position: sticky;
     top: 0;
     z-index: 3000;
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid #e2e8f0;
-    padding: 12px 24px;
+    background: hsla(0, 0%, 100%, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid hsl(220 15% 90%);
+    padding: 10px 28px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 4px hsla(220, 20%, 10%, 0.06);
   }
 
   .page-navbar .nav-left {
@@ -1046,7 +1047,7 @@
     right: 22px;
     bottom: 22px;
     z-index: 9998;
-    background: var(--gradient-gold);
+    background: linear-gradient(135deg, hsl(250 60% 58%), hsl(270 55% 50%));
     color: hsl(0 0% 100%);
     border: none;
     border-radius: 9999px;
@@ -1054,19 +1055,22 @@
     font-weight: 800;
     font-size: 12px;
     letter-spacing: 0.04em;
-    box-shadow: var(--shadow-gold);
+    box-shadow: 0 4px 14px hsla(250, 60%, 50%, 0.3);
     cursor: pointer;
     transition: all 0.2s ease;
   }
   .dashboard-fab:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 30px hsla(40, 85%, 45%, 0.45);
+    box-shadow: 0 8px 24px hsla(250, 60%, 50%, 0.4);
   }
   .dashboard-fab-inline {
     position: static;
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 8px 16px;
     font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
   /* ---- Date picker button ---- */
@@ -1128,11 +1132,11 @@
 
   /* ---- Edit mode button ---- */
   .edit-mode-base {
-    border-radius: 8px;
-    padding: 7px 14px;
-    border: 1.5px solid hsl(var(--gold));
-    background: transparent;
-    color: hsl(var(--gold-light));
+    border-radius: 10px;
+    padding: 8px 16px;
+    border: 1.5px solid hsl(220 15% 80%);
+    background: hsl(0 0% 100%);
+    color: hsl(220 20% 40%);
     font-size: 11px;
     font-weight: 800;
     letter-spacing: 0.05em;
@@ -1141,8 +1145,9 @@
     transition: all 0.2s ease;
   }
   .edit-mode-base:hover {
-    background: hsl(var(--gold));
-    color: hsl(0 0% 100%);
+    background: hsl(220 20% 96%);
+    border-color: hsl(220 15% 65%);
+    color: hsl(220 25% 25%);
   }
 
   /* Room type select */

@@ -45,34 +45,34 @@ export default function BuildingA() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           {/* Edit mode */}
-          <button className="edit-mode-base nav-btn-shape" id="edit-mode-btn" style={{ fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.05em" }}>
-            <span id="edit-icon"></span>
-            <span id="edit-mode-text">LOCK MODE</span>
+          <button className="edit-mode-base nav-btn-shape" id="edit-mode-btn">
+            <span id="edit-icon">🔒</span>
+            <span id="edit-mode-text"> LOCK MODE</span>
           </button>
 
           {/* Admin settings */}
-          <button id="admin-btn-canva" className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-violet-400 to-purple-500 text-white rounded-xl hover:shadow-lg transition-all border-none cursor-pointer text-xs font-black uppercase tracking-wide nav-btn-shape">
-            <span>⚙️</span> <span>SYSTEM SETTINGS (ADMIN)</span>
+          <button id="admin-btn-canva" className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-xl hover:shadow-lg hover:shadow-violet-200 transition-all duration-200 border-none cursor-pointer text-[11px] font-black uppercase tracking-wide">
+            ⚙️ SYSTEM SETTINGS
           </button>
 
           {/* Staff login */}
-          <button id="adminBtn" className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-black transition-all duration-300 shadow-sm ${
+          <button id="adminBtn" className={`flex items-center gap-2 px-5 py-2 rounded-full text-[11px] font-black transition-all duration-200 ${
             isAdmin
-              ? "bg-green-600 border-2 border-green-600 text-white hover:bg-green-700"
-              : "border-2 border-slate-800 text-slate-800 hover:bg-slate-800 hover:text-white"
+              ? "bg-emerald-500 border-2 border-emerald-500 text-white hover:bg-emerald-600 shadow-sm shadow-emerald-200"
+              : "border-2 border-slate-300 text-slate-600 hover:border-slate-500 hover:text-slate-800 bg-white"
           }`}>
-            <span id="btnText">{isAdmin ? "ADMIN ACTIVE" : "STAFF LOGIN"}</span>
+            <span id="btnText">{isAdmin ? "✓ ADMIN ACTIVE" : "STAFF LOGIN"}</span>
           </button>
 
           {/* Go to Building B */}
-          <button onClick={goB} className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 text-white border-none cursor-pointer text-xs font-black uppercase tracking-wide hover:shadow-lg transition-all">
+          <button onClick={goB} className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 text-white border-none cursor-pointer text-[11px] font-black uppercase tracking-wide hover:shadow-lg hover:shadow-rose-200 transition-all duration-200">
             🏢 BUILDING B
           </button>
 
           <button className="dashboard-fab dashboard-fab-inline" id="dashboardBtn">Dashboard</button>
-          <button id="open-date-picker-btn" className="h-9 w-9 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition text-base font-black border-none cursor-pointer" title="Select Date">📅</button>
+          <button id="open-date-picker-btn" className="h-9 w-9 rounded-xl bg-indigo-500 text-white hover:bg-indigo-600 hover:shadow-lg hover:shadow-indigo-200 transition-all duration-200 text-sm font-black border-none cursor-pointer" title="Select Date">📅</button>
         </div>
       </header>
 
