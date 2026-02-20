@@ -7,6 +7,7 @@ import {
   CATEGORY_COLORS,
   getIconComponent,
 } from "@/data/maintenanceCategories";
+import { DEFAULT_ROOM_TYPES, RoomTypeItem } from "@/data/roomTypes";
 
 interface SettingsModalProps {
   onClose: () => void;
@@ -15,22 +16,6 @@ interface SettingsModalProps {
 }
 
 type Tab = "room-types" | "maintenance" | "admin" | "general";
-
-interface RoomTypeItem {
-  id: string;
-  label: string;
-  color: string;
-}
-
-const DEFAULT_ROOM_TYPES: RoomTypeItem[] = [
-  { id: "condo", label: "Condo / Owner", color: "hsl(220,70%,55%)" },
-  { id: "sus", label: "Superior Suite", color: "hsl(160,60%,45%)" },
-  { id: "dls", label: "Deluxe Suite", color: "hsl(35,85%,55%)" },
-  { id: "sdl", label: "Studio Deluxe", color: "hsl(280,55%,55%)" },
-  { id: "sps", label: "Superior", color: "hsl(190,65%,45%)" },
-  { id: "fam", label: "Family", color: "hsl(340,65%,55%)" },
-  { id: "lux", label: "Luxury / Royal", color: "hsl(45,90%,50%)" },
-];
 
 const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: "room-types", label: "Room Types", icon: <Palette className="h-4 w-4" /> },
@@ -62,7 +47,7 @@ export default function SettingsModal({ onClose, categories, onCategoriesChange 
   const addRoomType = () => {
     if (!newRTLabel.trim()) return;
     const id = newRTLabel.trim().toLowerCase().replace(/\s+/g, "-");
-    setRoomTypes([...roomTypes, { id, label: newRTLabel.trim(), color: newRTColor }]);
+    setRoomTypes([...roomTypes, { id, label: newRTLabel.trim(), color: newRTColor, borderColor: newRTColor }]);
     setNewRTLabel("");
     setNewRTColor("#3b82f6");
   };
