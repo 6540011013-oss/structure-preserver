@@ -94,7 +94,7 @@ export default function BuildingA() {
           </div>
 
           {/* ===== BUILDING STRUCTURE (exact dimensions preserved) ===== */}
-          <div className="room two-line">
+          <div className="two-line">
             <div className="floor-section">
               <div className="building" onClick={(e) => {
                 const target = e.target as HTMLElement;
