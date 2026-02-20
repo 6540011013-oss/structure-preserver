@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { LogIn, Check, Settings, Building2, LayoutDashboard, Calendar, ChevronLeft, Hotel, Plus } from "lucide-react";
+import { LogIn, Check, Settings, Building2, LayoutDashboard, Calendar, ChevronLeft, Hotel } from "lucide-react";
 import EditRoomModal from "@/components/index/EditRoomModal";
 import SettingsModal from "@/components/index/SettingsModal";
 import ServiceStatus from "@/components/index/ServiceStatus";
@@ -155,17 +155,6 @@ export default function BuildingA() {
             >
               <span>{editMode ? "🔓" : "🔒"}</span>
               <span className="hidden md:inline">{editMode ? "Edit Mode: ON" : "Lock Mode"}</span>
-            </button>
-
-            <button
-              onClick={() => {
-                if (!isAdmin) { alert("Admin only."); return; }
-                openAddItemModal();
-              }}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800 transition-all border-none cursor-pointer"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              <span className="hidden md:inline">Add Item</span>
             </button>
 
             <button
