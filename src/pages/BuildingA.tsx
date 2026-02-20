@@ -119,24 +119,23 @@ export default function BuildingA() {
 
   return (
     <div style={{ fontFamily: "'Inter', sans-serif", background: "#f1f5f9", minHeight: "100vh" }}>
-      {/* ===== PMS-STYLE NAVBAR ===== */}
-      <header className="sticky top-0 z-[3000] bg-[#1e293b] shadow-lg">
-        {/* Top bar */}
-        <div className="flex items-center justify-between px-5 h-14">
-          {/* Left: Logo + Building name */}
+      {/* ===== NAVBAR (Light theme matching Index) ===== */}
+      <header className="sticky top-0 z-[3000] bg-white/85 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div className="flex items-center justify-between px-5 py-3">
+          {/* Left: Back + Building name */}
           <div className="flex items-center gap-4">
-            <button onClick={goHome} className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors border-none bg-transparent cursor-pointer">
+            <button onClick={goHome} className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors border-none bg-transparent cursor-pointer">
               <ChevronLeft className="h-4 w-4" />
-              <span className="text-xs font-medium hidden sm:inline">HOME</span>
+              <span className="text-xs font-semibold hidden sm:inline">HOME</span>
             </button>
-            <div className="h-6 w-px bg-slate-600" />
+            <div className="h-6 w-px bg-slate-300" />
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
-                <Hotel className="h-4 w-4 text-white" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
+                A
               </div>
               <div>
-                <h1 className="text-sm font-bold text-white leading-none tracking-wide">Building A</h1>
-                <span className="text-[10px] text-slate-400 font-medium tracking-widest uppercase">ABSH • Ocean View</span>
+                <h1 className="text-sm font-extrabold text-slate-800 leading-none tracking-wide">Building A — ABSH</h1>
+                <span className="text-[10px] text-slate-500 font-bold tracking-widest uppercase">Ocean View • Main Building</span>
               </div>
             </div>
           </div>
@@ -151,7 +150,7 @@ export default function BuildingA() {
               className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide transition-all border-none cursor-pointer ${
                 editMode
                   ? "bg-orange-500 text-white hover:bg-orange-600"
-                  : "text-slate-300 hover:bg-slate-700 hover:text-white"
+                  : "text-slate-600 hover:bg-slate-100 hover:text-slate-800"
               }`}
             >
               <span>{editMode ? "🔓" : "🔒"}</span>
@@ -160,35 +159,35 @@ export default function BuildingA() {
 
             <button
               onClick={() => setShowSettings(true)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide text-slate-300 hover:bg-slate-700 hover:text-white transition-all border-none bg-transparent cursor-pointer"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide text-slate-600 hover:bg-slate-100 hover:text-slate-800 transition-all border-none bg-transparent cursor-pointer"
             >
               <Settings className="h-3.5 w-3.5" />
               <span className="hidden md:inline">Settings</span>
             </button>
 
-            <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide text-slate-300 hover:bg-slate-700 hover:text-white transition-all border-none bg-transparent cursor-pointer">
+            <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide text-slate-600 hover:bg-slate-100 hover:text-slate-800 transition-all border-none bg-transparent cursor-pointer">
               <LayoutDashboard className="h-3.5 w-3.5" />
               <span className="hidden md:inline">Dashboard</span>
             </button>
 
-            <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide text-slate-300 hover:bg-slate-700 hover:text-white transition-all border-none bg-transparent cursor-pointer">
+            <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide text-slate-600 hover:bg-slate-100 hover:text-slate-800 transition-all border-none bg-transparent cursor-pointer">
               <Calendar className="h-3.5 w-3.5" />
               <span className="hidden md:inline">Date</span>
             </button>
 
-            <div className="h-6 w-px bg-slate-600 mx-1" />
+            <div className="h-6 w-px bg-slate-300 mx-1" />
 
-            <button onClick={goB} className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide bg-rose-500/15 text-rose-400 hover:bg-rose-500/25 hover:text-rose-300 transition-all border-none cursor-pointer">
+            <button onClick={goB} className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide bg-rose-50 text-rose-600 hover:bg-rose-100 hover:text-rose-700 transition-all border-none cursor-pointer">
               <Building2 className="h-3.5 w-3.5" />
               <span className="hidden md:inline">Building B</span>
             </button>
           </div>
 
           {/* Right: Auth */}
-          <button id="adminBtn" className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide transition-all border-none cursor-pointer ${
+          <button id="adminBtn" className={`flex items-center gap-2 px-5 py-2 rounded-full text-xs font-black uppercase tracking-wide transition-all duration-300 cursor-pointer ${
             isAdmin
-              ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30"
-              : "bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-white"
+              ? "bg-green-600 border-2 border-green-600 text-white hover:bg-green-700"
+              : "border-2 border-slate-800 text-slate-800 hover:bg-slate-800 hover:text-white"
           }`}>
             {isAdmin ? <Check className="h-3.5 w-3.5" /> : <LogIn className="h-3.5 w-3.5" />}
             <span>{isAdmin ? "Admin Active" : "Staff Login"}</span>
