@@ -31,9 +31,9 @@ export default function ServiceStatus({ categories, roomServices, activeFilter, 
             onClick={() => onFilterChange(cat.id)}
             className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all cursor-pointer border-none text-left"
             style={{
-              border: `2px solid ${isActive ? cat.color : "hsl(220,10%,85%)"}`,
-              background: isActive ? `${cat.color}30` : "hsl(220,10%,97%)",
-              boxShadow: isActive ? `0 2px 12px ${cat.color}40` : "none",
+              border: `2px solid ${isActive ? "hsl(45,90%,55%)" : "hsl(220,10%,85%)"}`,
+              background: isActive ? "hsl(45,90%,88%)" : "hsl(220,10%,97%)",
+              boxShadow: isActive ? "0 2px 12px hsla(45,90%,50%,0.25)" : "none",
             }}
           >
             <span
