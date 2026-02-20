@@ -868,6 +868,24 @@
   .type-bam   { background-color: #ffe1eb !important; border-color: #f297b0 !important; }
   .type-suc   { background-color: hsl(220 18% 90%) !important; border-color: hsl(220 15% 65%) !important; }
 
+  /* ---- Service filter: greyed out / highlighted rooms ---- */
+  .room.room-greyed {
+    background-color: hsl(220, 15%, 88%) !important;
+    border-color: hsl(220, 10%, 78%) !important;
+    color: hsl(220, 10%, 60%) !important;
+    opacity: 0.55;
+    transition: all 0.3s ease;
+  }
+  .room.room-greyed .guest-label {
+    color: hsl(220, 10%, 65%) !important;
+  }
+  .room.room-highlighted {
+    box-shadow: 0 0 0 3px hsl(45, 90%, 50%), 0 4px 12px hsla(45, 90%, 50%, 0.35) !important;
+    z-index: 2;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
   /* Legend matching colors */
   .lg-lux   { background: #FF9900; }
   .lg-roy   { background: #ff9900; }
