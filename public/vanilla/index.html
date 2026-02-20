@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Andaman Beach Suites Hotel — Room Status System</title>
+  <meta name="description" content="Internal Room Management System - Andaman Beach Suites Hotel">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header">
+    <div class="inner">
+      <div class="logo-group">
+        <div class="logo-icon">🏨</div>
+        <div class="logo-text">
+          <h1 id="hotelName">ANDAMAN BEACH SUITES HOTEL</h1>
+          <p id="hotelSub">Room Status System</p>
+        </div>
+      </div>
+
+      <div class="status-bar">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="status-label" id="timeLabel">Local Time :</span>
+          <span class="status-value" id="liveTime">--:--:--</span>
+        </div>
+        <span class="divider"></span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="status-label" id="serverLabel">Server Status :</span>
+          <span class="server-dot"></span>
+          <span class="server-text" id="serverText">Active</span>
+        </div>
+      </div>
+
+      <button class="admin-btn" id="adminBtn" onclick="handleAdminBtn()">STAFF LOGIN</button>
+    </div>
+  </header>
+
+  <!-- ===== HERO SLIDER ===== -->
+  <section class="hero">
+    <div class="hero-track" id="heroTrack" style="width:300%">
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1600&q=80')"></div>
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1600&q=80')"></div>
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=1600&q=80')"></div>
+    </div>
+    <h2 id="heroTitle">Room Status System</h2>
+    <p id="heroSubtitle">Internal Room Management System</p>
+  </section>
+
+  <!-- ===== BUILDING CARDS ===== -->
+  <section class="cards-section">
+    <div class="cards-grid">
+      <!-- Building A -->
+      <a href="building-a.html" style="text-decoration:none">
+        <div class="building-card">
+          <div class="card-icon a">A</div>
+          <h3 id="cardAName">ABSH</h3>
+          <p class="desc" id="cardADesc">Building A • 104 Rooms</p>
+          <div class="card-stats">
+            <div class="row"><span id="labelFloors">Total Floors</span><span class="val" id="cardAFloors">9 Floors</span></div>
+            <div class="row"><span id="labelRooms">Rooms/Floor</span><span class="val" id="cardARooms">8 Rooms</span></div>
+          </div>
+          <span class="card-btn" id="cardABtn">View Floor Plan →</span>
+        </div>
+      </a>
+
+      <!-- Building B -->
+      <a href="building-b.html" style="text-decoration:none">
+        <div class="building-card">
+          <div class="card-icon b">B</div>
+          <h3 id="cardBName">ABSC</h3>
+          <p class="desc" id="cardBDesc">Building B • 40 Rooms</p>
+          <div class="card-stats">
+            <div class="row"><span>Total Floors</span><span class="val" id="cardBFloors">4 Floors</span></div>
+            <div class="row"><span>Rooms/Floor</span><span class="val" id="cardBRooms">10 Rooms</span></div>
+          </div>
+          <span class="card-btn" id="cardBBtn">View Floor Plan →</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer" id="footer">© Andaman Beach Suites Hotel</footer>
+
+  <!-- ===== LOGIN MODAL ===== -->
+  <div class="modal-overlay hidden" id="loginModal">
+    <div class="modal-box">
+      <div class="icon-circle">🔒</div>
+      <h2 id="loginTitle">Staff Login</h2>
+      <p class="sub" id="loginSub">Please enter passcode to access</p>
+      <input type="password" placeholder="••••" onkeydown="if(event.key==='Enter')handleLogin()">
+      <div class="modal-btns">
+        <button class="btn-cancel" onclick="hideLoginModal()">Cancel</button>
+        <button class="btn-confirm" onclick="handleLogin()">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    // Init
+    startClock(document.getElementById('liveTime'));
+    initHeroSlider(document.getElementById('heroTrack'), [1,2,3]);
+    updateAdminUI();
+
+    // Apply translations
+    function applyLang() {
+      const t = LANG.t.bind(LANG);
+      document.getElementById('hotelName').textContent = t('hotel.name');
+      document.getElementById('hotelSub').textContent = t('hotel.subtitle');
+      document.getElementById('timeLabel').textContent = t('time.label');
+      document.getElementById('serverLabel').textContent = t('server.label');
+      document.getElementById('serverText').textContent = t('server.active');
+      document.getElementById('heroTitle').textContent = t('hero.title');
+      document.getElementById('heroSubtitle').textContent = t('hero.subtitle');
+      document.getElementById('cardAName').textContent = t('building.a.name');
+      document.getElementById('cardADesc').textContent = t('building.a.desc');
+      document.getElementById('cardAFloors').textContent = t('building.a.floors');
+      document.getElementById('cardARooms').textContent = t('building.a.rooms');
+      document.getElementById('cardBName').textContent = t('building.b.name');
+      document.getElementById('cardBDesc').textContent = t('building.b.desc');
+      document.getElementById('cardBFloors').textContent = t('building.b.floors');
+      document.getElementById('cardBRooms').textContent = t('building.b.rooms');
+      document.getElementById('cardABtn').textContent = t('btn.viewFloorPlan');
+      document.getElementById('cardBBtn').textContent = t('btn.viewFloorPlan');
+      document.getElementById('footer').textContent = t('footer.copyright');
+      document.getElementById('loginTitle').textContent = t('login.title');
+      document.getElementById('loginSub').textContent = t('login.subtitle');
+    }
+    applyLang();
+  </script>
+</body>
+</html>
