@@ -1,6 +1,12 @@
-import { useState } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { LogIn, Check, Settings, Building2, LayoutDashboard, Calendar, ChevronLeft, Hotel } from "lucide-react";
 import EditRoomModal from "@/components/index/EditRoomModal";
+import SettingsModal from "@/components/index/SettingsModal";
+import ServiceStatus from "@/components/index/ServiceStatus";
+import { MaintenanceCategory, DEFAULT_CATEGORIES } from "@/data/maintenanceCategories";
+import { DEFAULT_ROOM_TYPES, RoomTypeItem } from "@/data/roomTypes";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 /* ================================================================
    Building B – Floor Plan (React port)
@@ -8,90 +14,205 @@ import EditRoomModal from "@/components/index/EditRoomModal";
 ================================================================ */
 
 export default function BuildingB() {
+  const { t } = useLanguage();
   const [isAdmin] = useState(() => localStorage.getItem("isAdmin") === "true");
-  const [editMode, setEditMode] = useState(false);
-  const [selectedRoom, setSelectedRoom] = useState<string>("");
+  const [showAddItemModal, setShowAddItemModal] = useState(false);
+  const [showRoomInfoModal, setShowRoomInfoModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState<string>("");
+  const [editMode, setEditMode] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [categories, setCategories] = useState<MaintenanceCategory[]>(DEFAULT_CATEGORIES);
+  const [roomServices, setRoomServices] = useState<Record<string, string[]>>({});
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [roomTypes] = useState<RoomTypeItem[]>(DEFAULT_ROOM_TYPES);
+  const [roomItems, setRoomItems] = useState<Array<{ id: string; roomId: string; name: string; width?: string; height?: string; note?: string; category: string; categoryIcon: string; image?: string }>>([]);
+  const [activeItemCategory, setActiveItemCategory] = useState("all");
+  const [itemCategories, setItemCategories] = useState([
+    { id: "furniture", name: "Furniture", icon: "🛋️" },
+    { id: "appliances", name: "Appliances", icon: "💡" },
+    { id: "decor", name: "Decor", icon: "🖼️" },
+    { id: "other", name: "Other", icon: "📦" },
+  ]);
+  const [showRoomNote, setShowRoomNote] = useState(false);
+  const [roomNotes, setRoomNotes] = useState<Record<string, string>>({});
+  const buildingRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+
+  const filteredItems = roomItems
+    .filter(i => i.roomId === selectedRoom)
+    .filter(i => activeItemCategory === "all" || i.category === activeItemCategory);
+
+  const getRoomId = (room: Element): string => {
+    return room.getAttribute('data-room-id') || room.childNodes[0]?.textContent?.trim().replace(/\s+/g, ' ') || "";
+  };
+
+  // Apply grey filter to rooms when service categories are selected
+  useEffect(() => {
+    const buildingEl = buildingRef.current;
+    if (!buildingEl) return;
+    const rooms = buildingEl.querySelectorAll('.room-b');
+    if (activeFilters.length === 0) {
+      rooms.forEach(room => { room.classList.remove('room-greyed', 'room-highlighted'); });
+      return;
+    }
+    const highlightedRooms = new Set<string>();
+    for (const [roomId, services] of Object.entries(roomServices)) {
+      if (activeFilters.some(f => services.includes(f))) highlightedRooms.add(roomId);
+    }
+    rooms.forEach(room => {
+      const roomText = getRoomId(room);
+      if (highlightedRooms.has(roomText)) {
+        room.classList.remove('room-greyed');
+        room.classList.add('room-highlighted');
+      } else {
+        room.classList.add('room-greyed');
+        room.classList.remove('room-highlighted');
+      }
+    });
+  }, [activeFilters, roomServices]);
+
+  // Inject service icon dots into rooms
+  useEffect(() => {
+    const buildingEl = buildingRef.current;
+    if (!buildingEl) return;
+    const rooms = buildingEl.querySelectorAll('.room-b');
+    buildingEl.querySelectorAll('.room-service-icons').forEach(el => el.remove());
+    rooms.forEach(room => {
+      const roomId = getRoomId(room);
+      const services = roomServices[roomId];
+      if (!services || services.length === 0) return;
+      const container = document.createElement('div');
+      container.className = 'room-service-icons';
+      services.forEach(catId => {
+        const cat = categories.find(c => c.id === catId);
+        if (!cat) return;
+        const dot = document.createElement('span');
+        dot.className = 'room-service-dot';
+        dot.style.background = cat.color;
+        dot.title = cat.name;
+        container.appendChild(dot);
+      });
+      (room as HTMLElement).style.position = 'relative';
+      room.appendChild(container);
+    });
+  }, [roomServices, categories]);
+
+  const openAddItemModal = useCallback(() => setShowAddItemModal(true), []);
+  const closeAddItemModal = useCallback(() => setShowAddItemModal(false), []);
+  const openRoom = useCallback((roomId: string) => {
+    setSelectedRoom(roomId);
+    setShowRoomInfoModal(true);
+  }, []);
+  const closeInfoModal = useCallback(() => {
+    setShowRoomInfoModal(false);
+    setSelectedRoom("");
+  }, []);
+
   const goHome = () => { navigate("/"); };
-  const goA = () => { navigate("/building-a"); };
+  const goA = () => {
+    setShowRoomInfoModal(false);
+    setShowAddItemModal(false);
+    navigate("/building-a");
+  };
 
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif", background: "hsl(220 22% 96%)", minHeight: "100vh" }}>
+    <div style={{ fontFamily: "'Inter', sans-serif", background: "#f1f5f9", minHeight: "100vh" }}>
       {/* ===== NAVBAR ===== */}
-      <header className="hotel-navbar">
-        <div className="nav-left">
-          <button onClick={goHome} className="back-link" style={{ background: "none", border: "none", cursor: "pointer", padding: 0, fontFamily: "inherit" }}>
-            ← Back to Home
-          </button>
-          <div style={{ width: 1, height: 24, background: "hsla(40,85%,45%,0.25)" }} />
-          <div className="nav-title">
-            <h1>Building B – ABSC</h1>
-            <span>Andaman Beach Suites Hotel</span>
+      <header className="sticky top-0 z-[3000] bg-white/85 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div className="flex items-center justify-between px-5 py-3">
+          <div className="flex items-center gap-4">
+            <button onClick={goHome} className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors border-none bg-transparent cursor-pointer">
+              <ChevronLeft className="h-4 w-4" />
+              <span className="text-xs font-semibold hidden sm:inline">{t("nav.home")}</span>
+            </button>
+            <div className="h-6 w-px bg-slate-300" />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
+                B
+              </div>
+              <div>
+                <h1 className="text-sm font-extrabold text-slate-800 leading-none tracking-wide">{t("buildingB.title")}</h1>
+                <span className="text-[10px] text-slate-500 font-bold tracking-widest uppercase">{t("buildingB.sub")}</span>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <button
-            onClick={() => {
-              if (!isAdmin) { alert("Admin only."); return; }
-              setEditMode(!editMode);
-            }}
-            className="edit-mode-base"
-            id="edit-mode-btn"
-            style={{
-              background: editMode ? "hsl(25,90%,55%)" : undefined,
-              borderColor: editMode ? "hsl(25,90%,55%)" : undefined,
-              color: editMode ? "#fff" : undefined,
-            }}
-          >
-            <span id="edit-icon">{editMode ? "🔓" : "🔒"}</span>
-            <span id="edit-mode-text" style={{ fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.05em" }}>{editMode ? "EDIT MODE: ON" : "LOCK MODE"}</span>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => {
+                if (!isAdmin) { alert("Admin only."); return; }
+                setEditMode(!editMode);
+              }}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide transition-all border-none cursor-pointer ${
+                editMode
+                  ? "bg-orange-500 text-white hover:bg-orange-600"
+                  : "text-slate-600 hover:bg-slate-100 hover:text-slate-800"
+              }`}
+            >
+              <span>{editMode ? "🔓" : "🔒"}</span>
+              <span className="hidden md:inline">{editMode ? t("nav.editModeOn") : t("nav.lockMode")}</span>
+            </button>
+
+            <button
+              onClick={() => setShowSettings(true)}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide text-slate-600 hover:bg-slate-100 hover:text-slate-800 transition-all border-none bg-transparent cursor-pointer"
+            >
+              <Settings className="h-3.5 w-3.5" />
+              <span className="hidden md:inline">{t("nav.settings")}</span>
+            </button>
+
+            <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide text-slate-600 hover:bg-slate-100 hover:text-slate-800 transition-all border-none bg-transparent cursor-pointer">
+              <LayoutDashboard className="h-3.5 w-3.5" />
+              <span className="hidden md:inline">{t("nav.dashboard")}</span>
+            </button>
+
+            <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide text-slate-600 hover:bg-slate-100 hover:text-slate-800 transition-all border-none bg-transparent cursor-pointer">
+              <Calendar className="h-3.5 w-3.5" />
+              <span className="hidden md:inline">{t("nav.date")}</span>
+            </button>
+
+            <div className="h-6 w-px bg-slate-300 mx-1" />
+
+            <button onClick={goA} className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide bg-violet-50 text-violet-600 hover:bg-violet-100 hover:text-violet-700 transition-all border-none cursor-pointer">
+              <Building2 className="h-3.5 w-3.5" />
+              <span className="hidden md:inline">{t("nav.buildingA")}</span>
+            </button>
+          </div>
+
+          <button id="adminBtn" className={`flex items-center gap-2 px-5 py-2 rounded-full text-xs font-black uppercase tracking-wide transition-all duration-300 cursor-pointer ${
+            isAdmin
+              ? "bg-green-600 border-2 border-green-600 text-white hover:bg-green-700"
+              : "border-2 border-slate-800 text-slate-800 hover:bg-slate-800 hover:text-white"
+          }`}>
+            {isAdmin ? <Check className="h-3.5 w-3.5" /> : <LogIn className="h-3.5 w-3.5" />}
+            <span>{isAdmin ? t("btn.adminActive") : t("btn.staffLogin")}</span>
           </button>
-
-          <button onClick={goA} style={{
-            display: "flex", alignItems: "center", gap: 6,
-            padding: "8px 16px", borderRadius: 8,
-            background: "linear-gradient(135deg, hsl(220,65%,42%), hsl(235,70%,55%))",
-            color: "#fff", border: "none", cursor: "pointer",
-            fontSize: 11, fontWeight: 900, letterSpacing: "0.04em", textTransform: "uppercase"
-          }}>🏢 BUILDING A</button>
-
-          <button id="adminBtn" style={{
-            display: "flex", alignItems: "center", gap: 8, padding: "8px 18px",
-            borderRadius: 8, border: isAdmin ? "1.5px solid #22c55e" : "1.5px solid hsl(42,90%,68%)",
-            background: isAdmin ? "rgba(34,197,94,0.1)" : "transparent",
-            color: isAdmin ? "#22c55e" : "hsl(42,90%,68%)",
-            fontSize: 11, fontWeight: 900, letterSpacing: "0.05em", textTransform: "uppercase", cursor: "pointer"
-          }}>
-            <span id="btnText">{isAdmin ? "✓ ADMIN ACTIVE" : "STAFF LOGIN"}</span>
-          </button>
-
-          <button className="dashboard-fab dashboard-fab-inline" id="dashboardBtn">Dashboard</button>
-          <button id="open-date-picker-btn" className="date-picker-btn" title="Select Date">📅</button>
         </div>
       </header>
 
       {/* ===== PLAN WRAPPER ===== */}
       <div className="plan-wrapper" style={{
         display: "flex", justifyContent: "center", alignItems: "flex-start",
-        padding: "40px 20px", gap: 32, overflowX: "auto", background: "hsl(220 22% 96%)"
+        padding: "40px 20px", gap: 32, overflowX: "auto", background: "#f1f5f9"
       }}>
         {/* Left Panel – Service Status */}
         <div style={{ width: 220, flexShrink: 0 }}>
-          <div style={{
-            background: "hsl(222 40% 14%)", padding: 16, borderRadius: 14,
-            border: "1px solid hsla(40,85%,45%,0.2)",
-            boxShadow: "0 8px 32px hsla(222,50%,5%,0.35)",
-            position: "sticky", top: 80
-          }}>
-            <h4 style={{ color: "hsl(42,90%,68%)", fontFamily: "'Playfair Display',serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", margin: "0 0 10px", borderBottom: "1px solid hsla(40,85%,45%,0.2)", paddingBottom: 8 }}>Service Status</h4>
-            <div id="service-sidebar-list" style={{ display: "flex", flexDirection: "column", gap: 8 }}></div>
+          <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm sticky top-20">
+            <h4 className="text-sm font-bold text-gray-800 mb-3 border-b pb-2 uppercase tracking-wider">{t("legend.serviceStatus")}</h4>
+            <ServiceStatus
+              categories={categories}
+              roomServices={roomServices}
+              activeFilters={activeFilters}
+              onFilterChange={(catId) => setActiveFilters(prev =>
+                prev.includes(catId) ? prev.filter(id => id !== catId) : [...prev, catId]
+              )}
+            />
           </div>
         </div>
 
         {/* Building B grid */}
-        <div className="building-b-container" style={{ cursor: "pointer" }} onClick={(e) => {
+        <div className="building-b-container" ref={buildingRef} style={{ cursor: "pointer" }} onClick={(e) => {
           const target = e.target as HTMLElement;
           const roomEl = target.closest('.room-b') as HTMLElement | null;
           if (roomEl) {
@@ -100,268 +221,303 @@ export default function BuildingB() {
             if (editMode && isAdmin) {
               setShowEditModal(true);
             } else {
-              // Info modal (view only) - TODO
+              setShowRoomInfoModal(true);
             }
           }
         }}>
-
           {/* Floor 25 – 7 rooms */}
           <div className="floor-row">
             {["2501","2502","2503","2504","2505","2506","2507"].map(r => (
               <div key={r} className="room-b" data-room-id={r}>{r}</div>
             ))}
           </div>
-
           {/* Floor 24 – 10 rooms */}
           <div className="floor-row">
             {["2401","2402","2403","2404","2405","2406","2407","2408","2409","2410"].map(r => (
               <div key={r} className="room-b" data-room-id={r}>{r}</div>
             ))}
           </div>
-
           {/* Floor 23 – 10 rooms */}
           <div className="floor-row">
             {["2301","2302","2303","2304","2305","2306","2307","2308","2309","2310"].map(r => (
               <div key={r} className="room-b" data-room-id={r}>{r}</div>
             ))}
           </div>
-
           {/* Floor 22 – 10 rooms */}
           <div className="floor-row">
             {["2201","2202","2203","2204","2205","2206","2207","2208","2209","2210"].map(r => (
               <div key={r} className="room-b" data-room-id={r}>{r}</div>
             ))}
           </div>
-
           {/* Floor 21 – 2 rooms */}
           <div className="floor-row">
             {["2111","2112"].map(r => (
               <div key={r} className="room-b" data-room-id={r}>{r}</div>
             ))}
           </div>
-
         </div>
 
         {/* Right Panel – Room Types */}
         <div style={{ width: 220, flexShrink: 0 }}>
-          <div style={{
-            background: "hsl(222 40% 14%)", padding: 16, borderRadius: 14,
-            border: "1px solid hsla(40,85%,45%,0.2)",
-            boxShadow: "0 8px 32px hsla(222,50%,5%,0.35)",
-            position: "sticky", top: 80
-          }}>
-            <h4 style={{ color: "hsl(42,90%,68%)", fontFamily: "'Playfair Display',serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", margin: "0 0 10px", borderBottom: "1px solid hsla(40,85%,45%,0.2)", paddingBottom: 8 }}>Room Types</h4>
-            <div id="room-types-list-mini" style={{ fontSize: 12, display: "flex", flexDirection: "column", gap: 6 }}></div>
-          </div>
-        </div>
-      </div>
-
-      {/* ===== MODALS ===== */}
-      {/* Edit Modal */}
-      <div id="roomEditModal" className="modal-overlay hidden" style={{ position: "fixed", inset: 0, zIndex: 50 }}>
-        <div style={{ width: "100%", maxWidth: 640, background: "#fff", borderRadius: 16, boxShadow: "0 30px 80px rgba(0,0,0,0.25)", overflow: "hidden" }}>
-          <div style={{ padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "linear-gradient(135deg, hsl(25,85%,50%), hsl(35,90%,60%))" }}>
-            <h2 id="modalRoomNumber" style={{ margin: 0, fontSize: 18, fontWeight: 800, color: "#fff", fontFamily: "'Playfair Display',serif" }}>Edit Room</h2>
-            <button id="closeIcon" style={{ background: "rgba(255,255,255,0.2)", border: "none", borderRadius: 8, width: 32, height: 32, cursor: "pointer", color: "#fff", fontSize: 16 }}>✕</button>
-          </div>
-          <div style={{ padding: 24 }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                <div>
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "hsl(220 25% 25%)", marginBottom: 5 }}>👤 Guest Name</label>
-                  <input type="text" id="editGuestName" style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: "1.5px solid hsl(220 20% 85%)", fontSize: 14, boxSizing: "border-box", outline: "none" }} />
+          <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm sticky top-20">
+            <h4 className="text-sm font-bold text-gray-800 mb-2 border-b pb-1 uppercase tracking-wider">{t("legend.roomType")}</h4>
+            <div className="flex flex-col gap-1.5 mt-2">
+              {roomTypes.map(rt => (
+                <div key={rt.id} className="flex items-center gap-2.5">
+                  <span
+                    className="w-5 h-5 rounded flex-shrink-0 border"
+                    style={{ background: rt.color, borderColor: rt.borderColor }}
+                  />
+                  <span className="text-xs font-semibold text-slate-600">{rt.label}</span>
                 </div>
-                <div>
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "hsl(220 25% 25%)", marginBottom: 5 }}>🛏️ Room Type</label>
-                  <input type="hidden" id="editRoomType" value="" />
-                  <div id="roomTypeSelect" className="room-type-select">
-                    <button type="button" id="roomTypeSelectBtn" className="room-type-select__btn">
-                      <span id="roomTypeSelectColor" className="room-type-select__color"></span>
-                      <span id="roomTypeSelectLabel">Select Room Type</span>
-                      <span className="room-type-select__chev">▾</span>
-                    </button>
-                    <div id="roomTypeSelectList" className="room-type-select__list hidden"></div>
-                  </div>
-                </div>
-                <div>
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "hsl(220 25% 25%)", marginBottom: 5 }}>🛠️ Maintenance</label>
-                  <select id="editMaintStatus" style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: "1.5px solid hsl(220 20% 85%)", fontSize: 14, background: "#fff", outline: "none" }}>
-                    <option value="">(None)</option>
-                    <option value="wifi">📶 WiFi / Network</option>
-                    <option value="air">❄️ Aircon</option>
-                    <option value="clean">🧹 Housekeeping</option>
-                    <option value="fix">🔧 General</option>
-                  </select>
-                </div>
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                <div>
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "hsl(220 25% 25%)", marginBottom: 5 }}>📝 Maintenance Note</label>
-                  <textarea id="maintNote" rows={4} style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: "1.5px solid hsl(220 20% 85%)", fontSize: 13, outline: "none", resize: "vertical", boxSizing: "border-box" }} />
-                </div>
-                <div id="resolve-maint-container" className="hidden">
-                  <button type="button" id="btn-resolve-maint" style={{ width: "100%", padding: 10, borderRadius: 10, border: "none", background: "#22c55e", color: "#fff", fontWeight: 800, cursor: "pointer" }}>✓ Mark as Resolved</button>
-                </div>
-                <div style={{ borderTop: "1px solid hsl(220 20% 90%)", paddingTop: 10 }}>
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "#3b82f6", marginBottom: 5 }}>📡 Access Point (AP)</label>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <input type="checkbox" id="hasAP" />
-                    <span style={{ fontSize: 13, fontWeight: 600 }}>AP Installed</span>
-                  </div>
-                  <div id="apDateGroup" className="hidden" style={{ paddingLeft: 22, marginTop: 6 }}>
-                    <input type="date" id="apInstallDate" style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: "1px solid hsl(220 20% 85%)", fontSize: 13 }} />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div style={{ padding: "12px 24px 16px", background: "hsl(220 20% 97%)", borderTop: "1px solid hsl(220 20% 90%)", display: "flex", justifyContent: "flex-end", gap: 10 }}>
-            <button id="closeModal" style={{ padding: "10px 20px", borderRadius: 10, border: "1px solid hsl(220 20% 80%)", background: "#fff", color: "hsl(220 25% 35%)", fontWeight: 700, cursor: "pointer" }}>Cancel</button>
-            <button id="saveRoomInfo" style={{ padding: "10px 22px", borderRadius: 10, border: "none", background: "#22c55e", color: "#fff", fontWeight: 800, cursor: "pointer", boxShadow: "0 4px 12px rgba(34,197,94,0.35)" }}>Save Changes</button>
-          </div>
-        </div>
-      </div>
-
-      {/* Room Info Modal */}
-      <div id="roomInfoModal" className="hidden" style={{ position: "fixed", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, zIndex: 20000 }}>
-        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(6px)" }} onClick={() => { if (typeof (window as any).closeInfoModal === "function") (window as any).closeInfoModal(); }}></div>
-        <div className="modal-content-box" style={{ background: "#fff", borderRadius: 24, width: "100%", maxWidth: 900, maxHeight: "90vh", overflow: "hidden", display: "flex", flexDirection: "column", position: "relative", zIndex: 10 }}>
-          <div style={{ padding: "16px 20px 0" }}>
-            <div style={{ background: "linear-gradient(135deg, hsl(235,65%,50%), hsl(260,65%,58%))", borderRadius: 16, padding: "20px 24px" }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-                    <span style={{ fontSize: 28 }}>🏠</span>
-                    <h1 id="infoRoomTitle" style={{ margin: 0, fontSize: 22, fontWeight: 800, color: "#fff", fontFamily: "'Playfair Display',serif" }}>Room</h1>
-                  </div>
-                  <p style={{ margin: 0, color: "rgba(255,255,255,0.85)", fontSize: 12 }}>Room <span id="infoRoomIdDisplay">#000</span> • <span id="itemCount">0</span> items</p>
-                </div>
-                <div style={{ display: "flex", gap: 8 }}>
-                  <button onClick={() => { if (typeof (window as any).openAddItemModal === "function") (window as any).openAddItemModal(); }} style={{ background: "#10b981", border: "none", color: "#fff", padding: "9px 16px", borderRadius: 10, fontWeight: 700, cursor: "pointer", fontSize: 13 }}>+ Add Item</button>
-                  <button onClick={() => { if (typeof (window as any).closeInfoModal === "function") (window as any).closeInfoModal(); }} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#fff", padding: "9px 12px", borderRadius: 10, cursor: "pointer" }}>✕</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px 20px", position: "relative" }}>
-            <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 10 }} id="category-filters"></div>
-            <div id="items-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 14 }}></div>
-            <div id="empty-state" className="hidden" style={{ textAlign: "center", padding: "50px 0" }}>
-              <div style={{ fontSize: 50, marginBottom: 10 }}>📭</div>
-              <h3 style={{ color: "hsl(220 25% 40%)", fontWeight: 700 }}>No items yet</h3>
+              ))}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Add Item Modal */}
-      <div id="addItemModal" className="hidden" style={{ position: "fixed", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, zIndex: 21000 }}>
-        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(6px)" }} onClick={() => { if (typeof (window as any).closeAddItemModal === "function") (window as any).closeAddItemModal(); }}></div>
-        <div className="modal-content-box" style={{ background: "#fff", borderRadius: 24, width: "100%", maxWidth: 460, overflow: "hidden", boxShadow: "0 30px 80px rgba(0,0,0,0.25)", position: "relative", zIndex: 10 }}>
-          <div style={{ background: "linear-gradient(135deg, hsl(235,65%,50%), hsl(260,65%,58%))", padding: "16px 22px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <h2 style={{ margin: 0, fontSize: 17, fontWeight: 800, color: "#fff", fontFamily: "'Playfair Display',serif" }}>Add New Item</h2>
-            <button onClick={() => { if (typeof (window as any).closeAddItemModal === "function") (window as any).closeAddItemModal(); }} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#fff", width: 30, height: 30, borderRadius: 8, cursor: "pointer" }}>✕</button>
-          </div>
-          <div style={{ padding: 22, maxHeight: "75vh", overflowY: "auto" }}>
-            <div style={{ marginBottom: 14 }}>
-              <div id="image-dropzone" style={{ width: "100%", height: 130, borderRadius: 10, border: "2px dashed hsl(220 20% 80%)", display: "flex", alignItems: "center", justifyContent: "center", background: "hsl(220 20% 97%)", cursor: "pointer", position: "relative", overflow: "hidden" }}>
-                <div id="image-placeholder" style={{ textAlign: "center" }}>
-                  <span style={{ fontSize: 32, display: "block", marginBottom: 6 }}>📷</span>
-                  <button type="button" id="image-pick-btn" style={{ padding: "6px 14px", fontSize: 12, fontWeight: 700, borderRadius: 8, background: "#10b981", color: "#fff", border: "none", cursor: "pointer" }}>Choose Image</button>
+      {/* ===== Room Info Modal ===== */}
+      <div id="roomInfoModal" style={{ display: showRoomInfoModal ? "flex" : "none", position: "fixed", inset: 0, alignItems: "center", justifyContent: "center", padding: 16, zIndex: 20000 }}>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-0" onClick={closeInfoModal}></div>
+        <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl" style={{ maxHeight: "90vh", overflow: "hidden", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
+          {/* Header */}
+          <div className="p-4 md:p-6 pb-0 bg-white">
+            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-6 shadow-xl">
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-3xl">🏠</span>
+                    <h1 className="text-2xl md:text-3xl font-bold text-white m-0">{t("room.title")} {selectedRoom}</h1>
+                  </div>
+                  <p className="text-white text-sm opacity-90">{t("room.title")} #{selectedRoom} • {roomItems.filter(i => i.roomId === selectedRoom).length} {t("room.items")}</p>
                 </div>
-                <img id="preview-img" className="hidden" alt="Preview" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-                <input type="file" id="item-image-file" accept="image/*" className="hidden" />
+                <div className="flex gap-2">
+                  <button onClick={(e) => { e.stopPropagation(); openAddItemModal(); }} className="bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-3 rounded-xl font-semibold cursor-pointer border-none text-sm transition-colors flex items-center gap-2 shadow-lg">
+                    <span>+</span> {t("room.addItem").replace("+ ", "")}
+                  </button>
+                  <button onClick={(e) => { e.stopPropagation(); closeInfoModal(); }} className="bg-white/20 hover:bg-white/30 text-white p-3 rounded-xl cursor-pointer border-none text-lg flex items-center justify-center">✕</button>
+                </div>
               </div>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              <div>
-                <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "hsl(220 25% 30%)", marginBottom: 4 }}>Item Name *</label>
-                <input type="text" id="item-name-input" style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1.5px solid hsl(220 20% 85%)", fontSize: 13, outline: "none", boxSizing: "border-box" }} />
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-white relative">
+            {/* Category Filters */}
+            <div className="flex gap-2 overflow-x-auto pb-4 flex-wrap">
+              <button
+                onClick={() => setActiveItemCategory("all")}
+                className={`px-4 py-1.5 rounded-full text-sm font-semibold border-none cursor-pointer transition-all ${
+                  activeItemCategory === "all" ? "bg-emerald-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >{t("room.all")}</button>
+              {itemCategories.map(cat => (
+                <div key={cat.id} className="flex items-center gap-1">
+                  <button
+                    onClick={() => setActiveItemCategory(cat.id)}
+                    className={`px-4 py-1.5 rounded-full text-sm font-semibold border-none cursor-pointer transition-all ${
+                      activeItemCategory === cat.id ? "bg-emerald-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >{cat.icon} {cat.name}</button>
+                  {isAdmin && (
+                    <button
+                      onClick={() => setItemCategories(prev => prev.filter(c => c.id !== cat.id))}
+                      className="text-red-400 hover:text-red-600 bg-transparent border-none cursor-pointer text-sm font-bold"
+                    >✕</button>
+                  )}
+                </div>
+              ))}
+              {isAdmin && (
+                <button
+                  onClick={() => {
+                    const name = prompt("Category name:");
+                    if (name) {
+                      const icon = prompt("Emoji icon:", "📦") || "📦";
+                      setItemCategories(prev => [...prev, { id: name.toLowerCase().replace(/\s+/g, '-'), name, icon }]);
+                    }
+                  }}
+                  className="px-4 py-1.5 rounded-full text-sm font-semibold border-2 border-dashed border-emerald-400 text-emerald-600 bg-transparent cursor-pointer hover:bg-emerald-50 transition-all"
+                >{t("room.addCategory")}</button>
+              )}
+            </div>
+
+            {/* Items Grid */}
+            {filteredItems.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-10">
+                {filteredItems.map(item => (
+                  <div key={item.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden hover:-translate-y-1 transition-all duration-300 hover:shadow-md">
+                    {item.image && (
+                      <div className="h-32 bg-gray-100">
+                        <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                    <div className="p-4">
+                      <h4 className="font-bold text-gray-800 text-sm">{item.name}</h4>
+                      {item.width && item.height && (
+                        <p className="text-xs text-gray-400 mt-1">{item.width} × {item.height} cm</p>
+                      )}
+                      {item.note && <p className="text-xs text-gray-500 mt-1">{item.note}</p>}
+                      <span className="inline-block mt-2 px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-[10px] font-semibold">{item.categoryIcon} {item.category}</span>
+                    </div>
+                    {isAdmin && (
+                      <div className="px-4 pb-3 flex justify-end">
+                        <button onClick={() => setRoomItems(prev => prev.filter(i => i.id !== item.id))} className="text-xs text-red-400 hover:text-red-600 bg-transparent border-none cursor-pointer">{t("room.delete")}</button>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+            ) : (
+              <div className="text-center py-16">
+                <div className="text-6xl mb-4">📭</div>
+                <h3 className="text-slate-700 text-xl font-semibold mb-2">{t("room.noItems")}</h3>
+                <p className="text-slate-500 mb-6">{t("room.noItemsSub")}</p>
+                <button onClick={(e) => { e.stopPropagation(); openAddItemModal(); }} className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-semibold inline-flex items-center gap-2 cursor-pointer border-none transition-colors shadow-lg">
+                  {t("room.addFirstItem")}
+                </button>
+              </div>
+            )}
+
+            {/* Room Note Pin */}
+            <button
+              onClick={() => setShowRoomNote(!showRoomNote)}
+              className="absolute bottom-4 right-4 h-10 w-10 rounded-full bg-amber-100 text-amber-700 hover:bg-amber-200 transition cursor-pointer border-none text-base font-bold shadow-md z-20"
+              title={t("room.note")}
+            >📌</button>
+
+            {showRoomNote && (
+              <div className="absolute bottom-16 right-4 w-80 max-w-[calc(100%-2rem)] rounded-xl border border-slate-200 bg-white p-4 shadow-xl z-30">
+                <div className="text-sm font-semibold text-slate-700 mb-2">{t("room.note")}</div>
+                <textarea
+                  value={roomNotes[selectedRoom] || ""}
+                  onChange={(e) => setRoomNotes(prev => ({ ...prev, [selectedRoom]: e.target.value }))}
+                  rows={4}
+                  placeholder="จดได้ทุกอย่าง เช่น ความกว้างห้อง, ตำแหน่งเตียง, จุดสังเกตพิเศษ ฯลฯ"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition bg-white text-sm"
+                />
+                <div className="mt-3 flex justify-end gap-2">
+                  <button onClick={() => setShowRoomNote(false)} className="px-3 py-1.5 rounded-lg bg-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-300 transition cursor-pointer border-none">Close</button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ===== Add Item Modal ===== */}
+      <div id="addItemModal" style={{ display: showAddItemModal ? "flex" : "none", position: "fixed", inset: 0, alignItems: "center", justifyContent: "center", padding: 16, zIndex: 21000 }}>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-0" onClick={closeAddItemModal}></div>
+        <div className="bg-white rounded-3xl w-full max-w-[480px] overflow-hidden shadow-2xl relative z-[1]">
+          <div className="bg-gradient-to-br from-violet-500 to-purple-600 px-6 py-4 flex justify-between items-center">
+            <h2 className="text-lg font-bold text-white m-0">{t("addItem.title")}</h2>
+            <button onClick={(e) => { e.stopPropagation(); closeAddItemModal(); }} className="bg-white/20 hover:bg-white/30 text-white w-9 h-9 rounded-lg cursor-pointer border-none text-lg flex items-center justify-center relative z-[2]">✕</button>
+          </div>
+          <div className="p-6 max-h-[80vh] overflow-y-auto">
+            <div className="space-y-4">
+              <div className="mb-5">
+                <label className="block text-sm font-semibold text-slate-700 mb-2">{t("addItem.image")}</label>
+                <div className="image-preview relative w-full h-40 rounded-xl border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden bg-slate-50 cursor-pointer">
+                  <div className="text-center">
+                    <span className="text-4xl mb-2 block">📷</span>
+                    <span className="text-slate-500 text-sm">{t("addItem.dragHint")}</span>
+                    <button type="button" className="mt-3 px-4 py-2 text-sm font-semibold rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 transition border-none cursor-pointer">{t("addItem.chooseImage")}</button>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">{t("addItem.name")} <span className="text-red-500">*</span></label>
+                <input type="text" id="b-item-name-input" placeholder="e.g., Bed" className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition" />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "hsl(220 25% 30%)", marginBottom: 4 }}>Width (cm)</label>
-                  <input type="text" id="item-width-input" style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1.5px solid hsl(220 20% 85%)", fontSize: 13, outline: "none", boxSizing: "border-box" }} />
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">{t("addItem.width")}</label>
+                  <input type="text" id="b-item-width-input" placeholder="55" className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition" />
                 </div>
                 <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "hsl(220 25% 30%)", marginBottom: 4 }}>Length (cm)</label>
-                  <input type="text" id="item-height-input" style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1.5px solid hsl(220 20% 85%)", fontSize: 13, outline: "none", boxSizing: "border-box" }} />
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">{t("addItem.length")}</label>
+                  <input type="text" id="b-item-height-input" placeholder="55" className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition" />
                 </div>
               </div>
+
               <div>
-                <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "hsl(220 25% 30%)", marginBottom: 4 }}>Note</label>
-                <textarea id="item-note-input" rows={3} style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1.5px solid hsl(220 20% 85%)", fontSize: 13, outline: "none", resize: "vertical", boxSizing: "border-box" }} />
+                <label className="block text-sm font-semibold text-slate-700 mb-2">{t("addItem.note")}</label>
+                <textarea id="b-item-note-input" rows={3} placeholder="เช่น ห้องกว้าง 4 เมตร, หัวเตียงชิดผนังด้านซ้าย" className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition" />
               </div>
+
               <div>
-                <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "hsl(220 25% 30%)", marginBottom: 4 }}>Category</label>
-                <select id="item-category-input" style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1.5px solid hsl(220 20% 85%)", fontSize: 13, background: "#fff", outline: "none" }}>
-                  <option value="เฟอร์นิเจอร์">🛋️ Furniture</option>
-                  <option value="เครื่องใช้ไฟฟ้า">💡 Appliances</option>
-                  <option value="ของตกแต่ง">🖼️ Decor</option>
-                  <option value="อื่นๆ">📦 Other</option>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">{t("addItem.category")}</label>
+                <select id="b-item-category-input" className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition bg-white">
+                  <option value="เฟอร์นิเจอร์">🛋️ {t("cat.furniture")}</option>
+                  <option value="เครื่องใช้ไฟฟ้า">💡 {t("cat.appliances")}</option>
+                  <option value="ของตกแต่ง">🖼️ {t("cat.decor")}</option>
+                  <option value="อื่นๆ">📦 {t("cat.other")}</option>
                 </select>
               </div>
             </div>
-            <button onClick={() => { if (typeof (window as any).saveCanvaItem === "function") (window as any).saveCanvaItem(); }} style={{ width: "100%", padding: "13px", marginTop: 16, borderRadius: 10, border: "none", background: "#10b981", color: "#fff", fontWeight: 800, fontSize: 15, cursor: "pointer" }}>Save Item</button>
+
+            <button onClick={() => {
+              const nameEl = document.getElementById("b-item-name-input") as HTMLInputElement;
+              const widthEl = document.getElementById("b-item-width-input") as HTMLInputElement;
+              const heightEl = document.getElementById("b-item-height-input") as HTMLInputElement;
+              const noteEl = document.getElementById("b-item-note-input") as HTMLTextAreaElement;
+              const catEl = document.getElementById("b-item-category-input") as HTMLSelectElement;
+              const name = nameEl?.value?.trim();
+              if (!name) { alert("Please enter item name"); return; }
+              const catValue = catEl?.value || "อื่นๆ";
+              const catMap: Record<string, { name: string; icon: string }> = {
+                "เฟอร์นิเจอร์": { name: "Furniture", icon: "🛋️" },
+                "เครื่องใช้ไฟฟ้า": { name: "Appliances", icon: "💡" },
+                "ของตกแต่ง": { name: "Decor", icon: "🖼️" },
+                "อื่นๆ": { name: "Other", icon: "📦" },
+              };
+              const matched = catMap[catValue] || { name: catValue, icon: "📦" };
+              const matchedCat = itemCategories.find(c => c.name === matched.name);
+              setRoomItems(prev => [...prev, {
+                id: Date.now().toString(),
+                roomId: selectedRoom,
+                name,
+                width: widthEl?.value || undefined,
+                height: heightEl?.value || undefined,
+                note: noteEl?.value || undefined,
+                category: matchedCat?.id || "other",
+                categoryIcon: matched.icon,
+              }]);
+              if (nameEl) nameEl.value = "";
+              if (widthEl) widthEl.value = "";
+              if (heightEl) heightEl.value = "";
+              if (noteEl) noteEl.value = "";
+              closeAddItemModal();
+            }} className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg mt-6 cursor-pointer border-none transition-colors">
+              {t("addItem.save")}
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Dashboard modal */}
-      <div id="dashboardModal" className="dashboard-modal hidden">
-        <div className="dashboard-modal__panel">
-          <div className="dashboard-modal__header">
-            <div>
-              <h2 className="dashboard-modal__title">📊 Dashboard</h2>
-              <p className="dashboard-modal__subtitle">Building B — Occupancy Overview</p>
-            </div>
-            <div className="dashboard-modal__actions">
-              <button className="dashboard-btn" id="dash-close-btn">✕ Close</button>
-            </div>
-          </div>
-          <div className="dashboard-modal__content">
-            <div className="dashboard-grid">
-              <div className="dashboard-analytic-card">
-                <div className="dashboard-card__header">🏠 Occupancy Rate</div>
-                <div className="dashboard-chart-wrap"><canvas className="dashboard-chart" id="occupancyChart"></canvas></div>
-              </div>
-              <div className="dashboard-analytic-card">
-                <div className="dashboard-card__header">🔧 Maintenance Status</div>
-                <div className="dashboard-chart-wrap"><canvas className="dashboard-chart" id="maintenanceChart"></canvas></div>
-              </div>
-              <div className="dashboard-analytic-card">
-                <div className="dashboard-card__header">📋 Room Types</div>
-                <div id="room-type-progress" className="dashboard-progress"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Login modal */}
-      <div id="adminModal" className="modal-overlay hidden">
-        <div className="modal-box">
-          <div style={{ width: 52, height: 52, borderRadius: "50%", background: "hsla(40,85%,45%,0.15)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px", fontSize: 22, border: "1px solid hsla(40,85%,45%,0.3)" }}>🔑</div>
-          <h2>Staff Login</h2>
-          <p>Please enter passcode to access</p>
-          <input type="password" id="adminPassword" placeholder="Passcode" />
-          <div style={{ display: "flex", gap: 8 }}>
-            <button id="loginCancel" style={{ flex: 1, padding: "10px", borderRadius: 10, border: "1px solid hsl(220 20% 30%)", background: "transparent", color: "hsl(220 15% 60%)", fontWeight: 700, cursor: "pointer" }}>Cancel</button>
-            <button id="loginConfirm" style={{ flex: 1, padding: "10px", borderRadius: 10, border: "none", background: "linear-gradient(135deg, hsl(38,85%,42%), hsl(44,90%,60%))", color: "#fff", fontWeight: 800, cursor: "pointer" }}>Confirm</button>
-          </div>
-        </div>
-      </div>
       {/* Edit Room Modal */}
       {showEditModal && selectedRoom && (
         <EditRoomModal
           roomId={selectedRoom}
           onClose={() => { setShowEditModal(false); setSelectedRoom(""); }}
-          categories={[]}
+          categories={categories}
+          activeServices={roomServices[selectedRoom] || []}
           onSave={(data) => {
             console.log("Save room:", selectedRoom, data);
+            setRoomServices(prev => ({ ...prev, [selectedRoom]: data.services }));
             setShowEditModal(false);
             setSelectedRoom("");
           }}
+        />
+      )}
+
+      {/* Settings Modal */}
+      {showSettings && (
+        <SettingsModal
+          onClose={() => setShowSettings(false)}
+          categories={categories}
+          onCategoriesChange={setCategories}
         />
       )}
     </div>
