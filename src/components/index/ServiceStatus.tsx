@@ -3,11 +3,11 @@ import { MaintenanceCategory, getIconComponent } from "@/data/maintenanceCategor
 interface ServiceStatusProps {
   categories: MaintenanceCategory[];
   roomServices: Record<string, string[]>;
-  activeFilter: string | null;
+  activeFilters: string[];
   onFilterChange: (catId: string) => void;
 }
 
-export default function ServiceStatus({ categories, roomServices, activeFilter, onFilterChange }: ServiceStatusProps) {
+export default function ServiceStatus({ categories, roomServices, activeFilters, onFilterChange }: ServiceStatusProps) {
   const counts: Record<string, number> = {};
   for (const cat of categories) {
     counts[cat.id] = 0;
@@ -23,7 +23,7 @@ export default function ServiceStatus({ categories, roomServices, activeFilter, 
       {categories.map(cat => {
         const IconComp = getIconComponent(cat.icon);
         const count = counts[cat.id] || 0;
-        const isActive = activeFilter === cat.id;
+        const isActive = activeFilters.includes(cat.id);
 
         return (
           <button

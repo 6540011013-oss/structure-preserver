@@ -5,6 +5,7 @@ import EditRoomModal from "@/components/index/EditRoomModal";
 import SettingsModal from "@/components/index/SettingsModal";
 import ServiceStatus from "@/components/index/ServiceStatus";
 import { MaintenanceCategory, DEFAULT_CATEGORIES } from "@/data/maintenanceCategories";
+import { DEFAULT_ROOM_TYPES, RoomTypeItem } from "@/data/roomTypes";
 
 /* ================================================================
    Building A – Floor Plan (React port)
@@ -21,29 +22,29 @@ export default function BuildingA() {
   const [showSettings, setShowSettings] = useState(false);
   const [categories, setCategories] = useState<MaintenanceCategory[]>(DEFAULT_CATEGORIES);
   const [roomServices, setRoomServices] = useState<Record<string, string[]>>({});
-  const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [roomTypes] = useState<RoomTypeItem[]>(DEFAULT_ROOM_TYPES);
   const buildingRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  // Apply grey filter to rooms when a service category is selected
+  // Apply grey filter to rooms when service categories are selected
   useEffect(() => {
     const buildingEl = buildingRef.current;
     if (!buildingEl) return;
 
     const rooms = buildingEl.querySelectorAll('.room');
 
-    if (!activeFilter) {
-      // Remove all filter classes
+    if (activeFilters.length === 0) {
       rooms.forEach(room => {
         room.classList.remove('room-greyed', 'room-highlighted');
       });
       return;
     }
 
-    // Get room IDs that have the active filter service
+    // Get room IDs that have ANY of the active filter services
     const highlightedRooms = new Set<string>();
     for (const [roomId, services] of Object.entries(roomServices)) {
-      if (services.includes(activeFilter)) {
+      if (activeFilters.some(f => services.includes(f))) {
         highlightedRooms.add(roomId);
       }
     }
@@ -58,7 +59,7 @@ export default function BuildingA() {
         room.classList.remove('room-highlighted');
       }
     });
-  }, [activeFilter, roomServices]);
+  }, [activeFilters, roomServices]);
 
   const openAddItemModal = useCallback(() => setShowAddItemModal(true), []);
   const closeAddItemModal = useCallback(() => setShowAddItemModal(false), []);
@@ -164,8 +165,18 @@ export default function BuildingA() {
           {/* Legend panels */}
           <div id="Acontent">
             <div className="legend-block main-legend">
-              <h4 className="text-sm font-bold text-gray-800 mb-2 border-b pb-1">Room Type</h4>
-              <div id="room-type-legend" className="legend-grid"></div>
+              <h4 className="text-sm font-bold text-gray-800 mb-2 border-b pb-1 uppercase tracking-wider">Room Type</h4>
+              <div className="flex flex-col gap-1.5 mt-2">
+                {roomTypes.map(rt => (
+                  <div key={rt.id} className="flex items-center gap-2.5">
+                    <span
+                      className="w-5 h-5 rounded flex-shrink-0 border"
+                      style={{ background: rt.color, borderColor: rt.borderColor }}
+                    />
+                    <span className="text-xs font-semibold text-slate-600">{rt.label}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -174,8 +185,10 @@ export default function BuildingA() {
             <ServiceStatus
               categories={categories}
               roomServices={roomServices}
-              activeFilter={activeFilter}
-              onFilterChange={(catId) => setActiveFilter(prev => prev === catId ? null : catId)}
+              activeFilters={activeFilters}
+              onFilterChange={(catId) => setActiveFilters(prev =>
+                prev.includes(catId) ? prev.filter(id => id !== catId) : [...prev, catId]
+              )}
             />
           </div>
 
