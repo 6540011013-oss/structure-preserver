@@ -125,7 +125,7 @@ export default function Index() {
         </div>
 
         {/* Buildings Section */}
-        <div className="mb-6 max-w-3xl">
+        <div className="mb-6 max-w-3xl mx-auto">
           <div className="flex items-center gap-3 mb-5">
             <Building2 className="h-5 w-5 text-slate-400" />
             <h3 className="text-lg font-bold text-white">Buildings Overview</h3>
