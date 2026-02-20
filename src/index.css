@@ -879,11 +879,36 @@
   .room.room-greyed .guest-label {
     color: hsl(220, 10%, 65%) !important;
   }
+  .room.room-greyed .room-service-icons {
+    opacity: 0.4;
+  }
   .room.room-highlighted {
     box-shadow: 0 0 0 3px hsl(45, 90%, 50%), 0 4px 12px hsla(45, 90%, 50%, 0.35) !important;
     z-index: 2;
     position: relative;
     transition: all 0.3s ease;
+  }
+
+  /* ---- Service icons inside rooms ---- */
+  .room-service-icons {
+    position: absolute;
+    bottom: 2px;
+    right: 3px;
+    display: flex;
+    gap: 2px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    max-width: 80%;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .room-service-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1.5px solid hsl(0, 0%, 100%);
+    box-shadow: 0 1px 3px hsla(0, 0%, 0%, 0.2);
+    flex-shrink: 0;
   }
 
   /* Legend matching colors */
