@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function BuildingB() {
   const [isAdmin] = useState(() => localStorage.getItem("isAdmin") === "true");
+  const [lockMode, setLockMode] = useState(false);
   const navigate = useNavigate();
   const goHome = () => { navigate("/"); };
   const goA = () => { navigate("/building-a"); };
@@ -28,9 +29,18 @@ export default function BuildingB() {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <button className="edit-mode-base" id="edit-mode-btn">
-            <span id="edit-icon"></span>
-            <span id="edit-mode-text" style={{ fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.05em" }}>LOCK MODE</span>
+          <button
+            onClick={() => setLockMode(!lockMode)}
+            className="edit-mode-base"
+            id="edit-mode-btn"
+            style={{
+              background: lockMode ? "rgba(245,158,11,0.15)" : undefined,
+              borderColor: lockMode ? "hsl(38,92%,50%)" : undefined,
+              color: lockMode ? "hsl(38,92%,50%)" : undefined,
+            }}
+          >
+            <span id="edit-icon">{lockMode ? "🔒" : "🔓"}</span>
+            <span id="edit-mode-text" style={{ fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.05em" }}>{lockMode ? "LOCKED" : "LOCK MODE"}</span>
           </button>
 
           <button onClick={goA} style={{
@@ -75,7 +85,7 @@ export default function BuildingB() {
         </div>
 
         {/* Building B grid */}
-        <div className="building-b-container">
+        <div className={`building-b-container ${lockMode ? 'pointer-events-none opacity-80' : ''}`} style={{ cursor: lockMode ? "not-allowed" : undefined }}>
 
           {/* Floor 25 – 7 rooms */}
           <div className="floor-row">
