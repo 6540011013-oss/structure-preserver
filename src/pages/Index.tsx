@@ -1,11 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { Building2, Users, BedDouble, TrendingUp, ArrowRight, Hotel, Clock, Activity, LogIn, Check, Lock, DoorOpen, CalendarCheck, AlertTriangle } from "lucide-react";
+import { LogIn, Check } from "lucide-react";
 import LoginModal from "@/components/index/LoginModal";
+import HeroSlider from "@/components/index/HeroSlider";
 import heroImg1 from "@/assets/hotel-hero-1.jpg";
+import heroImg2 from "@/assets/hotel-hero-2.jpg";
+import heroImg3 from "@/assets/hotel-hero-3.jpg";
+
+const slides = [heroImg1, heroImg2, heroImg3];
 
 export default function Index() {
   const [liveTime, setLiveTime] = useState("");
+  const [currentSlide, setCurrentSlide] = useState(0);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isAdmin, setIsAdmin] = useState(() => localStorage.getItem("isAdmin") === "true");
 
@@ -19,7 +25,14 @@ export default function Index() {
     return () => clearInterval(id);
   }, []);
 
-  const handleLogin = (password: string) => {
+  useEffect(() => {
+    const id = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 3000);
+    return () => clearInterval(id);
+  }, []);
+
+  const handleLogin = useCallback((password: string) => {
     if (password === "1234") {
       localStorage.setItem("isAdmin", "true");
       setIsAdmin(true);
@@ -27,7 +40,7 @@ export default function Index() {
       return true;
     }
     return false;
-  };
+  }, []);
 
   const handleAdminBtn = () => {
     if (isAdmin) {
@@ -40,219 +53,118 @@ export default function Index() {
     }
   };
 
-  const today = new Date();
-  const dateStr = today.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-
   return (
-    <div className="min-h-screen bg-[#0f172a] font-sans text-white">
-      {/* ===== TOP NAV ===== */}
-      <header className="sticky top-0 z-50 bg-[#1e293b]/95 backdrop-blur-xl border-b border-slate-700/50">
-        <div className="max-w-full mx-auto px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center">
-              <Hotel className="h-4 w-4 text-white" />
+    <div className="min-h-screen bg-gray-50 font-sans text-gray-800">
+      {/* ===== HEADER ===== */}
+      <header className="sticky top-0 z-50 bg-white/85 backdrop-blur-md border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center text-white text-2xl font-bold shadow-md">
+              🏨
             </div>
-            <div>
-              <h1 className="text-sm font-bold text-white leading-none tracking-wide">ANDAMAN BEACH SUITES</h1>
-              <p className="text-[10px] uppercase tracking-widest text-slate-400 font-medium mt-0.5">Property Management System</p>
+            <div className="hidden sm:block border-l-2 border-slate-300 pl-4 py-1">
+              <h1 className="text-lg font-extrabold text-slate-800 tracking-tight leading-none">
+                ANDAMAN BEACH SUITES HOTEL
+              </h1>
+              <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500 font-bold mt-1">
+                Room Status System
+              </p>
             </div>
           </div>
 
-          <div className="hidden lg:flex items-center gap-6 text-slate-400">
+          <div className="hidden lg:flex items-center gap-8 text-slate-600">
             <div className="flex items-center gap-2">
-              <Clock className="h-3.5 w-3.5" />
-              <span className="text-[11px] uppercase font-bold tracking-wider">Local Time</span>
-              <span className="text-sm font-mono font-bold text-white">{liveTime}</span>
+              <span className="text-[11px] uppercase font-bold text-slate-400 tracking-wider">Local Time :</span>
+              <span className="text-md font-mono font-bold text-slate-700">{liveTime}</span>
             </div>
-            <div className="h-5 w-px bg-slate-600" />
+            <div className="h-4 w-px bg-slate-300" />
             <div className="flex items-center gap-2">
-              <Activity className="h-3.5 w-3.5" />
-              <span className="text-[11px] uppercase font-bold tracking-wider">Server</span>
-              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-              <span className="text-xs font-bold text-emerald-400">Online</span>
+              <span className="text-[11px] uppercase font-bold text-slate-400 tracking-wider">Server Status :</span>
+              <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
+              <span className="text-sm font-bold text-green-700">Active</span>
             </div>
           </div>
 
           <button
             onClick={handleAdminBtn}
-            className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide transition-all border-none cursor-pointer ${
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-black transition-all duration-300 group shadow-sm ${
               isAdmin
-                ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30"
-                : "bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-white"
+                ? "bg-green-600 border-2 border-green-600 text-white hover:bg-green-700"
+                : "border-2 border-slate-800 text-slate-800 hover:bg-slate-800 hover:text-white"
             }`}
           >
-            {isAdmin ? <Check className="h-3.5 w-3.5" /> : <LogIn className="h-3.5 w-3.5" />}
-            <span>{isAdmin ? "Admin Active" : "Staff Login"}</span>
+            <span>{isAdmin ? "ADMIN ACTIVE" : "STAFF LOGIN"}</span>
+            {isAdmin ? (
+              <Check className="h-4 w-4" />
+            ) : (
+              <LogIn className="h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
+            )}
           </button>
         </div>
       </header>
 
-      {/* ===== HERO BANNER ===== */}
-      <div className="relative h-48 overflow-hidden">
-        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${heroImg1})` }} />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0f172a]/70 via-[#0f172a]/50 to-[#0f172a]" />
-        <div className="relative z-10 h-full flex items-center px-8">
-          <div>
-            <p className="text-slate-400 text-xs font-medium uppercase tracking-widest mb-1">{dateStr}</p>
-            <h2 className="text-2xl font-bold text-white">Welcome back, Team 👋</h2>
-            <p className="text-slate-400 text-sm mt-1">Here's your property overview for today.</p>
-          </div>
-        </div>
-      </div>
+      {/* ===== HERO SLIDER ===== */}
+      <HeroSlider slides={slides} currentSlide={currentSlide} />
 
-      {/* ===== MAIN CONTENT ===== */}
-      <div className="px-6 pb-12 -mt-4 relative z-10">
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {[
-            { icon: BedDouble, label: "Total Rooms", value: "144", sub: "Building A + B", color: "from-violet-500 to-purple-600" },
-            { icon: Users, label: "Occupied", value: "87", sub: "60.4% occupancy", color: "from-emerald-500 to-teal-600" },
-            { icon: DoorOpen, label: "Available", value: "42", sub: "Ready to check-in", color: "from-blue-500 to-cyan-600" },
-            { icon: AlertTriangle, label: "Maintenance", value: "15", sub: "Under service", color: "from-amber-500 to-orange-600" },
-          ].map((stat) => (
-            <div key={stat.label} className="bg-[#1e293b] rounded-2xl p-5 border border-slate-700/50 hover:border-slate-600 transition-all group">
-              <div className="flex items-start justify-between mb-3">
-                <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-lg`}>
-                  <stat.icon className="h-5 w-5 text-white" />
-                </div>
-                <TrendingUp className="h-4 w-4 text-slate-500 group-hover:text-emerald-400 transition-colors" />
-              </div>
-              <p className="text-2xl font-bold text-white">{stat.value}</p>
-              <p className="text-xs font-semibold text-slate-400 mt-0.5">{stat.label}</p>
-              <p className="text-[11px] text-slate-500 mt-1">{stat.sub}</p>
+      {/* ===== BUILDING CARDS ===== */}
+      <section className="relative z-10 -mt-[120px] px-5 pb-24">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10">
+          {/* Building A */}
+          <div className="bg-white rounded-3xl shadow-[0_15px_40px_rgba(0,0,0,0.08)] p-12 text-center transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_25px_50px_rgba(0,0,0,0.1)]">
+            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-600 to-purple-600 mx-auto mb-5 flex items-center justify-center text-3xl font-bold text-white">
+              A
             </div>
-          ))}
-        </div>
-
-        {/* Buildings Section */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-5">
-            <Building2 className="h-5 w-5 text-slate-400" />
-            <h3 className="text-lg font-bold text-white">Buildings Overview</h3>
+            <h3 className="text-2xl font-bold mb-2 text-slate-800">ABSH</h3>
+            <p className="text-slate-500 mb-6">Building A • 104 Rooms</p>
+            <div className="bg-slate-50 rounded-xl p-4 text-sm text-slate-600 mb-6 space-y-2">
+              <div className="flex justify-between">
+                <span>Total Floors</span>
+                <span className="font-semibold text-slate-900">9 Floors</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Rooms/Floor</span>
+                <span className="font-semibold text-slate-900">8 Rooms</span>
+              </div>
+            </div>
+            <Link
+              to="/building-a"
+              className="inline-block bg-violet-600 text-white rounded-xl px-6 py-2.5 font-semibold text-sm hover:bg-violet-700 transition-colors no-underline"
+            >
+              View Floor Plan →
+            </Link>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-5">
-            {/* Building A */}
-            <Link to="/building-a" className="no-underline group">
-              <div className="bg-[#1e293b] rounded-2xl border border-slate-700/50 overflow-hidden hover:border-violet-500/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(139,92,246,0.15)]">
-                <div className="h-1.5 bg-gradient-to-r from-violet-500 to-purple-600" />
-                <div className="p-5">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-base font-bold text-white shadow-lg shadow-violet-500/20">
-                        A
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-bold text-white">Building A — ABSH</h4>
-                        <p className="text-[11px] text-slate-400 mt-0.5">Ocean View • Main Building</p>
-                      </div>
-                    </div>
-                    <ArrowRight className="h-4 w-4 text-slate-500 group-hover:text-violet-400 group-hover:translate-x-1 transition-all" />
-                  </div>
-
-                  {/* Occupancy Bar */}
-                  <div className="mb-4">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Occupancy</span>
-                      <span className="text-xs font-bold text-emerald-400">68%</span>
-                    </div>
-                    <div className="h-1.5 bg-slate-700/60 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-violet-500 to-emerald-400 rounded-full transition-all duration-500" style={{ width: "68%" }} />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-2">
-                    <div className="bg-slate-800/50 rounded-lg p-2.5 text-center">
-                      <p className="text-base font-bold text-white">104</p>
-                      <p className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold">Rooms</p>
-                    </div>
-                    <div className="bg-slate-800/50 rounded-lg p-2.5 text-center">
-                      <p className="text-base font-bold text-white">9</p>
-                      <p className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold">Floors</p>
-                    </div>
-                    <div className="bg-slate-800/50 rounded-lg p-2.5 text-center">
-                      <p className="text-base font-bold text-emerald-400">71</p>
-                      <p className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold">Guests</p>
-                    </div>
-                  </div>
-                </div>
+          {/* Building B */}
+          <div className="bg-white rounded-3xl shadow-[0_15px_40px_rgba(0,0,0,0.08)] p-12 text-center transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_25px_50px_rgba(0,0,0,0.1)]">
+            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-pink-500 to-rose-500 mx-auto mb-5 flex items-center justify-center text-3xl font-bold text-white">
+              B
+            </div>
+            <h3 className="text-2xl font-bold mb-2 text-slate-800">ABSC</h3>
+            <p className="text-slate-500 mb-6">Building B • 40 Rooms</p>
+            <div className="bg-slate-50 rounded-xl p-4 text-sm text-slate-600 mb-6 space-y-2">
+              <div className="flex justify-between">
+                <span>Total Floors</span>
+                <span className="font-semibold text-slate-900">4 Floors</span>
               </div>
-            </Link>
-
-            {/* Building B */}
-            <Link to="/building-b" className="no-underline group">
-              <div className="bg-[#1e293b] rounded-2xl border border-slate-700/50 overflow-hidden hover:border-rose-500/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(244,63,94,0.15)]">
-                <div className="h-1.5 bg-gradient-to-r from-pink-500 to-rose-500" />
-                <div className="p-5">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center text-base font-bold text-white shadow-lg shadow-rose-500/20">
-                        B
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-bold text-white">Building B — ABSC</h4>
-                        <p className="text-[11px] text-slate-400 mt-0.5">City View • Condo Wing</p>
-                      </div>
-                    </div>
-                    <ArrowRight className="h-4 w-4 text-slate-500 group-hover:text-rose-400 group-hover:translate-x-1 transition-all" />
-                  </div>
-
-                  {/* Occupancy Bar */}
-                  <div className="mb-4">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Occupancy</span>
-                      <span className="text-xs font-bold text-emerald-400">45%</span>
-                    </div>
-                    <div className="h-1.5 bg-slate-700/60 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-rose-500 to-emerald-400 rounded-full transition-all duration-500" style={{ width: "45%" }} />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-2">
-                    <div className="bg-slate-800/50 rounded-lg p-2.5 text-center">
-                      <p className="text-base font-bold text-white">40</p>
-                      <p className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold">Rooms</p>
-                    </div>
-                    <div className="bg-slate-800/50 rounded-lg p-2.5 text-center">
-                      <p className="text-base font-bold text-white">4</p>
-                      <p className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold">Floors</p>
-                    </div>
-                    <div className="bg-slate-800/50 rounded-lg p-2.5 text-center">
-                      <p className="text-base font-bold text-emerald-400">18</p>
-                      <p className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold">Guests</p>
-                    </div>
-                  </div>
-                </div>
+              <div className="flex justify-between">
+                <span>Rooms/Floor</span>
+                <span className="font-semibold text-slate-900">10 Rooms</span>
               </div>
+            </div>
+            <Link
+              to="/building-b"
+              className="inline-block bg-violet-600 text-white rounded-xl px-6 py-2.5 font-semibold text-sm hover:bg-violet-700 transition-colors no-underline"
+            >
+              View Floor Plan →
             </Link>
           </div>
         </div>
+      </section>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {[
-            { icon: CalendarCheck, label: "Today's Check-in", value: "12 guests", color: "text-blue-400", border: "hover:border-blue-500/30" },
-            { icon: DoorOpen, label: "Today's Check-out", value: "8 guests", color: "text-amber-400", border: "hover:border-amber-500/30" },
-            { icon: BedDouble, label: "Housekeeping", value: "6 pending", color: "text-violet-400", border: "hover:border-violet-500/30" },
-            { icon: AlertTriangle, label: "Alerts", value: "2 issues", color: "text-rose-400", border: "hover:border-rose-500/30" },
-          ].map((action) => (
-            <div key={action.label} className={`bg-[#1e293b]/60 rounded-xl p-4 border border-slate-700/30 flex items-center gap-3 transition-all duration-200 hover:bg-[#1e293b] cursor-pointer ${action.border}`}>
-              <div className="w-9 h-9 rounded-lg bg-slate-800/80 flex items-center justify-center flex-shrink-0">
-                <action.icon className={`h-4 w-4 ${action.color}`} />
-              </div>
-              <div>
-                <p className="text-xs font-semibold text-slate-300">{action.label}</p>
-                <p className="text-sm font-bold text-white">{action.value}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Footer */}
-        <footer className="mt-12 pt-6 border-t border-slate-700/30 text-center">
-          <p className="text-xs text-slate-500">© Andaman Beach Suites Hotel — Room Status System v2.0</p>
-        </footer>
-      </div>
+      {/* ===== FOOTER ===== */}
+      <footer className="py-6 text-center text-sm text-slate-500 border-t border-slate-200">
+        © Andaman Beach Suites Hotel
+      </footer>
 
       {showLoginModal && (
         <LoginModal onLogin={handleLogin} onClose={() => setShowLoginModal(false)} />
