@@ -24,8 +24,22 @@ export default function BuildingA() {
   const [roomServices, setRoomServices] = useState<Record<string, string[]>>({});
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [roomTypes] = useState<RoomTypeItem[]>(DEFAULT_ROOM_TYPES);
+  const [roomItems, setRoomItems] = useState<Array<{ id: string; roomId: string; name: string; width?: string; height?: string; note?: string; category: string; categoryIcon: string; image?: string }>>([]);
+  const [activeItemCategory, setActiveItemCategory] = useState("all");
+  const [itemCategories, setItemCategories] = useState([
+    { id: "furniture", name: "Furniture", icon: "🛋️" },
+    { id: "appliances", name: "Appliances", icon: "💡" },
+    { id: "decor", name: "Decor", icon: "🖼️" },
+    { id: "other", name: "Other", icon: "📦" },
+  ]);
+  const [showRoomNote, setShowRoomNote] = useState(false);
+  const [roomNotes, setRoomNotes] = useState<Record<string, string>>({});
   const buildingRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+
+  const filteredItems = roomItems
+    .filter(i => i.roomId === selectedRoom)
+    .filter(i => activeItemCategory === "all" || i.category === activeItemCategory);
 
   // Helper: extract room ID from a room element
   const getRoomId = (room: Element): string => {
@@ -550,23 +564,129 @@ export default function BuildingA() {
       {/* Room Info Modal */}
       <div id="roomInfoModal" style={{ display: showRoomInfoModal ? "flex" : "none", position: "fixed", inset: 0, alignItems: "center", justifyContent: "center", padding: 16, zIndex: 20000 }}>
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-0" onClick={closeInfoModal}></div>
-        <div className="bg-white rounded-3xl shadow-2xl w-full max-w-[900px] max-h-[90vh] overflow-hidden flex flex-col relative z-[1]">
-          <div className="p-5 pb-0">
-            <div className="bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl px-6 py-5">
-              <div className="flex items-center justify-between flex-wrap gap-3">
-                <div className="flex items-center gap-3">
-                  <span className="text-3xl">🏠</span>
-                  <h1 className="text-2xl font-bold text-white m-0">Room {selectedRoom}</h1>
+        <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl" style={{ maxHeight: "90vh", overflow: "hidden", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
+          {/* Header */}
+          <div className="p-4 md:p-6 pb-0 bg-white">
+            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-6 shadow-xl">
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-3xl">🏠</span>
+                    <h1 className="text-2xl md:text-3xl font-bold text-white m-0">Room {selectedRoom}</h1>
+                  </div>
+                  <p className="text-white text-sm opacity-90">Room #{selectedRoom} • {roomItems.filter(i => i.roomId === selectedRoom).length} items</p>
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={(e) => { e.stopPropagation(); openAddItemModal(); }} className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-xl font-bold cursor-pointer border-none text-sm transition-colors">+ Add Item</button>
-                  <button onClick={(e) => { e.stopPropagation(); closeInfoModal(); }} className="bg-white/20 hover:bg-white/30 text-white w-9 h-9 rounded-lg cursor-pointer border-none text-lg flex items-center justify-center relative z-[2]">✕</button>
+                  <button onClick={(e) => { e.stopPropagation(); openAddItemModal(); }} className="bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-3 rounded-xl font-semibold cursor-pointer border-none text-sm transition-colors flex items-center gap-2 shadow-lg">
+                    <span>+</span> Add Item
+                  </button>
+                  <button onClick={(e) => { e.stopPropagation(); closeInfoModal(); }} className="bg-white/20 hover:bg-white/30 text-white p-3 rounded-xl cursor-pointer border-none text-lg flex items-center justify-center">✕</button>
                 </div>
               </div>
             </div>
           </div>
-          <div className="flex-1 overflow-y-auto p-5 pt-4">
-            <div id="items-grid" className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-3.5"></div>
+
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-white relative">
+            {/* Category Filters */}
+            <div className="flex gap-2 overflow-x-auto pb-4 flex-wrap">
+              <button
+                onClick={() => setActiveItemCategory("all")}
+                className={`px-4 py-1.5 rounded-full text-sm font-semibold border-none cursor-pointer transition-all ${
+                  activeItemCategory === "all" ? "bg-emerald-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >All</button>
+              {itemCategories.map(cat => (
+                <div key={cat.id} className="flex items-center gap-1">
+                  <button
+                    onClick={() => setActiveItemCategory(cat.id)}
+                    className={`px-4 py-1.5 rounded-full text-sm font-semibold border-none cursor-pointer transition-all ${
+                      activeItemCategory === cat.id ? "bg-emerald-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >{cat.icon} {cat.name}</button>
+                  {isAdmin && (
+                    <button
+                      onClick={() => setItemCategories(prev => prev.filter(c => c.id !== cat.id))}
+                      className="text-red-400 hover:text-red-600 bg-transparent border-none cursor-pointer text-sm font-bold"
+                    >✕</button>
+                  )}
+                </div>
+              ))}
+              {isAdmin && (
+                <button
+                  onClick={() => {
+                    const name = prompt("Category name:");
+                    if (name) {
+                      const icon = prompt("Emoji icon:", "📦") || "📦";
+                      setItemCategories(prev => [...prev, { id: name.toLowerCase().replace(/\s+/g, '-'), name, icon }]);
+                    }
+                  }}
+                  className="px-4 py-1.5 rounded-full text-sm font-semibold border-2 border-dashed border-emerald-400 text-emerald-600 bg-transparent cursor-pointer hover:bg-emerald-50 transition-all"
+                >+ Add Category</button>
+              )}
+            </div>
+
+            {/* Items Grid */}
+            {filteredItems.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-10">
+                {filteredItems.map(item => (
+                  <div key={item.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden hover:-translate-y-1 transition-all duration-300 hover:shadow-md">
+                    {item.image && (
+                      <div className="h-32 bg-gray-100">
+                        <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                    <div className="p-4">
+                      <h4 className="font-bold text-gray-800 text-sm">{item.name}</h4>
+                      {item.width && item.height && (
+                        <p className="text-xs text-gray-400 mt-1">{item.width} × {item.height} cm</p>
+                      )}
+                      {item.note && <p className="text-xs text-gray-500 mt-1">{item.note}</p>}
+                      <span className="inline-block mt-2 px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-[10px] font-semibold">{item.categoryIcon} {item.category}</span>
+                    </div>
+                    {isAdmin && (
+                      <div className="px-4 pb-3 flex justify-end">
+                        <button onClick={() => setRoomItems(prev => prev.filter(i => i.id !== item.id))} className="text-xs text-red-400 hover:text-red-600 bg-transparent border-none cursor-pointer">Delete</button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              /* Empty State */
+              <div className="text-center py-16">
+                <div className="text-6xl mb-4">📭</div>
+                <h3 className="text-slate-700 text-xl font-semibold mb-2">No items yet</h3>
+                <p className="text-slate-500 mb-6">Start adding items for this room.</p>
+                <button onClick={(e) => { e.stopPropagation(); openAddItemModal(); }} className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-semibold inline-flex items-center gap-2 cursor-pointer border-none transition-colors shadow-lg">
+                  + Add First Item
+                </button>
+              </div>
+            )}
+
+            {/* Room Note Pin */}
+            <button
+              onClick={() => setShowRoomNote(!showRoomNote)}
+              className="absolute bottom-4 right-4 h-10 w-10 rounded-full bg-amber-100 text-amber-700 hover:bg-amber-200 transition cursor-pointer border-none text-base font-bold shadow-md z-20"
+              title="Room Note"
+            >📌</button>
+
+            {/* Room Note Panel */}
+            {showRoomNote && (
+              <div className="absolute bottom-16 right-4 w-80 max-w-[calc(100%-2rem)] rounded-xl border border-slate-200 bg-white p-4 shadow-xl z-30">
+                <div className="text-sm font-semibold text-slate-700 mb-2">Room Note</div>
+                <textarea
+                  value={roomNotes[selectedRoom] || ""}
+                  onChange={(e) => setRoomNotes(prev => ({ ...prev, [selectedRoom]: e.target.value }))}
+                  rows={4}
+                  placeholder="จดได้ทุกอย่าง เช่น ความกว้างห้อง, ตำแหน่งเตียง, จุดสังเกตพิเศษ ฯลฯ"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition bg-white text-sm"
+                />
+                <div className="mt-3 flex justify-end gap-2">
+                  <button onClick={() => setShowRoomNote(false)} className="px-3 py-1.5 rounded-lg bg-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-300 transition cursor-pointer border-none">Close</button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -626,7 +746,39 @@ export default function BuildingA() {
               </div>
             </div>
 
-            <button onClick={() => { if (typeof (window as any).saveCanvaItem === "function") (window as any).saveCanvaItem(); }} className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg mt-6 cursor-pointer border-none transition-colors">
+            <button onClick={() => {
+              const nameEl = document.getElementById("item-name-input") as HTMLInputElement;
+              const widthEl = document.getElementById("item-width-input") as HTMLInputElement;
+              const heightEl = document.getElementById("item-height-input") as HTMLInputElement;
+              const noteEl = document.getElementById("item-note-input") as HTMLTextAreaElement;
+              const catEl = document.getElementById("item-category-input") as HTMLSelectElement;
+              const name = nameEl?.value?.trim();
+              if (!name) { alert("Please enter item name"); return; }
+              const catValue = catEl?.value || "อื่นๆ";
+              const catMap: Record<string, { name: string; icon: string }> = {
+                "เฟอร์นิเจอร์": { name: "Furniture", icon: "🛋️" },
+                "เครื่องใช้ไฟฟ้า": { name: "Appliances", icon: "💡" },
+                "ของตกแต่ง": { name: "Decor", icon: "🖼️" },
+                "อื่นๆ": { name: "Other", icon: "📦" },
+              };
+              const matched = catMap[catValue] || { name: catValue, icon: "📦" };
+              const matchedCat = itemCategories.find(c => c.name === matched.name);
+              setRoomItems(prev => [...prev, {
+                id: Date.now().toString(),
+                roomId: selectedRoom,
+                name,
+                width: widthEl?.value || undefined,
+                height: heightEl?.value || undefined,
+                note: noteEl?.value || undefined,
+                category: matchedCat?.id || "other",
+                categoryIcon: matched.icon,
+              }]);
+              if (nameEl) nameEl.value = "";
+              if (widthEl) widthEl.value = "";
+              if (heightEl) heightEl.value = "";
+              if (noteEl) noteEl.value = "";
+              closeAddItemModal();
+            }} className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg mt-6 cursor-pointer border-none transition-colors">
               Save Item
             </button>
           </div>
