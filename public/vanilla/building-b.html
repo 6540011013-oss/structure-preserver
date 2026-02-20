@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Building B — ABSC</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="page-navbar">
+    <div class="nav-left">
+      <a href="index.html" class="back-link">← <span>HOME</span></a>
+      <span class="nav-divider"></span>
+      <div class="nav-building-icon b">B</div>
+      <div class="nav-title">
+        <h1>Building B — ABSC</h1>
+        <span>City View • Condo Wing</span>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <button class="nav-btn" id="editModeBtn" onclick="toggleEditMode()">🔒 Lock Mode</button>
+      <button class="nav-btn" onclick="showSettingsModal()">⚙️ Settings</button>
+      <button class="nav-btn" onclick="showDatePicker()">📅 Date</button>
+      <span class="nav-divider" style="height:24px"></span>
+      <a href="building-a.html" class="nav-btn switch-building-a">🏢 Building A</a>
+    </div>
+    <button class="admin-btn" id="adminBtn" onclick="handleAdminBtn()">STAFF LOGIN</button>
+  </nav>
+
+  <!-- PLAN -->
+  <div class="plan-wrapper-b">
+    <!-- Left: Service Status -->
+    <div style="width:220px;flex-shrink:0">
+      <div class="legend-block sticky-panel">
+        <h4>Service Status</h4>
+        <div class="service-list" id="servicePanel"></div>
+      </div>
+    </div>
+
+    <!-- Building B Grid -->
+    <div class="building-b-container" id="buildingPlan" style="cursor:pointer">
+      <div class="floor-row"><div class="room-b" data-room-id="2501">2501</div><div class="room-b" data-room-id="2502">2502</div><div class="room-b" data-room-id="2503">2503</div><div class="room-b" data-room-id="2504">2504</div><div class="room-b" data-room-id="2505">2505</div><div class="room-b" data-room-id="2506">2506</div><div class="room-b" data-room-id="2507">2507</div></div>
+      <div class="floor-row"><div class="room-b" data-room-id="2401">2401</div><div class="room-b" data-room-id="2402">2402</div><div class="room-b" data-room-id="2403">2403</div><div class="room-b" data-room-id="2404">2404</div><div class="room-b" data-room-id="2405">2405</div><div class="room-b" data-room-id="2406">2406</div><div class="room-b" data-room-id="2407">2407</div><div class="room-b" data-room-id="2408">2408</div><div class="room-b" data-room-id="2409">2409</div><div class="room-b" data-room-id="2410">2410</div></div>
+      <div class="floor-row"><div class="room-b" data-room-id="2301">2301</div><div class="room-b" data-room-id="2302">2302</div><div class="room-b" data-room-id="2303">2303</div><div class="room-b" data-room-id="2304">2304</div><div class="room-b" data-room-id="2305">2305</div><div class="room-b" data-room-id="2306">2306</div><div class="room-b" data-room-id="2307">2307</div><div class="room-b" data-room-id="2308">2308</div><div class="room-b" data-room-id="2309">2309</div><div class="room-b" data-room-id="2310">2310</div></div>
+      <div class="floor-row"><div class="room-b" data-room-id="2201">2201</div><div class="room-b" data-room-id="2202">2202</div><div class="room-b" data-room-id="2203">2203</div><div class="room-b" data-room-id="2204">2204</div><div class="room-b" data-room-id="2205">2205</div><div class="room-b" data-room-id="2206">2206</div><div class="room-b" data-room-id="2207">2207</div><div class="room-b" data-room-id="2208">2208</div><div class="room-b" data-room-id="2209">2209</div><div class="room-b" data-room-id="2210">2210</div></div>
+      <div class="floor-row"><div class="room-b" data-room-id="2111">2111</div><div class="room-b" data-room-id="2112">2112</div></div>
+    </div>
+
+    <!-- Right: Room Types -->
+    <div style="width:220px;flex-shrink:0">
+      <div class="legend-block sticky-panel" id="roomTypeLegend"></div>
+    </div>
+  </div>
+
+  <!-- Room Info Modal -->
+  <div class="room-info-modal hidden" id="roomInfoModal">
+    <div class="room-info-backdrop" onclick="hideRoomInfo()"></div>
+    <div class="room-info-box">
+      <div class="room-info-header"><div class="room-info-banner"><div><div style="display:flex;align-items:center;gap:12px;margin-bottom:8px"><span style="font-size:28px">🏠</span><h1>Room ---</h1></div><p>Room #--- • 0 items</p></div><div style="display:flex;gap:8px"><button class="btn-add-item" onclick="showAddItemModal()">+ Add Item</button><button class="btn-x" onclick="hideRoomInfo()">✕</button></div></div></div>
+      <div class="room-info-content">
+        <div class="cat-filters" id="roomCatFilters"></div>
+        <div class="items-grid" id="roomItemsGrid"></div>
+        <div id="roomItemsEmpty"></div>
+        <button class="room-note-pin" onclick="toggleRoomNote($('#roomInfoModal').dataset.roomId)">📌</button>
+        <div class="room-note-panel" id="roomNotePanel" style="display:none"><div style="font-size:13px;font-weight:600;color:#334155;margin-bottom:8px">Room Note</div><textarea class="form-input form-textarea" rows="4" placeholder="จดได้ทุกอย่าง..."></textarea><div style="margin-top:12px;text-align:right"><button class="btn-close-modal" onclick="saveRoomNote()">Close</button></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Item Modal -->
+  <div class="add-item-modal hidden" id="addItemModal">
+    <div class="room-info-backdrop" onclick="hideAddItemModal()"></div>
+    <div class="add-item-box">
+      <div class="add-item-header"><h2>Add New Item</h2><button class="btn-x" onclick="hideAddItemModal()">✕</button></div>
+      <div class="add-item-body">
+        <div class="image-dropzone"><div><span class="emoji">📷</span><span class="hint">Drag an image here or click.</span></div></div>
+        <label class="form-label">Item Name <span style="color:#ef4444">*</span></label>
+        <input type="text" id="addItemName" class="form-input" placeholder="e.g., Bed" style="margin-bottom:12px">
+        <div class="dim-grid"><div><label class="form-label">Width (cm)</label><input type="text" id="addItemWidth" class="form-input" placeholder="55"></div><div><label class="form-label">Length (cm)</label><input type="text" id="addItemHeight" class="form-input" placeholder="55"></div></div>
+        <label class="form-label" style="margin-top:12px">Note</label>
+        <textarea id="addItemNote" class="form-input form-textarea" rows="3" placeholder="เช่น ห้องกว้าง 4 เมตร"></textarea>
+        <label class="form-label" style="margin-top:12px">Category</label>
+        <select id="addItemCategory" class="form-input form-select"><option value="furniture">🛋️ Furniture</option><option value="appliances">💡 Appliances</option><option value="decor">🖼️ Decor</option><option value="other">📦 Other</option></select>
+        <button class="btn-save-item" onclick="saveNewItem()">Save Item</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Room Modal -->
+  <div class="modal-overlay hidden" id="editRoomModal">
+    <div class="edit-modal-box" onclick="event.stopPropagation()">
+      <div class="edit-header"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:24px">✏️</span><div><h2>Edit Room ---</h2><p style="font-size:12px;opacity:0.8">Update room details</p></div></div><button class="btn-x" onclick="hideEditModal()">✕</button></div>
+      <div class="edit-body">
+        <div class="edit-grid">
+          <div><label class="form-label">👤 Guest Name</label><input type="text" class="form-input" placeholder="e.g. Mr. Smith" style="margin-bottom:16px"><label class="form-label">🛏️ Room Type</label><select class="form-input form-select"><option value="">Select</option><option value="condo">Condo</option><option value="sus">Superior Suite</option><option value="dls">Deluxe Suite</option></select></div>
+          <div><label class="form-label">📝 Maintenance Note</label><textarea class="form-input form-textarea" rows="3"></textarea><div style="margin-top:12px;padding-top:12px;border-top:1px solid #e2e8f0"><label class="form-label" style="color:#2563eb">📡 Access Point</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:600"><input type="checkbox"> AP Installed</label></div></div>
+        </div>
+        <div style="margin-top:20px;padding-top:20px;border-top:1px solid #e2e8f0"><label class="form-label">🛠️ Service Icons</label><div class="service-select"></div></div>
+      </div>
+      <div class="edit-footer"><button class="btn-close-modal" onclick="hideEditModal()">Cancel</button><button class="btn-save" onclick="saveEditModal()">Save Changes</button></div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="settings-modal hidden" id="settingsModal">
+    <div class="room-info-backdrop" onclick="hideSettingsModal()"></div>
+    <div class="settings-box" onclick="event.stopPropagation()">
+      <div class="settings-header"><div style="display:flex;align-items:center;gap:12px"><div style="width:36px;height:36px;border-radius:12px;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center">⚙️</div><div><h2>Settings</h2><p>Manage system configuration</p></div></div><button class="btn-x" onclick="hideSettingsModal()">✕</button></div>
+      <div class="settings-body"><div class="settings-tabs"><button class="settings-tab active" data-tab="room-types" onclick="renderSettingsTab('room-types')">🎨 Room Types</button><button class="settings-tab" data-tab="maintenance" onclick="renderSettingsTab('maintenance')">🔧 Maintenance</button><button class="settings-tab" data-tab="admin" onclick="renderSettingsTab('admin')">🔑 Admin Password</button><button class="settings-tab" data-tab="general" onclick="renderSettingsTab('general')">⚙️ General</button></div><div class="settings-content" id="settingsContent"></div></div>
+    </div>
+  </div>
+
+  <!-- Date Picker Modal -->
+  <div class="datepicker-modal hidden" id="datePickerModal">
+    <div class="room-info-backdrop" onclick="hideDatePicker()"></div>
+    <div class="datepicker-box" onclick="event.stopPropagation()">
+      <div class="datepicker-header"><h3>📅 Select Date (30 days)</h3><p>✓ Select today or up to 30 days back</p></div>
+      <div class="datepicker-display"><span id="calDisplay">Please select a date</span></div>
+      <div style="padding:0 24px"><div class="cal-nav"><button onclick="calPrevMonth()">◀</button><span id="calMonthLabel"></span><button onclick="calNextMonth()">▶</button></div><div class="cal-grid" id="calGrid"></div><div style="text-align:center;padding:12px 0"><button class="btn-go-today" onclick="calGoToday()">📍 Go to today</button></div></div>
+      <div class="cal-footer"><button class="btn-select-date" id="calSelectBtn" onclick="calConfirm()" disabled>Select Date</button></div>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div class="modal-overlay hidden" id="loginModal">
+    <div class="modal-box"><div class="icon-circle">🔒</div><h2>Staff Login</h2><p class="sub">Please enter passcode to access</p><input type="password" placeholder="••••" onkeydown="if(event.key==='Enter')handleLogin()"><div class="modal-btns"><button class="btn-cancel" onclick="hideLoginModal()">Cancel</button><button class="btn-confirm" onclick="handleLogin()">Confirm</button></div></div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    window._activeFilters = [];
+    const editMode = { value: false };
+    function toggleEditMode() {
+      if (!isAdmin()) { alert('Admin only.'); return; }
+      editMode.value = !editMode.value;
+      const btn = document.getElementById('editModeBtn');
+      if (editMode.value) { btn.textContent = '🔓 Edit Mode: ON'; btn.classList.add('edit-active'); }
+      else { btn.textContent = '🔒 Lock Mode'; btn.classList.remove('edit-active'); }
+    }
+    updateAdminUI();
+    renderRoomTypeLegend(document.getElementById('roomTypeLegend'));
+    renderServicePanel(document.getElementById('servicePanel'), window._activeFilters);
+    initBuildingRoomClicks(editMode);
+  </script>
+</body>
+</html>

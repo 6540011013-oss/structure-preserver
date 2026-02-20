@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Building A — ABSH</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="page-navbar">
+    <div class="nav-left">
+      <a href="index.html" class="back-link">← <span>HOME</span></a>
+      <span class="nav-divider"></span>
+      <div class="nav-building-icon a">A</div>
+      <div class="nav-title">
+        <h1>Building A — ABSH</h1>
+        <span>Ocean View • Main Building</span>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <button class="nav-btn" id="editModeBtn" onclick="toggleEditMode()">🔒 Lock Mode</button>
+      <button class="nav-btn" onclick="showSettingsModal()">⚙️ Settings</button>
+      <button class="nav-btn" onclick="showDatePicker()">📅 Date</button>
+      <span class="nav-divider" style="height:24px"></span>
+      <a href="building-b.html" class="nav-btn switch-building">🏢 Building B</a>
+    </div>
+    <button class="admin-btn" id="adminBtn" onclick="handleAdminBtn()">STAFF LOGIN</button>
+  </nav>
+
+  <!-- PLAN -->
+  <div class="plan-wrapper">
+    <!-- Legend Left: Service Status -->
+    <div class="legend-block fixed-left">
+      <h4>Service Status</h4>
+      <div class="service-list" id="servicePanel"></div>
+    </div>
+
+    <div class="two-line">
+      <div class="floor-section">
+        <div class="building" id="buildingPlan" style="cursor:pointer">
+
+          <!-- Floor 21 -->
+          <div class="floor small"><div class="room type-condo half">2101 Floor 2</div><div class="room type-condo half">2102 Floor 2</div></div>
+          <div class="floor small"><div class="room type-condo half">2101 Floor 1<br><span class="guest-label">Mrs.Mizuki</span></div><div class="room type-condo half">2102 Floor 1<br><span class="guest-label">Dr.Gerhard</span></div></div>
+
+          <!-- Floor 20 -->
+          <div class="floor large"><div class="room type-condo" style="width:100%;height:100%">2001–2008<br><span class="guest-label">Mr.Moravekar</span></div></div>
+
+          <!-- Floor 19 -->
+          <div class="floor floor19"><div class="r1 room type-condo">1901<br>Mr.Moravekar</div><div class="r2 room type-sus">1902<br>Mr.Moravekar</div><div class="r3 room type-dls">1903<br>Mr.Moravekar</div><div class="r4 room type-condo">1905<br>Mr.Moravekar</div></div>
+
+          <!-- Floor 18 -->
+          <div class="floor level18"><div class="r1 room type-condo">1801</div><div class="r2 room type-dls">1805</div><div class="r3 room type-sus">1806</div><div class="r4 room type-dls">1807</div><div class="r5 room type-dls">1808</div><div class="r6 room type-sus">1809</div><div class="r7 room type-dls">1810</div><div class="r8 room type-condo">1804</div></div>
+
+          <!-- Floor 17 -->
+          <div class="floor level17"><div class="r1 room type-condo">1701-02</div><div class="r2 room type-sus">1703</div><div class="r3 room type-dls">1704</div><div class="r4 room type-dls">1705</div><div class="r5 room type-dls">1706</div><div class="r6 room type-dls">1707</div><div class="r7 room type-sus">1708</div><div class="r8 room type-condo">1709</div></div>
+
+          <!-- Floor 16 -->
+          <div class="floor level16"><div class="r1 room type-lux">1601–1602<br>LUX</div><div class="r2 room type-condo">1603<br>SUS</div><div class="r3 room type-sus">1604<br>SUS</div><div class="r4 room type-dls">1605<br>DLS</div><div class="r5 room type-dls">1607<br>DLS</div><div class="r6 room type-dls">1608<br>DLS</div><div class="r7 room type-dls">1609<br>DLS</div><div class="r8 room type-sus">1610<br>SUS</div><div class="r9 room type-condo">1606<br>SUS</div><div class="r10 room type-lux">1611–1612<br>ROY</div></div>
+
+          <!-- Floor 15 -->
+          <div class="floor level15"><div class="r1 room type-condo">1501–1502<br>BYD</div><div class="r2 room type-condo">1503<br>BYD</div><div class="r3 room type-sus">1504<br>SUS</div><div class="r4 room type-dls">1505<br>DLS</div><div class="r5 room type-dls">1506<br>DLS</div><div class="r6 room type-dls">1507<br>DLS</div><div class="r7 room type-dls">1508<br>DLS</div><div class="r8 room type-sus">1509<br>SUS</div><div class="r9 room type-condo">1510<br>SUS</div><div class="r10 room type-condo">1511–1512<br>SUS</div></div>
+
+          <!-- Floor 14 -->
+          <div class="floor level14"><div class="r1 room type-condo">1401–1402</div><div class="r2 room type-condo">1403</div><div class="r3 room type-sdl">1404<br>SDL</div><div class="r4 room type-sdl">1405<br>SDL</div><div class="r5 room type-sdl">1406<br>SDL</div><div class="r6 room type-sdl">1410<br>SDL</div><div class="r7 room type-condo">1407</div><div class="r10 room type-condo">1408–1409</div></div>
+
+          <!-- Floor 12 -->
+          <div class="floor level12"><div class="r1 room type-condo">1201-02<br><span class="guest-label">Mrs.Maillard</span></div><div class="r2 room type-condo">1203<br><span class="guest-label">K.Sunan</span></div><div class="r3 room type-condo">1204<br><span class="guest-label">Mr.&Mrs.Gazonnaud</span></div><div class="r4 room type-dls">1205<br>DLS New</div><div class="r5 room type-dls">1210<br>DLS New</div><div class="r6 room type-condo">1206<br><span class="guest-label">Mr.Keller</span></div><div class="r7 room type-condo">1207<br><span class="guest-label">Mr.Sonerud</span></div><div class="r10 room type-condo">1208-09<br><span class="guest-label">Mrs.Marti</span></div></div>
+
+          <!-- Floor 11 -->
+          <div class="floor level11"><div class="r1 room type-condo">1101-02<br><span class="guest-label">K.Bernd</span></div><div class="r2 room type-sdl" style="width:200px">1103-1104<br>SDL</div><div class="r4 room type-sus">1105<br>SUS</div><div class="r5 room type-dls">1106<br>DLS</div><div class="r6 room type-dls">1108<br>DLS</div><div class="r7 room type-dls">1109<br>DLS</div><div class="r8 room type-condo">1110-11<br><span class="guest-label">K.Tom</span></div><div class="r9 room type-condo">1107<br><span class="guest-label">K.Tom</span></div><div class="r10 room type-condo">1112-14<br><span class="guest-label">K.Tom</span></div></div>
+
+          <!-- Floor 10 -->
+          <div class="floor level10"><div class="r1 room type-condo">1001-02<br><span class="guest-label">K.Odd</span></div><div class="r2 room type-condo">1003<br><span class="guest-label">K.Regis</span></div><div class="r3 room type-sus">1004<br>SUS</div><div class="r4 room type-dls">1005<br>DLS</div><div class="r5 room type-dls">1006<br>DLS</div><div class="r6 room type-dls">1010<br>DLS</div><div class="r7 room type-condo">1011-12<br><span class="guest-label">K.Alex</span></div><div class="r8 room type-condo">1007<br><span class="guest-label">K.Alex</span></div><div class="r9 room type-condo">1008-09<br><span class="guest-label">K.Alex</span></div></div>
+
+          <!-- Floor 9 -->
+          <div class="floor level9"><div class="r1 room type-condo">901-02<br><span class="guest-label">K.Bernd</span></div><div class="r2 room type-condo">903<br><span class="guest-label">K.Sunan</span></div><div class="r3 room type-sus">904<br>SUS</div><div class="r4 room type-dls">905<br>DLS</div><div class="r5 room type-dls">906<br>DLS</div><div class="r6 room type-dls">907<br>DLS</div><div class="r7 room type-dls" style="width:200px">908-909</div><div class="r9 room type-dls">910<br>DLS</div><div class="r10 room type-sdl">911<br>SDL</div><div class="r11 room type-condo">912<br><span class="guest-label">K.Marcus</span></div></div>
+
+          <!-- Floor 8 -->
+          <div class="floor level8"><div class="r1 room type-fam">801 802<br>FAM</div><div class="r2 room type-condo">803<br><span class="guest-label">Mr.&Mrs.Stammer</span></div><div class="r3 room type-sps">804<br>SPS</div><div class="r4 room type-sps">805<br>SPS</div><div class="r5 room type-sps">806<br>SPS</div><div class="r6 room type-sps">807<br>SPS</div><div class="r7 room type-sps">808<br>DLS</div><div class="r8 room type-sps">809<br>SPS</div><div class="r9 room type-sps">810<br>SPS</div><div class="r10 room type-sdl">811<br>SDL</div><div class="r11 room type-condo">812-14<br><span class="guest-label">K.Eddy</span></div></div>
+
+          <!-- Floor 7 -->
+          <div class="floor level7"><div class="r1 room type-fam">701 702<br>FAM</div><div class="r2 room type-condo">703<br><span class="guest-label">K.Marc</span></div><div class="r3 room type-condo">704<br><span class="guest-label">Mr.Lim</span></div><div class="r4 room type-sps">705<br>SPS</div><div class="r5 room type-condo">706<br><span class="guest-label">K.Peter</span></div><div class="r6 room type-sps">707<br>SPS</div><div class="r7 room type-condo">708<br><span class="guest-label">Mr.Terbuyken</span></div><div class="r8 room type-sps">709<br>SPS</div><div class="r9 room type-sps">710<br>SPS</div><div class="r10 room type-condo">711<br><span class="guest-label">K.Bernard</span></div><div class="r11 room type-condo">712<br><span class="guest-label">Mr.Kemenade</span></div><div class="r12 room type-fam">714 715<br>FAM</div></div>
+
+          <!-- Floor 6 -->
+          <div class="floor level6"><div class="r1 room type-fam">601 602<br>FAM</div><div class="r2 room type-condo">603<br><span class="guest-label">Mr.Taret</span></div><div class="r3 room type-sps">604<br>SPS</div><div class="r4 room type-sps">605<br>SPS</div><div class="r5 room type-sps">606<br>SPS</div><div class="r6 room type-sps">607<br>SPS</div><div class="r7 room type-condo">608<br><span class="guest-label">BYD (K.Hans)</span></div><div class="r8 room type-sps">609<br>SPS</div><div class="r9 room type-sps">610<br>SPS</div><div class="r10 room type-sps">611<br>SPS</div><div class="r11 room type-sdl">612<br>SDL</div><div class="r12 room type-fam">614 615<br>FAM</div></div>
+
+          <!-- Floor 5 -->
+          <div class="floor level5"><div class="r1 room type-fam">501 502<br>FAM</div><div class="r2 room type-sdl">503<br>SDL</div><div class="r3 room type-sps">504<br>SPS</div><div class="r4 room type-sps">505<br>SPS</div><div class="r5 room type-sps">506<br>SPS</div><div class="r6 room type-sps">507<br>SPS</div><div class="r7 room type-sps">508<br>SPS</div><div class="r8 room type-sps">509<br>SPS</div><div class="r9 room type-sps">510<br>SPS</div><div class="r10 room type-sps">511<br>SPS</div><div class="r11 room type-condo">512<br><span class="guest-label">Mr.John Ove</span></div><div class="r12 room type-fam">514 515<br>FAM</div></div>
+
+          <!-- Floor 4 -->
+          <div class="floor level4"><div class="r1 room type-condo">401-02<br>BAM</div><div class="r2 room type-sps">403<br>SPS</div><div class="r3 room type-sps">404<br>SPS</div><div class="r4 room type-sps">405<br>SPS</div><div class="r5 room type-sps">406<br>SPS</div><div class="r6 room type-sps">407<br>SPS</div><div class="r7 room type-sps">408<br>SPS</div><div class="r8 room type-sps">409<br>SPS</div><div class="r9 room type-sps">410<br>SPS</div><div class="r10 room type-sps">411<br>SPS</div><div class="r11 room type-sps">412<br><span class="guest-label">Mr.John Ove</span></div><div class="r12 room type-fam">414 415<br>FAM</div></div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Legend Right: Room Types -->
+    <div class="legend-block fixed-right" id="roomTypeLegend"></div>
+  </div>
+
+  <!-- ===== ROOM INFO MODAL ===== -->
+  <div class="room-info-modal hidden" id="roomInfoModal">
+    <div class="room-info-backdrop" onclick="hideRoomInfo()"></div>
+    <div class="room-info-box">
+      <div class="room-info-header">
+        <div class="room-info-banner">
+          <div><div style="display:flex;align-items:center;gap:12px;margin-bottom:8px"><span style="font-size:28px">🏠</span><h1>Room ---</h1></div><p>Room #--- • 0 items</p></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn-add-item" onclick="showAddItemModal()">+ Add Item</button>
+            <button class="btn-x" onclick="hideRoomInfo()">✕</button>
+          </div>
+        </div>
+      </div>
+      <div class="room-info-content">
+        <div class="cat-filters" id="roomCatFilters"></div>
+        <div class="items-grid" id="roomItemsGrid"></div>
+        <div id="roomItemsEmpty"></div>
+        <button class="room-note-pin" onclick="toggleRoomNote($('#roomInfoModal').dataset.roomId)">📌</button>
+        <div class="room-note-panel" id="roomNotePanel" style="display:none">
+          <div style="font-size:13px;font-weight:600;color:#334155;margin-bottom:8px">Room Note</div>
+          <textarea class="form-input form-textarea" rows="4" placeholder="จดได้ทุกอย่าง..."></textarea>
+          <div style="margin-top:12px;text-align:right"><button class="btn-close-modal" onclick="saveRoomNote()">Close</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ADD ITEM MODAL ===== -->
+  <div class="add-item-modal hidden" id="addItemModal">
+    <div class="room-info-backdrop" onclick="hideAddItemModal()"></div>
+    <div class="add-item-box">
+      <div class="add-item-header"><h2>Add New Item</h2><button class="btn-x" onclick="hideAddItemModal()">✕</button></div>
+      <div class="add-item-body">
+        <div class="image-dropzone"><div><span class="emoji">📷</span><span class="hint">Drag an image here or click to choose.</span></div></div>
+        <label class="form-label">Item Name <span style="color:#ef4444">*</span></label>
+        <input type="text" id="addItemName" class="form-input" placeholder="e.g., Bed" style="margin-bottom:12px">
+        <div class="dim-grid">
+          <div><label class="form-label">Width (cm)</label><input type="text" id="addItemWidth" class="form-input" placeholder="55"></div>
+          <div><label class="form-label">Length (cm)</label><input type="text" id="addItemHeight" class="form-input" placeholder="55"></div>
+        </div>
+        <label class="form-label" style="margin-top:12px">Note</label>
+        <textarea id="addItemNote" class="form-input form-textarea" rows="3" placeholder="เช่น ห้องกว้าง 4 เมตร"></textarea>
+        <label class="form-label" style="margin-top:12px">Category</label>
+        <select id="addItemCategory" class="form-input form-select">
+          <option value="furniture">🛋️ Furniture</option>
+          <option value="appliances">💡 Appliances</option>
+          <option value="decor">🖼️ Decor</option>
+          <option value="other">📦 Other</option>
+        </select>
+        <button class="btn-save-item" onclick="saveNewItem()">Save Item</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== EDIT ROOM MODAL ===== -->
+  <div class="modal-overlay hidden" id="editRoomModal">
+    <div class="edit-modal-box" onclick="event.stopPropagation()">
+      <div class="edit-header"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:24px">✏️</span><div><h2>Edit Room ---</h2><p style="font-size:12px;opacity:0.8">Update room details</p></div></div><button class="btn-x" onclick="hideEditModal()">✕</button></div>
+      <div class="edit-body">
+        <div class="edit-grid">
+          <div>
+            <label class="form-label">👤 Guest Name</label>
+            <input type="text" class="form-input" placeholder="e.g. Mr. Smith" style="margin-bottom:16px">
+            <label class="form-label">🛏️ Room Type</label>
+            <select class="form-input form-select">
+              <option value="">Select Room Type</option>
+              <option value="condo">Condo / Owner</option>
+              <option value="sus">Superior Suite</option>
+              <option value="dls">Deluxe Suite</option>
+              <option value="sdl">Studio Deluxe</option>
+              <option value="sps">Superior</option>
+              <option value="fam">Family</option>
+              <option value="lux">Luxury / Royal</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">📝 Maintenance Note</label>
+            <textarea class="form-input form-textarea" rows="3" placeholder="e.g., install date / assigned staff"></textarea>
+            <div style="margin-top:12px;padding-top:12px;border-top:1px solid #e2e8f0">
+              <label class="form-label" style="color:#2563eb">📡 Access Point (AP)</label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:600"><input type="checkbox"> AP Installed</label>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:20px;padding-top:20px;border-top:1px solid #e2e8f0">
+          <label class="form-label">🛠️ Service Icons</label>
+          <div class="service-select"></div>
+        </div>
+      </div>
+      <div class="edit-footer">
+        <button class="btn-close-modal" onclick="hideEditModal()">Cancel</button>
+        <button class="btn-save" onclick="saveEditModal()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SETTINGS MODAL ===== -->
+  <div class="settings-modal hidden" id="settingsModal">
+    <div class="room-info-backdrop" onclick="hideSettingsModal()"></div>
+    <div class="settings-box" onclick="event.stopPropagation()">
+      <div class="settings-header"><div style="display:flex;align-items:center;gap:12px"><div style="width:36px;height:36px;border-radius:12px;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center">⚙️</div><div><h2>Settings</h2><p>Manage system configuration</p></div></div><button class="btn-x" onclick="hideSettingsModal()">✕</button></div>
+      <div class="settings-body">
+        <div class="settings-tabs">
+          <button class="settings-tab active" data-tab="room-types" onclick="renderSettingsTab('room-types')">🎨 Room Types</button>
+          <button class="settings-tab" data-tab="maintenance" onclick="renderSettingsTab('maintenance')">🔧 Maintenance</button>
+          <button class="settings-tab" data-tab="admin" onclick="renderSettingsTab('admin')">🔑 Admin Password</button>
+          <button class="settings-tab" data-tab="general" onclick="renderSettingsTab('general')">⚙️ General</button>
+        </div>
+        <div class="settings-content" id="settingsContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== DATE PICKER MODAL ===== -->
+  <div class="datepicker-modal hidden" id="datePickerModal">
+    <div class="room-info-backdrop" onclick="hideDatePicker()"></div>
+    <div class="datepicker-box" onclick="event.stopPropagation()">
+      <div class="datepicker-header"><h3>📅 Select Date (30 days)</h3><p>✓ Select today or up to 30 days back</p></div>
+      <div class="datepicker-display"><span id="calDisplay">Please select a date</span></div>
+      <div style="padding:0 24px">
+        <div class="cal-nav"><button onclick="calPrevMonth()">◀</button><span id="calMonthLabel"></span><button onclick="calNextMonth()">▶</button></div>
+        <div class="cal-grid" id="calGrid"></div>
+        <div style="text-align:center;padding:12px 0"><button class="btn-go-today" onclick="calGoToday()">📍 Go to today</button></div>
+      </div>
+      <div class="cal-footer"><button class="btn-select-date" id="calSelectBtn" onclick="calConfirm()" disabled>Select Date</button></div>
+    </div>
+  </div>
+
+  <!-- LOGIN MODAL -->
+  <div class="modal-overlay hidden" id="loginModal">
+    <div class="modal-box">
+      <div class="icon-circle">🔒</div>
+      <h2>Staff Login</h2>
+      <p class="sub">Please enter passcode to access</p>
+      <input type="password" placeholder="••••" onkeydown="if(event.key==='Enter')handleLogin()">
+      <div class="modal-btns">
+        <button class="btn-cancel" onclick="hideLoginModal()">Cancel</button>
+        <button class="btn-confirm" onclick="handleLogin()">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    // State
+    window._activeFilters = [];
+    const editMode = { value: false };
+
+    function toggleEditMode() {
+      if (!isAdmin()) { alert('Admin only.'); return; }
+      editMode.value = !editMode.value;
+      const btn = document.getElementById('editModeBtn');
+      if (editMode.value) { btn.textContent = '🔓 Edit Mode: ON'; btn.classList.add('edit-active'); }
+      else { btn.textContent = '🔒 Lock Mode'; btn.classList.remove('edit-active'); }
+    }
+
+    // Init
+    updateAdminUI();
+    renderRoomTypeLegend(document.getElementById('roomTypeLegend'));
+    renderServicePanel(document.getElementById('servicePanel'), window._activeFilters);
+    initBuildingRoomClicks(editMode);
+  </script>
+</body>
+</html>
