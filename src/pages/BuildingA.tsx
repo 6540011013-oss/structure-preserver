@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { LogIn, Check, Settings, Building2, LayoutDashboard, Calendar, ChevronLeft, Hotel } from "lucide-react";
+import EditRoomModal from "@/components/index/EditRoomModal";
 
 /* ================================================================
    Building A – Floor Plan (React port)
@@ -11,6 +12,7 @@ export default function BuildingA() {
   const [isAdmin] = useState(() => localStorage.getItem("isAdmin") === "true");
   const [showAddItemModal, setShowAddItemModal] = useState(false);
   const [showRoomInfoModal, setShowRoomInfoModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<string>("");
   const [editMode, setEditMode] = useState(false);
   const navigate = useNavigate();
@@ -134,11 +136,11 @@ export default function BuildingA() {
                 const roomEl = target.closest('.room') as HTMLElement | null;
                 if (roomEl) {
                   const text = roomEl.textContent?.split('\n')[0]?.trim() || "Room";
+                  setSelectedRoom(text);
                   if (editMode && isAdmin) {
-                    // TODO: open edit modal
-                    openRoom(text);
+                    setShowEditModal(true);
                   } else {
-                    openRoom(text);
+                    setShowRoomInfoModal(true);
                   }
                 }
               }} style={{ cursor: "pointer" }}>
@@ -653,7 +655,19 @@ export default function BuildingA() {
         </div>
       </div>
 
-      {/* JS helper */}
+      {/* Edit Room Modal */}
+      {showEditModal && selectedRoom && (
+        <EditRoomModal
+          roomId={selectedRoom}
+          onClose={() => { setShowEditModal(false); setSelectedRoom(""); }}
+          onSave={(data) => {
+            console.log("Save room:", selectedRoom, data);
+            setShowEditModal(false);
+            setSelectedRoom("");
+          }}
+        />
+      )}
+
       <script dangerouslySetInnerHTML={{ __html: `
         function toggleAPDate() {
           var hasAP = document.getElementById('hasAP');

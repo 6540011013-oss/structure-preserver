@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import EditRoomModal from "@/components/index/EditRoomModal";
 
 /* ================================================================
    Building B – Floor Plan (React port)
@@ -9,6 +10,8 @@ import { useNavigate } from "react-router-dom";
 export default function BuildingB() {
   const [isAdmin] = useState(() => localStorage.getItem("isAdmin") === "true");
   const [editMode, setEditMode] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState<string>("");
+  const [showEditModal, setShowEditModal] = useState(false);
   const navigate = useNavigate();
   const goHome = () => { navigate("/"); };
   const goA = () => { navigate("/building-a"); };
@@ -88,7 +91,19 @@ export default function BuildingB() {
         </div>
 
         {/* Building B grid */}
-        <div className="building-b-container" style={{ cursor: "pointer" }}>
+        <div className="building-b-container" style={{ cursor: "pointer" }} onClick={(e) => {
+          const target = e.target as HTMLElement;
+          const roomEl = target.closest('.room-b') as HTMLElement | null;
+          if (roomEl) {
+            const rid = roomEl.getAttribute('data-room-id') || roomEl.textContent?.trim() || "Room";
+            setSelectedRoom(rid);
+            if (editMode && isAdmin) {
+              setShowEditModal(true);
+            } else {
+              // Info modal (view only) - TODO
+            }
+          }
+        }}>
 
           {/* Floor 25 – 7 rooms */}
           <div className="floor-row">
@@ -336,6 +351,18 @@ export default function BuildingB() {
           </div>
         </div>
       </div>
+      {/* Edit Room Modal */}
+      {showEditModal && selectedRoom && (
+        <EditRoomModal
+          roomId={selectedRoom}
+          onClose={() => { setShowEditModal(false); setSelectedRoom(""); }}
+          onSave={(data) => {
+            console.log("Save room:", selectedRoom, data);
+            setShowEditModal(false);
+            setSelectedRoom("");
+          }}
+        />
+      )}
     </div>
   );
 }
