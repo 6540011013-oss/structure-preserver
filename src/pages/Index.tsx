@@ -125,13 +125,13 @@ export default function Index() {
         </div>
 
         {/* Buildings Section */}
-        <div className="mb-6">
+        <div className="mb-6 max-w-3xl">
           <div className="flex items-center gap-3 mb-5">
             <Building2 className="h-5 w-5 text-slate-400" />
             <h3 className="text-lg font-bold text-white">Buildings Overview</h3>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-5">
+          <div className="grid md:grid-cols-2 gap-4">
             {/* Building A */}
             <Link to="/building-a" className="no-underline group">
               <div className="bg-[#1e293b] rounded-2xl border border-slate-700/50 overflow-hidden hover:border-violet-500/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(139,92,246,0.1)]">
