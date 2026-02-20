@@ -32,62 +32,47 @@ export default function BuildingA() {
   };
 
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif", background: "hsl(220 22% 96%)", minHeight: "100vh" }}>
-      {/* ===== NAVBAR ===== */}
-      <header className="hotel-navbar">
+    <div style={{ fontFamily: "'Inter', sans-serif", background: "#f9fafb", minHeight: "100vh" }}>
+      {/* ===== NAVBAR (light theme matching original) ===== */}
+      <header className="page-navbar">
         <div className="nav-left">
-          <button onClick={goHome} className="back-link" style={{ background: "none", border: "none", cursor: "pointer", padding: 0, fontFamily: "inherit" }}>
+          <button onClick={goHome} className="back-link" style={{ background: "none", border: "none", fontFamily: "inherit" }}>
             ← Back to Home
           </button>
-          <div style={{ width: 1, height: 24, background: "hsla(40,85%,45%,0.25)" }} />
           <div className="nav-title">
             <h1>Building A – ABSH</h1>
-            <span>Andaman Beach Suites Hotel</span>
+            <span>Building A</span>
           </div>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div className="flex items-center gap-2">
           {/* Edit mode */}
-          <button className="edit-mode-base" id="edit-mode-btn">
+          <button className="edit-mode-base nav-btn-shape" id="edit-mode-btn" style={{ fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.05em" }}>
             <span id="edit-icon"></span>
-            <span id="edit-mode-text" style={{ fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.05em" }}>LOCK MODE</span>
+            <span id="edit-mode-text">LOCK MODE</span>
           </button>
 
           {/* Admin settings */}
-          <button id="admin-btn-canva" style={{
-            display: "flex", alignItems: "center", gap: 8,
-            padding: "8px 16px", borderRadius: 8,
-            background: "linear-gradient(135deg, hsl(255,55%,45%), hsl(280,60%,55%))",
-            color: "#fff", border: "none", cursor: "pointer",
-            fontSize: 11, fontWeight: 900, letterSpacing: "0.04em", textTransform: "uppercase"
-          }}>
-            ⚙️ SYSTEM SETTINGS
-          </button>
-
-          {/* Go to Building B */}
-          <button onClick={goB} style={{
-            display: "flex", alignItems: "center", gap: 6,
-            padding: "8px 16px", borderRadius: 8,
-            background: "linear-gradient(135deg, hsl(340,70%,45%), hsl(15,80%,55%))",
-            color: "#fff", border: "none", cursor: "pointer",
-            fontSize: 11, fontWeight: 900, letterSpacing: "0.04em", textTransform: "uppercase"
-          }}>
-            🏢 BUILDING B
+          <button id="admin-btn-canva" className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-violet-400 to-purple-500 text-white rounded-xl hover:shadow-lg transition-all border-none cursor-pointer text-xs font-black uppercase tracking-wide nav-btn-shape">
+            <span>⚙️</span> <span>SYSTEM SETTINGS (ADMIN)</span>
           </button>
 
           {/* Staff login */}
-          <button id="adminBtn" style={{
-            display: "flex", alignItems: "center", gap: 8, padding: "8px 18px",
-            borderRadius: 8, border: isAdmin ? "1.5px solid #22c55e" : "1.5px solid hsl(42,90%,68%)",
-            background: isAdmin ? "rgba(34,197,94,0.1)" : "transparent",
-            color: isAdmin ? "#22c55e" : "hsl(42,90%,68%)",
-            fontSize: 11, fontWeight: 900, letterSpacing: "0.05em", textTransform: "uppercase", cursor: "pointer"
-          }}>
-            <span id="btnText">{isAdmin ? "✓ ADMIN ACTIVE" : "STAFF LOGIN"}</span>
+          <button id="adminBtn" className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-black transition-all duration-300 shadow-sm ${
+            isAdmin
+              ? "bg-green-600 border-2 border-green-600 text-white hover:bg-green-700"
+              : "border-2 border-slate-800 text-slate-800 hover:bg-slate-800 hover:text-white"
+          }`}>
+            <span id="btnText">{isAdmin ? "ADMIN ACTIVE" : "STAFF LOGIN"}</span>
+          </button>
+
+          {/* Go to Building B */}
+          <button onClick={goB} className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 text-white border-none cursor-pointer text-xs font-black uppercase tracking-wide hover:shadow-lg transition-all">
+            🏢 BUILDING B
           </button>
 
           <button className="dashboard-fab dashboard-fab-inline" id="dashboardBtn">Dashboard</button>
-          <button id="open-date-picker-btn" className="date-picker-btn" title="Select Date">📅</button>
+          <button id="open-date-picker-btn" className="h-9 w-9 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition text-base font-black border-none cursor-pointer" title="Select Date">📅</button>
         </div>
       </header>
 
@@ -95,17 +80,17 @@ export default function BuildingA() {
       <div className="plan-wrapper">
         <div className="building-plan" style={{ position: "relative" }}>
 
-          {/* Legend panels (positioned via CSS) */}
+          {/* Legend panels */}
           <div id="Acontent">
             <div className="legend-block main-legend">
-              <h4 className="text-sm font-bold mb-2 border-b pb-1" style={{ color: "hsl(42,90%,68%)", fontFamily: "'Playfair Display',serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase" }}>Room Types</h4>
+              <h4 className="text-sm font-bold text-gray-800 mb-2 border-b pb-1">Room Type</h4>
               <div id="room-type-legend" className="legend-grid"></div>
             </div>
           </div>
 
           <div className="legend-block left-info-panel">
-            <h4 style={{ color: "hsl(42,90%,68%)", fontFamily: "'Playfair Display',serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8, borderBottom: "1px solid hsla(40,85%,45%,0.2)", paddingBottom: 6 }}>Service Status</h4>
-            <div id="service-sidebar-list" style={{ display: "flex", flexDirection: "column", gap: 8 }}></div>
+            <h4 className="text-sm font-bold text-gray-800 mb-3 border-b pb-2 uppercase tracking-wider">Service Status</h4>
+            <div id="service-sidebar-list" className="flex flex-col gap-3"></div>
           </div>
 
           {/* ===== BUILDING STRUCTURE (exact dimensions preserved) ===== */}
@@ -122,22 +107,22 @@ export default function BuildingA() {
 
                 {/* Floor 21 (small 770px) */}
                 <div className="floor small">
-                  <div className="room type-condo half" style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>2101 Floor 2</div>
-                  <div className="room type-condo half" style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>2102 Floor 2</div>
+                  <div className="room type-condo half flex items-center justify-center relative">2101 Floor 2</div>
+                  <div className="room type-condo half flex items-center justify-center relative">2102 Floor 2</div>
                 </div>
 
                 <div className="floor small">
-                  <div className="room type-condo half" style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+                  <div className="room type-condo half flex items-center justify-center relative">
                     2101 Floor 1<br /><span className="guest-label">Mrs.Mizuki</span>
                   </div>
-                  <div className="room type-condo half" style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+                  <div className="room type-condo half flex items-center justify-center relative">
                     2102 Floor 1<br /><span className="guest-label">Dr.Gerhard</span>
                   </div>
                 </div>
 
                 {/* Floor 20 large */}
                 <div className="floor large">
-                  <div className="room type-condo" style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+                  <div className="room type-condo w-full h-full flex items-center justify-center relative">
                     2001–2008 <br /><span className="guest-label">Mr.Moravekar</span>
                   </div>
                 </div>
@@ -352,23 +337,23 @@ export default function BuildingA() {
         </div>
       </div>
 
-      {/* ===== MODALS – kept from original structure ===== */}
+      {/* ===== MODALS ===== */}
       {/* Edit Modal */}
       <div id="roomEditModal" className="modal-overlay hidden" style={{ position: "fixed", inset: 0, zIndex: 50 }}>
-        <div style={{ width: "100%", maxWidth: 640, background: "#fff", borderRadius: 16, boxShadow: "0 30px 80px rgba(0,0,0,0.25)", overflow: "hidden" }}>
-          <div style={{ padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "linear-gradient(135deg, hsl(25,85%,50%), hsl(35,90%,60%))" }}>
-            <h2 id="modalRoomNumber" style={{ margin: 0, fontSize: 18, fontWeight: 800, color: "#fff", fontFamily: "'Playfair Display',serif" }}>Edit Room</h2>
-            <button id="closeIcon" style={{ background: "rgba(255,255,255,0.2)", border: "none", borderRadius: 8, width: 32, height: 32, cursor: "pointer", color: "#fff", fontSize: 16 }}>✕</button>
+        <div className="w-full max-w-2xl bg-white rounded-xl shadow-2xl overflow-hidden">
+          <div className="px-6 py-4 flex items-center justify-between bg-gradient-to-br from-orange-500 to-orange-600">
+            <h2 id="modalRoomNumber" className="text-xl font-bold text-white tracking-wide">Edit Room 0000</h2>
+            <button id="closeIcon" className="p-1 rounded-lg text-white hover:bg-white/20 transition-colors">✕</button>
           </div>
-          <div style={{ padding: 24 }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-5">
                 <div>
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "hsl(220 25% 25%)", marginBottom: 6 }}>👤 Guest Name</label>
-                  <input type="text" id="editGuestName" style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: "1.5px solid hsl(220 20% 85%)", fontSize: 14, boxSizing: "border-box", outline: "none" }} />
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">👤 Guest Name</label>
+                  <input type="text" id="editGuestName" className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 text-gray-700 outline-none focus:border-blue-500" />
                 </div>
                 <div>
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "hsl(220 25% 25%)", marginBottom: 6 }}>🛏️ Room Type</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">🛏️ Room Type</label>
                   <input type="hidden" id="editRoomType" value="" />
                   <div id="roomTypeSelect" className="room-type-select">
                     <button type="button" id="roomTypeSelectBtn" className="room-type-select__btn">
@@ -380,8 +365,8 @@ export default function BuildingA() {
                   </div>
                 </div>
                 <div>
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "hsl(220 25% 25%)", marginBottom: 6 }}>🛠️ Maintenance Category</label>
-                  <select id="editMaintStatus" style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: "1.5px solid hsl(220 20% 85%)", fontSize: 14, background: "#fff", outline: "none" }}>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">🛠️ Maintenance Category</label>
+                  <select id="editMaintStatus" className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 text-gray-700 bg-white outline-none">
                     <option value="">(None)</option>
                     <option value="wifi">📶 WiFi Install / Network Repair</option>
                     <option value="air">❄️ Aircon Cleaning / Repair</option>
@@ -390,105 +375,107 @@ export default function BuildingA() {
                   </select>
                 </div>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div className="space-y-5">
                 <div>
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "hsl(220 25% 25%)", marginBottom: 6 }}>📝 Maintenance Note</label>
-                  <textarea id="maintNote" rows={3} style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: "1.5px solid hsl(220 20% 85%)", fontSize: 13, outline: "none", resize: "vertical", boxSizing: "border-box" }} placeholder="e.g., install date / assigned staff" />
-                  <p style={{ fontSize: 11, color: "hsl(220 15% 55%)", marginTop: 4 }}>This note appears when hovering the maintenance icon.</p>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">📝 Maintenance Note</label>
+                  <textarea id="maintNote" rows={3} placeholder="e.g., install date / assigned staff / details" className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 text-gray-700 bg-white outline-none" />
+                  <p className="text-xs text-gray-400 mt-1">This note appears when hovering the maintenance icon.</p>
                 </div>
                 <div id="resolve-maint-container" className="hidden">
-                  <button type="button" id="btn-resolve-maint" style={{ width: "100%", padding: "10px", borderRadius: 10, border: "none", background: "#22c55e", color: "#fff", fontWeight: 800, cursor: "pointer", fontSize: 13 }}>✓ Mark as Resolved</button>
+                  <button type="button" id="btn-resolve-maint" className="w-full py-2.5 rounded-lg bg-green-500 text-white font-bold cursor-pointer border-none text-sm">✓ Mark as Resolved</button>
                 </div>
-                <div style={{ borderTop: "1px solid hsl(220 20% 90%)", paddingTop: 12 }}>
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "#3b82f6", marginBottom: 6 }}>📡 Access Point (AP)</label>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                    <input type="checkbox" id="hasAP" style={{ width: 16, height: 16, cursor: "pointer" }} />
-                    <span style={{ fontSize: 13, fontWeight: 600, color: "hsl(220 25% 30%)" }}>AP Installed</span>
+                <div className="border-t border-gray-200 pt-3">
+                  <label className="block text-sm font-semibold text-blue-500 mb-2">📡 Access Point (AP)</label>
+                  <div className="flex items-center gap-2 mb-2">
+                    <input type="checkbox" id="hasAP" className="w-4 h-4 cursor-pointer accent-blue-600" />
+                    <span className="text-sm font-semibold text-gray-700">AP Installed</span>
                   </div>
-                  <div id="apDateGroup" className="hidden" style={{ paddingLeft: 24 }}>
-                    <label style={{ display: "block", fontSize: 11, color: "hsl(220 15% 55%)", marginBottom: 4 }}>Install Date</label>
-                    <input type="date" id="apInstallDate" style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: "1px solid hsl(220 20% 85%)", fontSize: 13 }} />
+                  <div id="apDateGroup" className="hidden pl-6">
+                    <label className="block text-xs text-gray-400 mb-1">Install Date</label>
+                    <input type="date" id="apInstallDate" className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm" />
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div style={{ padding: "12px 24px 16px", background: "hsl(220 20% 97%)", borderTop: "1px solid hsl(220 20% 90%)", display: "flex", justifyContent: "flex-end", gap: 10 }}>
-            <button id="closeModal" style={{ padding: "10px 20px", borderRadius: 10, border: "1px solid hsl(220 20% 80%)", background: "#fff", color: "hsl(220 25% 35%)", fontWeight: 700, cursor: "pointer", fontSize: 13 }}>Cancel</button>
-            <button id="saveRoomInfo" style={{ padding: "10px 22px", borderRadius: 10, border: "none", background: "#22c55e", color: "#fff", fontWeight: 800, cursor: "pointer", fontSize: 13, boxShadow: "0 4px 12px rgba(34,197,94,0.35)" }}>Save Changes</button>
+          <div className="px-6 py-3 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
+            <button id="closeModal" className="px-5 py-2.5 rounded-lg border border-gray-200 bg-white text-gray-600 font-semibold cursor-pointer text-sm">Cancel</button>
+            <button id="saveRoomInfo" className="px-5 py-2.5 rounded-lg bg-green-500 text-white font-bold cursor-pointer border-none text-sm shadow-lg shadow-green-500/30">Save Changes</button>
           </div>
         </div>
       </div>
 
       {/* Room Info Modal */}
       <div id="roomInfoModal" style={{ display: showRoomInfoModal ? "flex" : "none", position: "fixed", inset: 0, alignItems: "center", justifyContent: "center", padding: 16, zIndex: 20000 }}>
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(6px)", zIndex: 0 }} onClick={closeInfoModal}></div>
-        <div style={{ background: "#fff", borderRadius: 24, boxShadow: "0 30px 80px rgba(0,0,0,0.25)", width: "100%", maxWidth: 900, maxHeight: "90vh", overflow: "hidden", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
-          <div style={{ padding: "16px 20px 0" }}>
-            <div style={{ background: "linear-gradient(135deg, hsl(235,65%,50%), hsl(260,65%,58%))", borderRadius: 16, padding: "20px 24px" }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
-                <div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-                    <span style={{ fontSize: 28 }}>🏠</span>
-                    <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800, color: "#fff", fontFamily: "'Playfair Display',serif" }}>Room {selectedRoom}</h1>
-                  </div>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-0" onClick={closeInfoModal}></div>
+        <div className="bg-white rounded-3xl shadow-2xl w-full max-w-[900px] max-h-[90vh] overflow-hidden flex flex-col relative z-[1]">
+          <div className="p-5 pb-0">
+            <div className="bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl px-6 py-5">
+              <div className="flex items-center justify-between flex-wrap gap-3">
+                <div className="flex items-center gap-3">
+                  <span className="text-3xl">🏠</span>
+                  <h1 className="text-2xl font-bold text-white m-0">Room {selectedRoom}</h1>
                 </div>
-                <div style={{ display: "flex", gap: 8 }}>
-                  <button onClick={(e) => { e.stopPropagation(); openAddItemModal(); }} style={{ background: "#10b981", border: "none", color: "#fff", padding: "10px 18px", borderRadius: 10, fontWeight: 700, cursor: "pointer", fontSize: 13 }}>+ Add Item</button>
-                  <button onClick={(e) => { e.stopPropagation(); closeInfoModal(); }} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#fff", width: 36, height: 36, borderRadius: 8, cursor: "pointer", fontSize: 18, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 2 }}>✕</button>
+                <div className="flex gap-2">
+                  <button onClick={(e) => { e.stopPropagation(); openAddItemModal(); }} className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-xl font-bold cursor-pointer border-none text-sm transition-colors">+ Add Item</button>
+                  <button onClick={(e) => { e.stopPropagation(); closeInfoModal(); }} className="bg-white/20 hover:bg-white/30 text-white w-9 h-9 rounded-lg cursor-pointer border-none text-lg flex items-center justify-center relative z-[2]">✕</button>
                 </div>
               </div>
             </div>
           </div>
-          <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px 20px" }}>
-            <div id="items-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 14 }}></div>
+          <div className="flex-1 overflow-y-auto p-5 pt-4">
+            <div id="items-grid" className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-3.5"></div>
           </div>
         </div>
       </div>
 
       {/* Add Item Modal */}
       <div id="addItemModal" style={{ display: showAddItemModal ? "flex" : "none", position: "fixed", inset: 0, alignItems: "center", justifyContent: "center", padding: 16, zIndex: 21000 }}>
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(6px)", zIndex: 0 }} onClick={closeAddItemModal}></div>
-        <div style={{ background: "#fff", borderRadius: 24, width: "100%", maxWidth: 480, overflow: "hidden", boxShadow: "0 30px 80px rgba(0,0,0,0.25)", position: "relative", zIndex: 1 }}>
-          <div style={{ background: "linear-gradient(135deg, hsl(235,65%,50%), hsl(260,65%,58%))", padding: "18px 24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: "#fff", fontFamily: "'Playfair Display',serif" }}>Add New Item</h2>
-            <button onClick={(e) => { e.stopPropagation(); closeAddItemModal(); }} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#fff", width: 36, height: 36, borderRadius: 8, cursor: "pointer", fontSize: 18, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, position: "relative", zIndex: 2 }}>✕</button>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-0" onClick={closeAddItemModal}></div>
+        <div className="bg-white rounded-3xl w-full max-w-[480px] overflow-hidden shadow-2xl relative z-[1]">
+          <div className="bg-gradient-to-br from-violet-500 to-purple-600 px-6 py-4 flex justify-between items-center">
+            <h2 className="text-lg font-bold text-white m-0">Add New Item</h2>
+            <button onClick={(e) => { e.stopPropagation(); closeAddItemModal(); }} className="bg-white/20 hover:bg-white/30 text-white w-9 h-9 rounded-lg cursor-pointer border-none text-lg flex items-center justify-center relative z-[2]">✕</button>
           </div>
-          <div style={{ padding: 24, maxHeight: "75vh", overflowY: "auto" }}>
-            <div style={{ marginBottom: 16 }}>
-              <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "hsl(220 25% 25%)", marginBottom: 6 }}>Image</label>
-              <div id="image-dropzone" style={{ width: "100%", height: 140, borderRadius: 12, border: "2px dashed hsl(220 20% 80%)", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden", background: "hsl(220 20% 97%)", cursor: "pointer" }}>
-                <div id="image-placeholder" style={{ textAlign: "center" }}>
-                  <span style={{ fontSize: 36, display: "block", marginBottom: 6 }}>📷</span>
-                  <span style={{ fontSize: 12, color: "hsl(220 15% 55%)" }}>Drag image here or click to choose</span>
-                  <button type="button" id="image-pick-btn" style={{ marginTop: 10, padding: "6px 16px", fontSize: 12, fontWeight: 700, borderRadius: 8, background: "#10b981", color: "#fff", border: "none", cursor: "pointer" }}>Choose Image</button>
+          <div className="p-6 max-h-[80vh] overflow-y-auto">
+            <div className="space-y-4">
+              <div className="mb-5">
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Image</label>
+                <div id="image-dropzone" className="image-preview relative w-full h-40 rounded-xl border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden bg-slate-50 cursor-pointer">
+                  <div id="image-placeholder" className="text-center">
+                    <span className="text-4xl mb-2 block">📷</span>
+                    <span className="text-slate-500 text-sm">Drag an image here or click to choose a file.</span>
+                    <button type="button" id="image-pick-btn" className="mt-3 px-4 py-2 text-sm font-semibold rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 transition border-none cursor-pointer">Choose Image</button>
+                  </div>
+                  <img id="preview-img" className="hidden absolute inset-0 w-full h-full object-cover" alt="Preview" />
+                  <input type="file" id="item-image-file" accept="image/*" className="hidden" />
                 </div>
-                <img id="preview-img" className="hidden" alt="Preview" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-                <input type="file" id="item-image-file" accept="image/*" className="hidden" />
               </div>
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+
               <div>
-                <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "hsl(220 25% 25%)", marginBottom: 4 }}>Item Name *</label>
-                <input type="text" id="item-name-input" placeholder="e.g., Bed" style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: "1.5px solid hsl(220 20% 85%)", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Item Name <span className="text-red-500">*</span></label>
+                <input type="text" id="item-name-input" placeholder="e.g., Bed" className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition" />
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "hsl(220 25% 25%)", marginBottom: 4 }}>Width (cm)</label>
-                  <input type="text" id="item-width-input" placeholder="55" style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: "1.5px solid hsl(220 20% 85%)", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Width (cm)</label>
+                  <input type="text" id="item-width-input" placeholder="55" className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition" />
                 </div>
                 <div>
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "hsl(220 25% 25%)", marginBottom: 4 }}>Length (cm)</label>
-                  <input type="text" id="item-height-input" placeholder="55" style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: "1.5px solid hsl(220 20% 85%)", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Length (cm)</label>
+                  <input type="text" id="item-height-input" placeholder="55" className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition" />
                 </div>
               </div>
+
               <div>
-                <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "hsl(220 25% 25%)", marginBottom: 4 }}>Note</label>
-                <textarea id="item-note-input" rows={3} style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: "1.5px solid hsl(220 20% 85%)", fontSize: 13, outline: "none", resize: "vertical", boxSizing: "border-box" }} />
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Note</label>
+                <textarea id="item-note-input" rows={3} placeholder="เช่น ห้องกว้าง 4 เมตร, หัวเตียงชิดผนังด้านซ้าย" className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition" />
               </div>
+
               <div>
-                <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "hsl(220 25% 25%)", marginBottom: 4 }}>Category</label>
-                <select id="item-category-input" style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: "1.5px solid hsl(220 20% 85%)", fontSize: 14, background: "#fff", outline: "none" }}>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Category</label>
+                <select id="item-category-input" className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition bg-white">
                   <option value="เฟอร์นิเจอร์">🛋️ Furniture</option>
                   <option value="เครื่องใช้ไฟฟ้า">💡 Appliances</option>
                   <option value="ของตกแต่ง">🖼️ Decor</option>
@@ -496,54 +483,99 @@ export default function BuildingA() {
                 </select>
               </div>
             </div>
-            <button onClick={() => { if (typeof (window as any).saveCanvaItem === "function") (window as any).saveCanvaItem(); }} style={{ width: "100%", padding: "14px", marginTop: 20, borderRadius: 12, border: "none", background: "#10b981", color: "#fff", fontWeight: 800, fontSize: 15, cursor: "pointer", boxShadow: "0 4px 16px rgba(16,185,129,0.35)" }}>Save Item</button>
+
+            <button onClick={() => { if (typeof (window as any).saveCanvaItem === "function") (window as any).saveCanvaItem(); }} className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg mt-6 cursor-pointer border-none transition-colors">
+              Save Item
+            </button>
           </div>
         </div>
       </div>
 
       {/* Admin settings modal */}
-      <div id="admin-modal-canva" className="hidden" style={{ position: "fixed", inset: 0, zIndex: 9999 }}>
-        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.4)", backdropFilter: "blur(6px)" }} id="modal-backdrop-canva"></div>
-        <div className="animate-slide-in" style={{ position: "absolute", inset: "20px 40px", background: "#fff", borderRadius: 24, boxShadow: "0 30px 80px rgba(0,0,0,0.3)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
-          <div style={{ background: "linear-gradient(135deg, hsl(255,55%,40%), hsl(280,60%,50%))", padding: "18px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <div style={{ width: 40, height: 40, background: "rgba(255,255,255,0.2)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>⚙️</div>
+      <div id="admin-modal-canva" className="hidden fixed inset-0 z-[9999]">
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" id="modal-backdrop-canva"></div>
+        <div className="absolute inset-4 md:inset-10 bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col animate-[slideIn_0.3s_ease_forwards]">
+          <div className="bg-gradient-to-r from-violet-500 to-purple-600 px-6 py-5 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-2xl">⚙️</div>
               <div>
-                <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: "#fff", fontFamily: "'Playfair Display',serif" }}>Admin Panel</h2>
-                <p style={{ margin: 0, fontSize: 12, color: "rgba(255,255,255,0.7)" }}>Manage room types and maintenance categories</p>
+                <h2 className="text-xl font-bold text-white m-0">Admin Panel</h2>
+                <p className="text-violet-200 text-sm m-0">Manage room types and maintenance categories (saved)</p>
               </div>
             </div>
-            <button id="close-modal-canva" style={{ width: 36, height: 36, background: "rgba(255,255,255,0.2)", border: "none", borderRadius: 8, color: "#fff", fontSize: 18, cursor: "pointer" }}>×</button>
+            <button id="close-modal-canva" className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center text-white text-xl border-none cursor-pointer">×</button>
           </div>
-          <div style={{ flex: 1, overflowY: "auto", padding: 24, background: "hsl(220 20% 97%)" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-              <div style={{ background: "#fff", borderRadius: 16, padding: 20, boxShadow: "0 4px 20px rgba(0,0,0,0.05)", border: "1px solid hsl(220 20% 90%)" }}>
-                <h3 style={{ fontSize: 15, fontWeight: 800, color: "hsl(222 40% 12%)", marginTop: 0, marginBottom: 16 }}>📝 Add New Room Type</h3>
-                <form id="room-type-form" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <div className="flex-1 overflow-auto p-6 bg-slate-50">
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">📝 Add New Room Type</h3>
+                <form id="room-type-form" className="space-y-4">
                   <div>
-                    <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "hsl(220 20% 35%)", marginBottom: 4 }}>Room Type Name</label>
-                    <input type="text" id="new-room-type-name" placeholder="e.g., Deluxe Sea View" style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: "1px solid hsl(220 20% 85%)", fontSize: 13, boxSizing: "border-box" }} />
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Room Type Name</label>
+                    <input type="text" id="room-type-name" placeholder="e.g., Executive Suite" className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-violet-500 outline-none" />
                   </div>
                   <div>
-                    <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "hsl(220 20% 35%)", marginBottom: 4 }}>Type ID (short code)</label>
-                    <input type="text" id="new-room-type-id" placeholder="e.g., dlx" style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: "1px solid hsl(220 20% 85%)", fontSize: 13, boxSizing: "border-box" }} />
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Type Color</label>
+                    <div className="flex gap-2">
+                      <input type="color" id="room-type-color" defaultValue="#c4b5fd" className="w-12 h-10 rounded cursor-pointer border border-gray-300" />
+                      <input type="text" id="room-type-color-text" defaultValue="#c4b5fd" className="flex-1 px-4 py-2 border border-gray-200 rounded-xl uppercase" />
+                    </div>
                   </div>
-                  <div>
-                    <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "hsl(220 20% 35%)", marginBottom: 4 }}>Color</label>
-                    <input type="color" id="new-room-type-color" defaultValue="#cccccc" style={{ width: "100%", height: 40, borderRadius: 8, border: "1px solid hsl(220 20% 85%)", cursor: "pointer" }} />
-                  </div>
-                  <button type="button" id="add-room-type-btn" style={{ padding: "10px", borderRadius: 8, border: "none", background: "hsl(255,55%,48%)", color: "#fff", fontWeight: 800, cursor: "pointer", fontSize: 13 }}>+ Add Room Type</button>
+                  <button type="submit" className="w-full py-3 bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-xl font-bold shadow hover:shadow-lg transition-all border-none cursor-pointer">Save</button>
                 </form>
+                <div className="mt-6">
+                  <h4 className="text-sm font-medium text-gray-600 mb-3 border-b pb-2">Existing Room Types</h4>
+                  <div className="space-y-2 h-64 overflow-y-auto pr-2" id="room-types-list"></div>
+                </div>
               </div>
-              <div style={{ background: "#fff", borderRadius: 16, padding: 20, boxShadow: "0 4px 20px rgba(0,0,0,0.05)", border: "1px solid hsl(220 20% 90%)" }}>
-                <h3 style={{ fontSize: 15, fontWeight: 800, color: "hsl(222 40% 12%)", marginTop: 0, marginBottom: 16 }}>🏷️ Current Room Types</h3>
-                <div id="room-types-list" style={{ display: "flex", flexDirection: "column", gap: 6 }}></div>
+
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">🔧 Add Maintenance Category</h3>
+                <form id="maintenance-form" className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Category Name</label>
+                    <input type="text" id="maintenance-name" placeholder="e.g., Electrical System" className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-violet-500 outline-none" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Select Icon</label>
+                    <div className="grid grid-cols-6 gap-2" id="icon-selector">
+                      {["📶","❄️","🧹","🔧","⚡","💡","💧","🚿","🛏️","🧯","🔑","🛁"].map(icon => (
+                        <button key={icon} type="button" className="icon-btn w-10 h-10 flex items-center justify-center bg-white border border-gray-200 rounded-lg hover:bg-violet-50 cursor-pointer text-xl" data-icon={icon}>{icon}</button>
+                      ))}
+                    </div>
+                    <input type="hidden" id="selected-icon" defaultValue="📶" />
+                  </div>
+                  <button type="submit" className="w-full py-3 bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-xl font-bold shadow hover:shadow-lg transition-all border-none cursor-pointer">Add Category</button>
+                </form>
+                <div className="mt-6">
+                  <h4 className="text-sm font-medium text-gray-600 mb-3 border-b pb-2">Existing Categories</h4>
+                  <div className="space-y-2 h-64 overflow-y-auto pr-2" id="maintenance-list"></div>
+                </div>
               </div>
             </div>
-            <div style={{ marginTop: 20, background: "#fff", borderRadius: 16, padding: 20, boxShadow: "0 4px 20px rgba(0,0,0,0.05)", border: "1px solid hsl(220 20% 90%)" }}>
-              <h3 style={{ fontSize: 15, fontWeight: 800, color: "hsl(222 40% 12%)", marginTop: 0, marginBottom: 16 }}>🔧 Maintenance Categories</h3>
-              <div id="maint-categories-list" style={{ display: "flex", flexWrap: "wrap", gap: 8 }}></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Toast */}
+      <div id="toast-canva" className="hidden fixed bottom-24 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-xl shadow-lg z-[10000]">
+        <span id="toast-message-canva">Saved successfully!</span>
+      </div>
+
+      {/* Login modal */}
+      <div id="adminModal" className="modal-overlay hidden">
+        <div className="modal-box bg-white p-8 rounded-2xl shadow-2xl w-[360px] text-center">
+          <div className="mb-6">
+            <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-inner">
+              🔒
             </div>
+            <h2 className="text-xl font-bold text-slate-800">Staff Login</h2>
+            <p className="text-sm text-slate-500 mt-1">Please enter passcode to access</p>
+          </div>
+          <input type="password" id="adminPassword" placeholder="Passcode (1234)" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl mb-5 outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-center text-lg tracking-widest transition-all" />
+          <div className="flex gap-3">
+            <button id="loginCancel" className="flex-1 bg-white border border-slate-200 text-slate-600 px-4 py-3 rounded-xl hover:bg-slate-50 font-semibold transition-colors cursor-pointer">Cancel</button>
+            <button id="loginConfirm" className="flex-1 bg-blue-600 text-white px-4 py-3 rounded-xl hover:bg-blue-700 font-semibold shadow-lg shadow-blue-500/30 transition-all active:scale-95 cursor-pointer border-none">Confirm</button>
           </div>
         </div>
       </div>
@@ -553,43 +585,32 @@ export default function BuildingA() {
         <div className="dashboard-modal__panel">
           <div className="dashboard-modal__header">
             <div>
-              <h2 className="dashboard-modal__title">📊 Dashboard</h2>
-              <p className="dashboard-modal__subtitle">Building A — Occupancy Overview</p>
+              <h3 className="dashboard-modal__title">Summary (Building A)</h3>
+              <p className="dashboard-modal__subtitle">Maintenance categories and room types with print support</p>
             </div>
             <div className="dashboard-modal__actions">
-              <button className="dashboard-btn" id="dash-export-btn">📥 Export</button>
-              <button className="dashboard-btn" id="dash-close-btn">✕ Close</button>
+              <button id="dashboardPrint" className="dashboard-btn dashboard-btn--primary" aria-label="Print report">🖨️</button>
+              <button id="dashboardClose" className="dashboard-btn">Close</button>
             </div>
           </div>
-          <div className="dashboard-modal__content">
-            <div className="dashboard-grid">
-              <div className="dashboard-analytic-card">
-                <div className="dashboard-card__header">🏠 Occupancy Rate</div>
-                <div className="dashboard-chart-wrap"><canvas className="dashboard-chart" id="occupancyChart"></canvas></div>
-              </div>
-              <div className="dashboard-analytic-card">
-                <div className="dashboard-card__header">🔧 Maintenance Status</div>
-                <div className="dashboard-chart-wrap"><canvas className="dashboard-chart" id="maintenanceChart"></canvas></div>
-              </div>
-              <div className="dashboard-analytic-card">
-                <div className="dashboard-card__header">📋 Room Types</div>
-                <div id="room-type-progress" className="dashboard-progress"></div>
+          <div id="dashboardContent" className="dashboard-modal__content">
+            <div className="dashboard-analytics">
+              <div id="dynamicSummaryRow" className="dashboard-summary-row"></div>
+              <div className="dashboard-grid mt-6">
+                <div className="dashboard-analytic-card">
+                  <div className="dashboard-card__header">Room Occupancy</div>
+                  <div className="dashboard-chart-wrap"><canvas id="occupancyChart" className="dashboard-chart"></canvas></div>
+                </div>
+                <div className="dashboard-analytic-card">
+                  <div className="dashboard-card__header">Maintenance Issues</div>
+                  <div className="dashboard-chart-wrap"><canvas id="maintenanceChart" className="dashboard-chart"></canvas></div>
+                </div>
+                <div className="dashboard-analytic-card dashboard-analytic-card--wide">
+                  <div className="dashboard-card__header">Room Type Summary</div>
+                  <div id="roomTypeSummary" className="dashboard-table-wrap"></div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Login modal (for Building A) */}
-      <div id="adminModal" className="modal-overlay hidden">
-        <div className="modal-box">
-          <div style={{ width: 52, height: 52, borderRadius: "50%", background: "hsla(40,85%,45%,0.15)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px", fontSize: 22, border: "1px solid hsla(40,85%,45%,0.3)" }}>🔑</div>
-          <h2>Staff Login</h2>
-          <p>Please enter passcode to access</p>
-          <input type="password" id="adminPassword" placeholder="Passcode" />
-          <div className="modal-actions" style={{ display: "flex", gap: 8 }}>
-            <button id="loginCancel" style={{ flex: 1, padding: "10px", borderRadius: 10, border: "1px solid hsl(220 20% 30%)", background: "transparent", color: "hsl(220 15% 60%)", fontWeight: 700, cursor: "pointer" }}>Cancel</button>
-            <button id="loginConfirm" style={{ flex: 1, padding: "10px", borderRadius: 10, border: "none", background: "linear-gradient(135deg, hsl(38,85%,42%), hsl(44,90%,60%))", color: "#fff", fontWeight: 800, cursor: "pointer" }}>Confirm</button>
           </div>
         </div>
       </div>

@@ -125,7 +125,7 @@
 
 @layer components {
 
-  /* ---- Navbar ---- */
+  /* ---- Navbar (dark luxury) ---- */
   .hotel-navbar {
     position: sticky;
     top: 0;
@@ -171,6 +171,57 @@
   .hotel-navbar .nav-title span {
     font-size: 11px;
     color: hsl(var(--gold-light));
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ---- Navbar (light / original) ---- */
+  .page-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 3000;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid #e2e8f0;
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .page-navbar .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .page-navbar .back-link {
+    color: #475569;
+    font-size: 13px;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+    cursor: pointer;
+  }
+  .page-navbar .back-link:hover {
+    color: #1e293b;
+  }
+
+  .page-navbar .nav-title h1 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e293b;
+    letter-spacing: 0.02em;
+  }
+
+  .page-navbar .nav-title span {
+    font-size: 11px;
+    color: #94a3b8;
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
