@@ -27,6 +27,11 @@ export default function BuildingA() {
   const buildingRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
+  // Helper: extract room ID from a room element
+  const getRoomId = (room: Element): string => {
+    return room.childNodes[0]?.textContent?.trim().replace(/\s+/g, ' ') || "";
+  };
+
   // Apply grey filter to rooms when service categories are selected
   useEffect(() => {
     const buildingEl = buildingRef.current;
@@ -41,7 +46,6 @@ export default function BuildingA() {
       return;
     }
 
-    // Get room IDs that have ANY of the active filter services
     const highlightedRooms = new Set<string>();
     for (const [roomId, services] of Object.entries(roomServices)) {
       if (activeFilters.some(f => services.includes(f))) {
@@ -50,7 +54,7 @@ export default function BuildingA() {
     }
 
     rooms.forEach(room => {
-      const roomText = room.childNodes[0]?.textContent?.trim().replace(/\s+/g, ' ') || "";
+      const roomText = getRoomId(room);
       if (highlightedRooms.has(roomText)) {
         room.classList.remove('room-greyed');
         room.classList.add('room-highlighted');
@@ -60,6 +64,40 @@ export default function BuildingA() {
       }
     });
   }, [activeFilters, roomServices]);
+
+  // Inject service icon dots into rooms
+  useEffect(() => {
+    const buildingEl = buildingRef.current;
+    if (!buildingEl) return;
+
+    const rooms = buildingEl.querySelectorAll('.room');
+
+    // Clean up old icons
+    buildingEl.querySelectorAll('.room-service-icons').forEach(el => el.remove());
+
+    rooms.forEach(room => {
+      const roomId = getRoomId(room);
+      const services = roomServices[roomId];
+      if (!services || services.length === 0) return;
+
+      const container = document.createElement('div');
+      container.className = 'room-service-icons';
+
+      services.forEach(catId => {
+        const cat = categories.find(c => c.id === catId);
+        if (!cat) return;
+        const dot = document.createElement('span');
+        dot.className = 'room-service-dot';
+        dot.style.background = cat.color;
+        dot.title = cat.name;
+        container.appendChild(dot);
+      });
+
+      // Ensure room is positioned for absolute child
+      (room as HTMLElement).style.position = 'relative';
+      room.appendChild(container);
+    });
+  }, [roomServices, categories]);
 
   const openAddItemModal = useCallback(() => setShowAddItemModal(true), []);
   const closeAddItemModal = useCallback(() => setShowAddItemModal(false), []);
