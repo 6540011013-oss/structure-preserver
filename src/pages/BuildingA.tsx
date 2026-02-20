@@ -12,6 +12,7 @@ export default function BuildingA() {
   const [showAddItemModal, setShowAddItemModal] = useState(false);
   const [showRoomInfoModal, setShowRoomInfoModal] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<string>("");
+  const [lockMode, setLockMode] = useState(false);
   const navigate = useNavigate();
 
   const openAddItemModal = useCallback(() => setShowAddItemModal(true), []);
@@ -58,9 +59,16 @@ export default function BuildingA() {
 
           {/* Center: Nav actions */}
           <div className="flex items-center gap-1.5">
-            <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide text-slate-300 hover:bg-slate-700 hover:text-white transition-all border-none bg-transparent cursor-pointer">
+            <button
+              onClick={() => setLockMode(!lockMode)}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide transition-all border-none cursor-pointer ${
+                lockMode
+                  ? "bg-amber-500/20 text-amber-400 hover:bg-amber-500/30"
+                  : "text-slate-300 hover:bg-slate-700 hover:text-white"
+              }`}
+            >
               <Lock className="h-3.5 w-3.5" />
-              <span className="hidden md:inline">Lock Mode</span>
+              <span className="hidden md:inline">{lockMode ? "Locked" : "Lock Mode"}</span>
             </button>
 
             <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide text-slate-300 hover:bg-slate-700 hover:text-white transition-all border-none bg-transparent cursor-pointer">
@@ -118,14 +126,15 @@ export default function BuildingA() {
           {/* ===== BUILDING STRUCTURE (exact dimensions preserved) ===== */}
           <div className="two-line">
             <div className="floor-section">
-              <div className="building" onClick={(e) => {
+              <div className={`building ${lockMode ? 'pointer-events-none opacity-80' : ''}`} onClick={(e) => {
+                if (lockMode) return;
                 const target = e.target as HTMLElement;
                 const roomEl = target.closest('.room') as HTMLElement | null;
                 if (roomEl) {
                   const text = roomEl.textContent?.split('\n')[0]?.trim() || "Room";
                   openRoom(text);
                 }
-              }} style={{ cursor: "pointer" }}>
+              }} style={{ cursor: lockMode ? "not-allowed" : "pointer" }}>
 
                 {/* Floor 21 (small 770px) */}
                 <div className="floor small">
