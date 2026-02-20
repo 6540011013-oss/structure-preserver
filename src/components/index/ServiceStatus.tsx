@@ -2,11 +2,12 @@ import { MaintenanceCategory, getIconComponent } from "@/data/maintenanceCategor
 
 interface ServiceStatusProps {
   categories: MaintenanceCategory[];
-  roomServices: Record<string, string[]>; // roomId -> array of category ids
+  roomServices: Record<string, string[]>;
+  activeFilter: string | null;
+  onFilterChange: (catId: string) => void;
 }
 
-export default function ServiceStatus({ categories, roomServices }: ServiceStatusProps) {
-  // Count rooms per category
+export default function ServiceStatus({ categories, roomServices, activeFilter, onFilterChange }: ServiceStatusProps) {
   const counts: Record<string, number> = {};
   for (const cat of categories) {
     counts[cat.id] = 0;
@@ -22,34 +23,35 @@ export default function ServiceStatus({ categories, roomServices }: ServiceStatu
       {categories.map(cat => {
         const IconComp = getIconComponent(cat.icon);
         const count = counts[cat.id] || 0;
-        const isActive = count > 0;
+        const isActive = activeFilter === cat.id;
 
         return (
-          <div
+          <button
             key={cat.id}
-            className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all"
+            onClick={() => onFilterChange(cat.id)}
+            className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all cursor-pointer border-none text-left"
             style={{
               border: `2px solid ${isActive ? cat.color : "hsl(220,10%,85%)"}`,
-              background: isActive ? `${cat.color}15` : "hsl(220,10%,97%)",
+              background: isActive ? `${cat.color}30` : "hsl(220,10%,97%)",
+              boxShadow: isActive ? `0 2px 12px ${cat.color}40` : "none",
             }}
           >
             <span
               className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
               style={{
-                background: isActive ? `${cat.color}30` : "hsl(220,10%,90%)",
+                background: isActive ? `${cat.color}40` : "hsl(220,10%,90%)",
               }}
             >
               {IconComp && (
                 <IconComp
-                  className="h-4.5 w-4.5"
-                  style={{ color: isActive ? cat.color : "hsl(220,10%,60%)" }}
                   size={18}
+                  style={{ color: isActive ? cat.color : "hsl(220,10%,60%)" }}
                 />
               )}
             </span>
             <span
               className="flex-1 text-sm font-semibold"
-              style={{ color: isActive ? "hsl(220,20%,30%)" : "hsl(220,10%,55%)" }}
+              style={{ color: isActive ? "hsl(220,20%,20%)" : "hsl(220,10%,55%)" }}
             >
               {cat.name}
             </span>
@@ -61,7 +63,7 @@ export default function ServiceStatus({ categories, roomServices }: ServiceStatu
             >
               {count}
             </span>
-          </div>
+          </button>
         );
       })}
     </div>

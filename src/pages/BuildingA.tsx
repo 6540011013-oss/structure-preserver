@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { LogIn, Check, Settings, Building2, LayoutDashboard, Calendar, ChevronLeft, Hotel } from "lucide-react";
 import EditRoomModal from "@/components/index/EditRoomModal";
@@ -21,7 +21,44 @@ export default function BuildingA() {
   const [showSettings, setShowSettings] = useState(false);
   const [categories, setCategories] = useState<MaintenanceCategory[]>(DEFAULT_CATEGORIES);
   const [roomServices, setRoomServices] = useState<Record<string, string[]>>({});
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const buildingRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+
+  // Apply grey filter to rooms when a service category is selected
+  useEffect(() => {
+    const buildingEl = buildingRef.current;
+    if (!buildingEl) return;
+
+    const rooms = buildingEl.querySelectorAll('.room');
+
+    if (!activeFilter) {
+      // Remove all filter classes
+      rooms.forEach(room => {
+        room.classList.remove('room-greyed', 'room-highlighted');
+      });
+      return;
+    }
+
+    // Get room IDs that have the active filter service
+    const highlightedRooms = new Set<string>();
+    for (const [roomId, services] of Object.entries(roomServices)) {
+      if (services.includes(activeFilter)) {
+        highlightedRooms.add(roomId);
+      }
+    }
+
+    rooms.forEach(room => {
+      const roomText = room.childNodes[0]?.textContent?.trim().replace(/\s+/g, ' ') || "";
+      if (highlightedRooms.has(roomText)) {
+        room.classList.remove('room-greyed');
+        room.classList.add('room-highlighted');
+      } else {
+        room.classList.add('room-greyed');
+        room.classList.remove('room-highlighted');
+      }
+    });
+  }, [activeFilter, roomServices]);
 
   const openAddItemModal = useCallback(() => setShowAddItemModal(true), []);
   const closeAddItemModal = useCallback(() => setShowAddItemModal(false), []);
@@ -134,13 +171,18 @@ export default function BuildingA() {
 
           <div className="legend-block left-info-panel">
             <h4 className="text-sm font-bold text-gray-800 mb-3 border-b pb-2 uppercase tracking-wider">Service Status</h4>
-            <ServiceStatus categories={categories} roomServices={roomServices} />
+            <ServiceStatus
+              categories={categories}
+              roomServices={roomServices}
+              activeFilter={activeFilter}
+              onFilterChange={(catId) => setActiveFilter(prev => prev === catId ? null : catId)}
+            />
           </div>
 
           {/* ===== BUILDING STRUCTURE (exact dimensions preserved) ===== */}
           <div className="two-line">
             <div className="floor-section">
-              <div className="building" onClick={(e) => {
+              <div className="building" ref={buildingRef} onClick={(e) => {
                 const target = e.target as HTMLElement;
                 const roomEl = target.closest('.room') as HTMLElement | null;
                 if (roomEl) {
