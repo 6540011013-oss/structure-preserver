@@ -6,6 +6,7 @@ import SettingsModal from "@/components/index/SettingsModal";
 import ServiceStatus from "@/components/index/ServiceStatus";
 import { MaintenanceCategory, DEFAULT_CATEGORIES } from "@/data/maintenanceCategories";
 import { DEFAULT_ROOM_TYPES, RoomTypeItem } from "@/data/roomTypes";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 /* ================================================================
    Building A – Floor Plan (React port)
@@ -13,6 +14,7 @@ import { DEFAULT_ROOM_TYPES, RoomTypeItem } from "@/data/roomTypes";
 ================================================================ */
 
 export default function BuildingA() {
+  const { t } = useLanguage();
   const [isAdmin] = useState(() => localStorage.getItem("isAdmin") === "true");
   const [showAddItemModal, setShowAddItemModal] = useState(false);
   const [showRoomInfoModal, setShowRoomInfoModal] = useState(false);
@@ -140,7 +142,7 @@ export default function BuildingA() {
           <div className="flex items-center gap-4">
             <button onClick={goHome} className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors border-none bg-transparent cursor-pointer">
               <ChevronLeft className="h-4 w-4" />
-              <span className="text-xs font-semibold hidden sm:inline">HOME</span>
+              <span className="text-xs font-semibold hidden sm:inline">{t("nav.home")}</span>
             </button>
             <div className="h-6 w-px bg-slate-300" />
             <div className="flex items-center gap-3">
@@ -148,8 +150,8 @@ export default function BuildingA() {
                 A
               </div>
               <div>
-                <h1 className="text-sm font-extrabold text-slate-800 leading-none tracking-wide">Building A — ABSH</h1>
-                <span className="text-[10px] text-slate-500 font-bold tracking-widest uppercase">Ocean View • Main Building</span>
+                <h1 className="text-sm font-extrabold text-slate-800 leading-none tracking-wide">{t("buildingA.title")}</h1>
+                <span className="text-[10px] text-slate-500 font-bold tracking-widest uppercase">{t("buildingA.sub")}</span>
               </div>
             </div>
           </div>
@@ -168,7 +170,7 @@ export default function BuildingA() {
               }`}
             >
               <span>{editMode ? "🔓" : "🔒"}</span>
-              <span className="hidden md:inline">{editMode ? "Edit Mode: ON" : "Lock Mode"}</span>
+              <span className="hidden md:inline">{editMode ? t("nav.editModeOn") : t("nav.lockMode")}</span>
             </button>
 
             <button
@@ -176,24 +178,24 @@ export default function BuildingA() {
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide text-slate-600 hover:bg-slate-100 hover:text-slate-800 transition-all border-none bg-transparent cursor-pointer"
             >
               <Settings className="h-3.5 w-3.5" />
-              <span className="hidden md:inline">Settings</span>
+              <span className="hidden md:inline">{t("nav.settings")}</span>
             </button>
 
             <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide text-slate-600 hover:bg-slate-100 hover:text-slate-800 transition-all border-none bg-transparent cursor-pointer">
               <LayoutDashboard className="h-3.5 w-3.5" />
-              <span className="hidden md:inline">Dashboard</span>
+              <span className="hidden md:inline">{t("nav.dashboard")}</span>
             </button>
 
             <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide text-slate-600 hover:bg-slate-100 hover:text-slate-800 transition-all border-none bg-transparent cursor-pointer">
               <Calendar className="h-3.5 w-3.5" />
-              <span className="hidden md:inline">Date</span>
+              <span className="hidden md:inline">{t("nav.date")}</span>
             </button>
 
             <div className="h-6 w-px bg-slate-300 mx-1" />
 
             <button onClick={goB} className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide bg-rose-50 text-rose-600 hover:bg-rose-100 hover:text-rose-700 transition-all border-none cursor-pointer">
               <Building2 className="h-3.5 w-3.5" />
-              <span className="hidden md:inline">Building B</span>
+              <span className="hidden md:inline">{t("nav.buildingB")}</span>
             </button>
           </div>
 
@@ -204,7 +206,7 @@ export default function BuildingA() {
               : "border-2 border-slate-800 text-slate-800 hover:bg-slate-800 hover:text-white"
           }`}>
             {isAdmin ? <Check className="h-3.5 w-3.5" /> : <LogIn className="h-3.5 w-3.5" />}
-            <span>{isAdmin ? "Admin Active" : "Staff Login"}</span>
+            <span>{isAdmin ? t("btn.adminActive") : t("btn.staffLogin")}</span>
           </button>
         </div>
       </header>
@@ -216,7 +218,7 @@ export default function BuildingA() {
           {/* Legend panels */}
           <div id="Acontent">
             <div className="legend-block main-legend">
-              <h4 className="text-sm font-bold text-gray-800 mb-2 border-b pb-1 uppercase tracking-wider">Room Type</h4>
+              <h4 className="text-sm font-bold text-gray-800 mb-2 border-b pb-1 uppercase tracking-wider">{t("legend.roomType")}</h4>
               <div className="flex flex-col gap-1.5 mt-2">
                 {roomTypes.map(rt => (
                   <div key={rt.id} className="flex items-center gap-2.5">
@@ -232,7 +234,7 @@ export default function BuildingA() {
           </div>
 
           <div className="legend-block left-info-panel">
-            <h4 className="text-sm font-bold text-gray-800 mb-3 border-b pb-2 uppercase tracking-wider">Service Status</h4>
+            <h4 className="text-sm font-bold text-gray-800 mb-3 border-b pb-2 uppercase tracking-wider">{t("legend.serviceStatus")}</h4>
             <ServiceStatus
               categories={categories}
               roomServices={roomServices}
@@ -572,13 +574,13 @@ export default function BuildingA() {
                 <div>
                   <div className="flex items-center gap-3 mb-2">
                     <span className="text-3xl">🏠</span>
-                    <h1 className="text-2xl md:text-3xl font-bold text-white m-0">Room {selectedRoom}</h1>
+                    <h1 className="text-2xl md:text-3xl font-bold text-white m-0">{t("room.title")} {selectedRoom}</h1>
                   </div>
-                  <p className="text-white text-sm opacity-90">Room #{selectedRoom} • {roomItems.filter(i => i.roomId === selectedRoom).length} items</p>
+                  <p className="text-white text-sm opacity-90">{t("room.title")} #{selectedRoom} • {roomItems.filter(i => i.roomId === selectedRoom).length} {t("room.items")}</p>
                 </div>
                 <div className="flex gap-2">
                   <button onClick={(e) => { e.stopPropagation(); openAddItemModal(); }} className="bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-3 rounded-xl font-semibold cursor-pointer border-none text-sm transition-colors flex items-center gap-2 shadow-lg">
-                    <span>+</span> Add Item
+                    <span>+</span> {t("room.addItem").replace("+ ", "")}
                   </button>
                   <button onClick={(e) => { e.stopPropagation(); closeInfoModal(); }} className="bg-white/20 hover:bg-white/30 text-white p-3 rounded-xl cursor-pointer border-none text-lg flex items-center justify-center">✕</button>
                 </div>
@@ -595,7 +597,7 @@ export default function BuildingA() {
                 className={`px-4 py-1.5 rounded-full text-sm font-semibold border-none cursor-pointer transition-all ${
                   activeItemCategory === "all" ? "bg-emerald-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
-              >All</button>
+              >{t("room.all")}</button>
               {itemCategories.map(cat => (
                 <div key={cat.id} className="flex items-center gap-1">
                   <button
@@ -622,7 +624,7 @@ export default function BuildingA() {
                     }
                   }}
                   className="px-4 py-1.5 rounded-full text-sm font-semibold border-2 border-dashed border-emerald-400 text-emerald-600 bg-transparent cursor-pointer hover:bg-emerald-50 transition-all"
-                >+ Add Category</button>
+                >{t("room.addCategory")}</button>
               )}
             </div>
 
@@ -646,7 +648,7 @@ export default function BuildingA() {
                     </div>
                     {isAdmin && (
                       <div className="px-4 pb-3 flex justify-end">
-                        <button onClick={() => setRoomItems(prev => prev.filter(i => i.id !== item.id))} className="text-xs text-red-400 hover:text-red-600 bg-transparent border-none cursor-pointer">Delete</button>
+                        <button onClick={() => setRoomItems(prev => prev.filter(i => i.id !== item.id))} className="text-xs text-red-400 hover:text-red-600 bg-transparent border-none cursor-pointer">{t("room.delete")}</button>
                       </div>
                     )}
                   </div>
@@ -656,10 +658,10 @@ export default function BuildingA() {
               /* Empty State */
               <div className="text-center py-16">
                 <div className="text-6xl mb-4">📭</div>
-                <h3 className="text-slate-700 text-xl font-semibold mb-2">No items yet</h3>
-                <p className="text-slate-500 mb-6">Start adding items for this room.</p>
+                <h3 className="text-slate-700 text-xl font-semibold mb-2">{t("room.noItems")}</h3>
+                <p className="text-slate-500 mb-6">{t("room.noItemsSub")}</p>
                 <button onClick={(e) => { e.stopPropagation(); openAddItemModal(); }} className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-semibold inline-flex items-center gap-2 cursor-pointer border-none transition-colors shadow-lg">
-                  + Add First Item
+                  {t("room.addFirstItem")}
                 </button>
               </div>
             )}
@@ -668,13 +670,13 @@ export default function BuildingA() {
             <button
               onClick={() => setShowRoomNote(!showRoomNote)}
               className="absolute bottom-4 right-4 h-10 w-10 rounded-full bg-amber-100 text-amber-700 hover:bg-amber-200 transition cursor-pointer border-none text-base font-bold shadow-md z-20"
-              title="Room Note"
+              title={t("room.note")}
             >📌</button>
 
             {/* Room Note Panel */}
             {showRoomNote && (
               <div className="absolute bottom-16 right-4 w-80 max-w-[calc(100%-2rem)] rounded-xl border border-slate-200 bg-white p-4 shadow-xl z-30">
-                <div className="text-sm font-semibold text-slate-700 mb-2">Room Note</div>
+                <div className="text-sm font-semibold text-slate-700 mb-2">{t("room.note")}</div>
                 <textarea
                   value={roomNotes[selectedRoom] || ""}
                   onChange={(e) => setRoomNotes(prev => ({ ...prev, [selectedRoom]: e.target.value }))}
@@ -696,18 +698,18 @@ export default function BuildingA() {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-0" onClick={closeAddItemModal}></div>
         <div className="bg-white rounded-3xl w-full max-w-[480px] overflow-hidden shadow-2xl relative z-[1]">
           <div className="bg-gradient-to-br from-violet-500 to-purple-600 px-6 py-4 flex justify-between items-center">
-            <h2 className="text-lg font-bold text-white m-0">Add New Item</h2>
+            <h2 className="text-lg font-bold text-white m-0">{t("addItem.title")}</h2>
             <button onClick={(e) => { e.stopPropagation(); closeAddItemModal(); }} className="bg-white/20 hover:bg-white/30 text-white w-9 h-9 rounded-lg cursor-pointer border-none text-lg flex items-center justify-center relative z-[2]">✕</button>
           </div>
           <div className="p-6 max-h-[80vh] overflow-y-auto">
             <div className="space-y-4">
               <div className="mb-5">
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Image</label>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">{t("addItem.image")}</label>
                 <div id="image-dropzone" className="image-preview relative w-full h-40 rounded-xl border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden bg-slate-50 cursor-pointer">
                   <div id="image-placeholder" className="text-center">
                     <span className="text-4xl mb-2 block">📷</span>
-                    <span className="text-slate-500 text-sm">Drag an image here or click to choose a file.</span>
-                    <button type="button" id="image-pick-btn" className="mt-3 px-4 py-2 text-sm font-semibold rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 transition border-none cursor-pointer">Choose Image</button>
+                    <span className="text-slate-500 text-sm">{t("addItem.dragHint")}</span>
+                    <button type="button" id="image-pick-btn" className="mt-3 px-4 py-2 text-sm font-semibold rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 transition border-none cursor-pointer">{t("addItem.chooseImage")}</button>
                   </div>
                   <img id="preview-img" className="hidden absolute inset-0 w-full h-full object-cover" alt="Preview" />
                   <input type="file" id="item-image-file" accept="image/*" className="hidden" />
@@ -715,33 +717,33 @@ export default function BuildingA() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Item Name <span className="text-red-500">*</span></label>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">{t("addItem.name")} <span className="text-red-500">*</span></label>
                 <input type="text" id="item-name-input" placeholder="e.g., Bed" className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition" />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Width (cm)</label>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">{t("addItem.width")}</label>
                   <input type="text" id="item-width-input" placeholder="55" className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Length (cm)</label>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">{t("addItem.length")}</label>
                   <input type="text" id="item-height-input" placeholder="55" className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition" />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Note</label>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">{t("addItem.note")}</label>
                 <textarea id="item-note-input" rows={3} placeholder="เช่น ห้องกว้าง 4 เมตร, หัวเตียงชิดผนังด้านซ้าย" className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition" />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Category</label>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">{t("addItem.category")}</label>
                 <select id="item-category-input" className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition bg-white">
-                  <option value="เฟอร์นิเจอร์">🛋️ Furniture</option>
-                  <option value="เครื่องใช้ไฟฟ้า">💡 Appliances</option>
-                  <option value="ของตกแต่ง">🖼️ Decor</option>
-                  <option value="อื่นๆ">📦 Other</option>
+                  <option value="เฟอร์นิเจอร์">🛋️ {t("cat.furniture")}</option>
+                  <option value="เครื่องใช้ไฟฟ้า">💡 {t("cat.appliances")}</option>
+                  <option value="ของตกแต่ง">🖼️ {t("cat.decor")}</option>
+                  <option value="อื่นๆ">📦 {t("cat.other")}</option>
                 </select>
               </div>
             </div>
@@ -779,7 +781,7 @@ export default function BuildingA() {
               if (noteEl) noteEl.value = "";
               closeAddItemModal();
             }} className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg mt-6 cursor-pointer border-none transition-colors">
-              Save Item
+              {t("addItem.save")}
             </button>
           </div>
         </div>

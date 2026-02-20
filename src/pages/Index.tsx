@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { LogIn, Check } from "lucide-react";
 import LoginModal from "@/components/index/LoginModal";
 import HeroSlider from "@/components/index/HeroSlider";
+import { useLanguage } from "@/contexts/LanguageContext";
 import heroImg1 from "@/assets/hotel-hero-1.jpg";
 import heroImg2 from "@/assets/hotel-hero-2.jpg";
 import heroImg3 from "@/assets/hotel-hero-3.jpg";
@@ -10,6 +11,7 @@ import heroImg3 from "@/assets/hotel-hero-3.jpg";
 const slides = [heroImg1, heroImg2, heroImg3];
 
 export default function Index() {
+  const { t } = useLanguage();
   const [liveTime, setLiveTime] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -44,7 +46,7 @@ export default function Index() {
 
   const handleAdminBtn = () => {
     if (isAdmin) {
-      if (confirm("Log out of Admin?")) {
+      if (confirm(t("login.logoutConfirm"))) {
         localStorage.removeItem("isAdmin");
         setIsAdmin(false);
       }
@@ -64,24 +66,24 @@ export default function Index() {
             </div>
             <div className="hidden sm:block border-l-2 border-slate-300 pl-4 py-1">
               <h1 className="text-lg font-extrabold text-slate-800 tracking-tight leading-none">
-                ANDAMAN BEACH SUITES HOTEL
+                {t("hotel.name")}
               </h1>
               <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500 font-bold mt-1">
-                Room Status System
+                {t("hotel.subtitle")}
               </p>
             </div>
           </div>
 
           <div className="hidden lg:flex items-center gap-8 text-slate-600">
             <div className="flex items-center gap-2">
-              <span className="text-[11px] uppercase font-bold text-slate-400 tracking-wider">Local Time :</span>
+              <span className="text-[11px] uppercase font-bold text-slate-400 tracking-wider">{t("time.label")}</span>
               <span className="text-md font-mono font-bold text-slate-700">{liveTime}</span>
             </div>
             <div className="h-4 w-px bg-slate-300" />
             <div className="flex items-center gap-2">
-              <span className="text-[11px] uppercase font-bold text-slate-400 tracking-wider">Server Status :</span>
+              <span className="text-[11px] uppercase font-bold text-slate-400 tracking-wider">{t("server.label")}</span>
               <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
-              <span className="text-sm font-bold text-green-700">Active</span>
+              <span className="text-sm font-bold text-green-700">{t("server.active")}</span>
             </div>
           </div>
 
@@ -93,7 +95,7 @@ export default function Index() {
                 : "border-2 border-slate-800 text-slate-800 hover:bg-slate-800 hover:text-white"
             }`}
           >
-            <span>{isAdmin ? "ADMIN ACTIVE" : "STAFF LOGIN"}</span>
+            <span>{isAdmin ? t("btn.adminActive") : t("btn.staffLogin")}</span>
             {isAdmin ? (
               <Check className="h-4 w-4" />
             ) : (
@@ -114,23 +116,23 @@ export default function Index() {
             <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-600 to-purple-600 mx-auto mb-5 flex items-center justify-center text-3xl font-bold text-white">
               A
             </div>
-            <h3 className="text-2xl font-bold mb-2 text-slate-800">ABSH</h3>
-            <p className="text-slate-500 mb-6">Building A • 104 Rooms</p>
+            <h3 className="text-2xl font-bold mb-2 text-slate-800">{t("building.a.name")}</h3>
+            <p className="text-slate-500 mb-6">{t("building.a.desc")}</p>
             <div className="bg-slate-50 rounded-xl p-4 text-sm text-slate-600 mb-6 space-y-2">
               <div className="flex justify-between">
-                <span>Total Floors</span>
-                <span className="font-semibold text-slate-900">9 Floors</span>
+                <span>{t("label.totalFloors")}</span>
+                <span className="font-semibold text-slate-900">{t("building.a.floors")}</span>
               </div>
               <div className="flex justify-between">
-                <span>Rooms/Floor</span>
-                <span className="font-semibold text-slate-900">8 Rooms</span>
+                <span>{t("label.roomsPerFloor")}</span>
+                <span className="font-semibold text-slate-900">{t("building.a.roomsFloor")}</span>
               </div>
             </div>
             <Link
               to="/building-a"
               className="inline-block bg-violet-600 text-white rounded-xl px-6 py-2.5 font-semibold text-sm hover:bg-violet-700 transition-colors no-underline"
             >
-              View Floor Plan →
+              {t("btn.viewFloorPlan")}
             </Link>
           </div>
 
@@ -139,23 +141,23 @@ export default function Index() {
             <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-pink-500 to-rose-500 mx-auto mb-5 flex items-center justify-center text-3xl font-bold text-white">
               B
             </div>
-            <h3 className="text-2xl font-bold mb-2 text-slate-800">ABSC</h3>
-            <p className="text-slate-500 mb-6">Building B • 40 Rooms</p>
+            <h3 className="text-2xl font-bold mb-2 text-slate-800">{t("building.b.name")}</h3>
+            <p className="text-slate-500 mb-6">{t("building.b.desc")}</p>
             <div className="bg-slate-50 rounded-xl p-4 text-sm text-slate-600 mb-6 space-y-2">
               <div className="flex justify-between">
-                <span>Total Floors</span>
-                <span className="font-semibold text-slate-900">4 Floors</span>
+                <span>{t("label.totalFloors")}</span>
+                <span className="font-semibold text-slate-900">{t("building.b.floors")}</span>
               </div>
               <div className="flex justify-between">
-                <span>Rooms/Floor</span>
-                <span className="font-semibold text-slate-900">10 Rooms</span>
+                <span>{t("label.roomsPerFloor")}</span>
+                <span className="font-semibold text-slate-900">{t("building.b.roomsFloor")}</span>
               </div>
             </div>
             <Link
               to="/building-b"
               className="inline-block bg-violet-600 text-white rounded-xl px-6 py-2.5 font-semibold text-sm hover:bg-violet-700 transition-colors no-underline"
             >
-              View Floor Plan →
+              {t("btn.viewFloorPlan")}
             </Link>
           </div>
         </div>
@@ -163,7 +165,7 @@ export default function Index() {
 
       {/* ===== FOOTER ===== */}
       <footer className="py-6 text-center text-sm text-slate-500 border-t border-slate-200">
-        © Andaman Beach Suites Hotel
+        {t("footer.copyright")}
       </footer>
 
       {showLoginModal && (

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { X, Palette, Wrench, KeyRound, SlidersHorizontal, Plus, Trash2, GripVertical } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   MaintenanceCategory,
   DEFAULT_CATEGORIES,
@@ -17,18 +18,18 @@ interface SettingsModalProps {
 
 type Tab = "room-types" | "maintenance" | "admin" | "general";
 
-const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
-  { id: "room-types", label: "Room Types", icon: <Palette className="h-4 w-4" /> },
-  { id: "maintenance", label: "Maintenance", icon: <Wrench className="h-4 w-4" /> },
-  { id: "admin", label: "Admin Password", icon: <KeyRound className="h-4 w-4" /> },
-  { id: "general", label: "General", icon: <SlidersHorizontal className="h-4 w-4" /> },
-];
-
 export default function SettingsModal({ onClose, categories, onCategoriesChange }: SettingsModalProps) {
+  const { lang, setLang, t } = useLanguage();
   const [activeTab, setActiveTab] = useState<Tab>("room-types");
   const [roomTypes, setRoomTypes] = useState<RoomTypeItem[]>(DEFAULT_ROOM_TYPES);
   const [hotelName, setHotelName] = useState("Andaman Beach Suites");
-  const [language, setLanguage] = useState("th");
+
+  const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
+    { id: "room-types", label: t("settings.roomTypes"), icon: <Palette className="h-4 w-4" /> },
+    { id: "maintenance", label: t("settings.maintenance"), icon: <Wrench className="h-4 w-4" /> },
+    { id: "admin", label: t("settings.adminPassword"), icon: <KeyRound className="h-4 w-4" /> },
+    { id: "general", label: t("settings.general"), icon: <SlidersHorizontal className="h-4 w-4" /> },
+  ];
 
   // Admin password
   const [currentPass, setCurrentPass] = useState("");
@@ -353,10 +354,10 @@ export default function SettingsModal({ onClose, categories, onCategoriesChange 
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-1.5">🌐 Language</label>
+                    <label className="block text-sm font-bold text-slate-700 mb-1.5">{t("settings.language")}</label>
                     <select
-                      value={language}
-                      onChange={(e) => setLanguage(e.target.value)}
+                      value={lang}
+                      onChange={(e) => setLang(e.target.value as "en" | "th")}
                       className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 text-sm bg-white outline-none focus:border-blue-500 cursor-pointer"
                     >
                       <option value="th">🇹🇭 ภาษาไทย</option>
