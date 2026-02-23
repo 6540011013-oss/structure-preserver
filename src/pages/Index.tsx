@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { LogIn, Check } from "lucide-react";
+import { LogIn, Check, UserCircle } from "lucide-react";
 import LoginModal from "@/components/index/LoginModal";
 import HeroSlider from "@/components/index/HeroSlider";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -89,18 +89,22 @@ export default function Index() {
 
           <button
             onClick={handleAdminBtn}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-black transition-all duration-300 group shadow-sm ${
+            className={`flex items-center gap-2.5 pl-3 pr-5 py-2 rounded-full text-xs font-black tracking-wide transition-all duration-300 group shadow-sm ${
               isAdmin
                 ? "bg-green-600 border-2 border-green-600 text-white hover:bg-green-700"
                 : "border-2 border-slate-800 text-slate-800 hover:bg-slate-800 hover:text-white"
             }`}
           >
-            <span>{isAdmin ? t("btn.adminActive") : t("btn.staffLogin")}</span>
             {isAdmin ? (
-              <Check className="h-4 w-4" />
+              <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center">
+                <Check className="h-4 w-4" />
+              </div>
             ) : (
-              <LogIn className="h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
+              <div className="w-7 h-7 rounded-full bg-slate-800 text-white group-hover:bg-white group-hover:text-slate-800 flex items-center justify-center transition-colors">
+                <UserCircle className="h-5 w-5" />
+              </div>
             )}
+            <span>{isAdmin ? t("btn.adminActive") : t("btn.staffLogin")}</span>
           </button>
         </div>
       </header>
