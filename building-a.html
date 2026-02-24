@@ -1,0 +1,1160 @@
+﻿﻿<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Building A</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style type="text/tailwindcss">
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-slide-in {
+        animation: slideIn 0.3s ease forwards;
+    }
+  </style>
+
+  <style>
+    /* ========== LAYOUT FIXES ========== */
+    .plan-wrapper {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        position: relative;
+        padding-bottom: 20px;
+    }
+
+    /* ========== DASHBOARD STYLES (CANVA REPLICA) ========== */
+    .dashboard-section {
+        display: block !important;
+        width: 100% !important;
+        background-color: #f1f5f9;
+        border-top: 1px solid #e2e8f0;
+        padding: 60px 20px;
+        margin-top: 40px;
+        font-family: 'Prompt', sans-serif;
+    }
+
+    .dashboard-header { text-align: center; margin-bottom: 40px; }
+    .dashboard-header h3 { font-size: 24px; font-weight: 800; color: #1e293b; margin-bottom: 8px; }
+    .dashboard-header p { color: #64748b; font-size: 14px; }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 30px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .filter-card {
+        background: white;
+        border-radius: 24px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        border: 2px solid transparent;
+        transition: all 0.3s;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .filter-card:hover { transform: translateY(-10px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+    .filter-card.active { border-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2); }
+    .filter-card.active .check-mark { opacity: 1; transform: scale(1); }
+
+    .img-container {
+        width: 100%; height: 160px; border-radius: 16px; margin-bottom: 15px;
+        display: flex; align-items: center; justify-content: center; position: relative;
+    }
+
+    .bg-pastel-blue { background-color: #e3f2fd; }
+    .bg-pastel-cyan { background-color: #e0f7fa; }
+    .bg-pastel-pink { background-color: #fce4ec; }
+    .bg-pastel-yellow { background-color: #fff8e1; }
+
+    .custom-svg { width: 100px; height: 100px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+
+    .status-badge {
+        background: rgba(255,255,255,0.9); color: #64748b; font-size: 10px; font-weight: 700;
+        padding: 4px 12px; border-radius: 20px; margin-top: -30px; margin-bottom: 15px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05); z-index: 2; border: 1px solid #f1f5f9;
+        display: flex; align-items: center; gap: 4px;
+    }
+    .status-icon { width: 8px; height: 8px; border-radius: 50%; }
+
+    .card-title { font-size: 16px; font-weight: 800; color: #1e293b; margin-bottom: 4px; }
+    .card-sub { font-size: 12px; color: #94a3b8; font-weight: 500; }
+
+    .check-mark {
+        position: absolute; top: 15px; right: 15px; width: 28px; height: 28px;
+        background: #3b82f6; color: white; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 16px; opacity: 0; transform: scale(0); transition: all 0.2s; z-index: 10;
+    }
+
+    /* CSS สำหรับ AP Date Input */
+    .checkbox-custom { width: 18px; height: 18px; cursor: pointer; accent-color: #2563eb; }
+    .hidden { display: none; }
+
+    @media (max-width: 1024px) { .filter-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { .filter-grid { grid-template-columns: 1fr; } }
+.room { 
+    transition: all 0.3s ease-in-out; 
+    position: relative; 
+}
+
+.room { 
+    transition: all 0.3s ease; 
+    position: relative; 
+}
+
+.room.is-dimmed-force {
+    opacity: 0.08 !important;
+    filter: grayscale(100%) !important;
+    pointer-events: none !important;
+}
+
+.room.is-highlight-force {
+    opacity: 1 !important;
+    filter: none !important; /* ปิดการทำ grayscale */
+    transform: scale(1.1) !important;
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.8) !important;
+}
+.item-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .item-card:hover { transform: translateY(-4px); }
+    .modal-content-box { animation: slideUp 0.3s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .btn-primary { transition: all 0.2s ease; }
+    .btn-primary:hover { transform: scale(1.02); }
+    .image-preview {
+        background-image: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+        background-size: 16px 16px;
+        background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+    }
+    .image-dropzone { cursor: pointer; transition: all 0.2s ease; }
+    .image-dropzone.is-dragover { border-color: #10b981; background-color: #ecfdf5; }
+    .image-dropzone .drop-hint { color: #64748b; font-size: 12px; }
+    .category-badge { animation: popIn 0.3s ease-out; }
+    @keyframes popIn { 0% { transform: scale(0); } 70% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+    /* date-strip styles removed */
+        /* Ensure hidden modals do not block pointer events */
+        .modal-overlay.hidden, #roomInfoModal.hidden, #addItemModal.hidden, #admin-modal-canva.hidden {
+                display: none !important;
+                pointer-events: none !important;
+        }
+        /* change-badge removed */
+  </style>
+</head>
+<body data-building-image="img/Andaman.jpg" data-building-title="Building A – Ocean View">
+
+<header class="page-navbar sticky top-0 z-[3000] bg-white/85 backdrop-blur-md border-b border-slate-200 shadow-sm !p-0">
+  <div class="flex flex-wrap items-center justify-between px-5 py-3 w-full gap-y-3">
+    
+    <div class="flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors border-none bg-transparent cursor-pointer no-underline">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+          <path d="m15 18-6-6 6-6"/>
+        </svg>
+        <span class="text-xs font-semibold">Home</span>
+      </a>
+      
+      <div class="h-6 w-px bg-slate-300"></div>
+      
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
+          A
+        </div>
+        <div>
+          <h1 class="text-sm font-extrabold text-slate-800 leading-none tracking-wide m-0">BUILDING A</h1>
+          <span class="text-[10px] text-slate-500 font-bold tracking-widest uppercase m-0">Ocean View</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-1.5">
+      
+      <button id="edit-mode-btn" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide transition-all border-none bg-transparent cursor-pointer text-slate-600 hover:text-slate-900">
+        <span id="edit-icon">🔒</span>
+        <span id="edit-mode-text">LOCK MODE</span>
+      </button>
+
+      <button id="admin-btn-canva" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide transition-all border-none bg-transparent cursor-pointer text-slate-600 hover:text-slate-900">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5">
+          <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>
+        </svg>
+        <span>SETTINGS</span>
+      </button> 
+
+      <button onclick="enableQuickMode()" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide transition-all border-none cursor-pointer text-orange-600 bg-orange-50 hover:bg-orange-100">
+          ⚡ QUICK UPDATE
+      </button> 
+
+      <button id="dashboardBtn" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide transition-all border-none bg-transparent cursor-pointer text-slate-600 hover:text-slate-900">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5">
+          <rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>
+        </svg>
+        <span>DASHBOARD</span>
+      </button>
+
+      <button id="open-date-picker-btn" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide transition-all border-none bg-transparent cursor-pointer text-slate-600 hover:text-slate-900">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5">
+          <path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>
+        </svg>
+        <span>DATE</span>
+      </button>
+
+      <div class="h-6 w-px bg-slate-300 mx-1"></div>
+
+      <a href="building-b.html" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide transition-all border-none cursor-pointer no-underline bg-rose-50 text-rose-600 hover:bg-rose-100 hover:text-rose-700">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5">
+          <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>
+        </svg>
+        <span>BUILDING B</span>
+      </a>
+</div>
+    <button id="adminBtn" class="flex items-center gap-2 px-5 py-2 rounded-full text-xs font-black uppercase tracking-wide transition-all duration-300 cursor-pointer border-2 border-slate-800 text-slate-800 hover:bg-slate-800 hover:text-white group">
+      <svg id="btnIcon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5 transform group-hover:translate-x-1 transition-transform">
+        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" x2="3" y1="12" y2="12"/>
+      </svg>
+      <span id="btnText">STAFF LOGIN</span>
+    </button>
+
+  </div>
+</header>
+<div id="quick-status-bar" class="hidden sticky top-[64px] z-[2500] bg-slate-900 shadow-xl border-b border-white/10 overflow-x-auto">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <span class="flex h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
+            <span class="text-white text-xs font-black uppercase tracking-widest">Quick Mode:</span>
+        </div>
+        
+        <div id="quick-tool-options" class="flex gap-2">
+            </div>
+
+        <button onclick="disableQuickMode()" class="px-4 py-1.5 rounded-lg bg-red-500 hover:bg-red-600 text-white text-[10px] font-black uppercase transition-all border-none cursor-pointer shadow-lg shadow-red-500/20">
+            Exit Mode
+        </button>
+    </div>
+</div>
+<div class="plan-wrapper">
+  <div class="building-plan">
+
+    <div id="Acontent">
+        <div class="legend-block main-legend">
+            <h4 class="text-sm font-bold text-gray-800 mb-2 border-b pb-1">Room Type</h4>
+            <div id="room-type-legend" class="legend-grid"></div>
+        </div>
+    </div>
+
+  <div class="legend-block left-info-panel">
+    <h4 class="text-sm font-bold text-gray-800 mb-3 border-b pb-2 uppercase tracking-wider">Service Status</h4>
+
+    <label class="inline-flex items-center cursor-pointer">
+            <span class="mr-2 text-[10px] font-bold text-slate-500 uppercase">Highlight</span>
+            <div class="relative">
+                <input type="checkbox" id="highlightToggle" class="sr-only peer" onchange="toggleHighlightMode(this.checked)">
+                <div class="w-8 h-4 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-indigo-600"></div>
+            </div>
+        </label>
+    </div>
+    
+    <div id="service-sidebar-list" class="flex flex-col gap-3">
+        </div>
+</div>
+<div class="floor small">
+        <div class="room type-condo half flex items-center justify-center relative" data-room-id="2101-F2">
+            2101 Floor 2
+        </div>
+        <div class="room type-condo half flex items-center justify-center relative" data-room-id="2102-F2">
+            2102 Floor 2
+        </div>
+    </div>
+
+    <div class="floor small">
+        <div class="room type-condo half flex items-center justify-center relative" data-room-id="2101-F1">
+            2101 Floor 1<br><span class="guest-label">Mrs.Mizuki</span>
+        </div>
+        <div class="room type-condo half flex items-center justify-center relative" data-room-id="2102-F1">
+            2102 Floor 1<br><span class="guest-label">Dr.Gerhard</span>
+        </div>
+    </div>
+
+    <div class="floor large">
+        <div class="room type-condo w-full h-full flex items-center justify-center relative" data-room-id="2001-2008">
+            2001–2008 <br> <span class="guest-label">Mr.Moravekar</span>
+        </div>
+    </div>
+                <div class="floor floor19"><div class="r1 room type-condo">1901 <br> Mr.Moravekar</div><div class="r2 room type-sus">1902 <br> Mr.Moravekar</div><div class="r3 room type-dls">1903 <br> Mr.Moravekar</div><div class="r4 room type-condo">1905 <br> Mr.Moravekar</div></div>
+                <div class="floor level18"><div class="r1 room type-condo">1801</div><div class="r2 room type-dls">1805</div><div class="r3 room type-sus">1806</div><div class="r4 room type-dls">1807</div><div class="r5 room type-dls">1808</div><div class="r6 room type-sus">1809</div><div class="r7 room type-dls">1810</div><div class="r8 room type-condo">1804</div></div>
+                <div class="floor level17"><div class="r1 room type-condo">1701-02</div><div class="r2 room type-sus">1703</div><div class="r3 room type-dls">1704</div><div class="r4 room type-dls">1705</div><div class="r5 room type-dls">1706</div><div class="r6 room type-dls">1707</div><div class="r7 room type-sus">1708</div><div class="r8 room type-condo">1709</div></div>
+                <div class="floor level16"><div class="r1 room type-lux">1601–1602<br>LUX</div><div class="r2 room type-condo">1603<br>SUS</div><div class="r3 room type-sus">1604<br>SUS</div><div class="r4 room type-dls">1605<br>DLS</div><div class="r5 room type-dls">1607<br>DLS</div><div class="r6 room type-dls">1608<br>DLS</div><div class="r7 room type-dls">1609<br>DLS</div><div class="r8 room type-sus">1610<br>SUS</div><div class="r9 room type-condo">1606<br>SUS</div><div class="r10 room type-lux">1611–1612<br>ROY</div></div>
+                <div class="floor level15"><div class="r1 room type-condo room-type">1501–1502<br>BYD</div><div class="r2 room type-condo room-type">1503<br>BYD</div><div class="r3 room type-sus room-type">1504<br>SUS</div><div class="r4 room type-dls room-type">1505<br>DLS</div><div class="r5 room type-dls room-type">1506<br>DLS</div><div class="r6 room type-dls room-type">1507<br>DLS</div><div class="r7 room type-dls room-type">1508<br>DLS</div><div class="r8 room type-sus room-type">1509<br>SUS</div><div class="r9 room type-condo room-type">1510<br>SUS</div><div class="r10 room type-condo room-type">1511–1512<br>SUS</div></div>
+                <div class="floor level14"><div class="r1 room type-condo room-type">1401–1402</div><div class="r2 room type-condo room-type">1403</div><div class="r3 room type-sdl room-type">1404<br>SDL</div><div class="r4 room type-sdl room-type">1405<br>SDL</div><div class="r5 room type-sdl room-type">1406<br>SDL</div><div class="r6 room type-sdl room-type">1410<br>SDL</div><div class="r7 room type-condo room-type">1407</div><div class="r10 room type-condo room-type">1408–1409</div></div>
+                <div class="floor level12"><div class="r1 room type-condo">1201-02 <br>Mrs.Maillard</div><div class="r2 room type-condo">1203 <br>K.Sunan</div><div class="r3 room type-condo">1204 <br>Mr.&Mrs.Gazonnaud </div><div class="r4 room type-dls">1205 <br>DLS New</div><div class="r5 room type-dls">1210 <br>DLS New</div><div class="r6 room type-condo">1206 <br>Mr.Keller</div><div class="r7 room type-condo">1207 <br>Mr.Sonerud</div><div class="r10 room type-condo">1208-09<br>Mrs.Marti</div></div>
+                <div class="floor level11"><div class="r1 room type-condo">1101-02 <br>K.Bernd</div><div class="r2 room type-sdl" data-room-id="1103-1104" style="width:200px;">1103 - 1104 <br>SDL</div><div class="r4 room type-sus">1105 <br>SUS</div><div class="r5 room type-dls">1106 <br>DLS</div><div class="r6 room type-dls">1108 <br>DLS</div><div class="r7 room type-dls">1109 <br>DLS</div><div class="r8 room type-condo">1110-11 <br>K.Tom, K.สุดใจ </div><div class="r9 room type-condo">1107 <br>K.Tom, K.สุดใจ </div><div class="r10 room type-condo">1112-14 <br>K.Tom, K.สุดใจ </div></div>
+                <div class="floor level10"><div class="r1 room type-condo">1001-02 <br>K.Odd</div><div class="r2 room type-condo">1003 <br>K.Regis</div><div class="r3 room type-sus">1004 <br> SUS </div><div class="r4 room type-dls">1005 <br>DLS</div><div class="r5 room type-dls">1006 <br>DLS</div><div class="r6 room type-dls">1010 <br>DLS</div><div class="r7 room type-condo">1011-12 <br>K.Alex</div><div class="r8 room type-condo">1007 <br>K.Alex </div><div class="r9 room type-condo">1008-09 <br>K.Alex </div></div>
+                <div class="floor level9"><div class="r1 room type-condo">901-02 <br>K.Bernd</div><div class="r2 room type-condo">903 <br>K.Sunan</div><div class="r3 room type-sus">904 <br> SUS </div><div class="r4 room type-dls">905 <br>DLS</div><div class="r5 room type-dls">906 <br>DLS</div><div class="r6 room type-dls">907 <br>DLS</div><div class="r7 room type-dls" data-room-id="908-909" style="width:200px;">908 - 909</div><div class="r9 room type-dls">910 <br>DLS </div><div class="r10 room type-sdl">911 <br>SDL </div><div class="r11 room type-condo">912 <br>K.Marcus </div></div>
+                <div class="floor level8"><div class="r1 room type-fam">801  802 <br>FAM</div><div class="r2 room type-condo">803<br>Mr.&Mrs.Stammer</div><div class="r3 room type-sps">804<br>SPS</div><div class="r4 room type-sps">805<br>SPS</div><div class="r5 room type-sps">806 <br>SPS</div><div class="r6 room type-sps">807 <br>SPS</div><div class="r7 room type-sps">808 <br>DLS</div><div class="r8 room type-sps">809 <br>SPS</div><div class="r9 room type-sps">810<br>SPS</div><div class="r10 room type-sdl">811 <br>SDL </div><div class="r11 room type-condo">812-14 <br>K.Eddy </div></div>
+                <div class="floor level7"><div class="r1 room type-fam">701 702<br>FAM</div><div class="r2 room type-condo">703 <br>K.Marc</div><div class="r3 room type-condo">704 <br>Mr.Lim</div><div class="r4 room type-sps">705 <br> SPS</div><div class="r5 room type-condo">706 <br>K.Peter</div><div class="r6 room type-sps">707 <br>SPS</div><div class="r7 room type-condo">708 <br>Mr.Terbuyken</div><div class="r8 room type-sps">709 <br>SPS </div><div class="r9 room type-sps">710 <br>SPS</div><div class="r10 room type-condo">711 <br>K.Bernard</div><div class="r11 room type-condo">712 <br>Mr.Kemenade</div><div class="r12 room type-fam">714 715 <br>FAM</div></div>
+                <div class="floor level6"><div class="r1 room type-fam">601 602 <br>FAM</div><div class="r2 room type-condo">603<br>Mr.Taret</div><div class="r3 room type-sps">604<br>SPS</div><div class="r4 room type-sps">605<br>SPS</div><div class="r5 room type-sps">606<br>SPS</div><div class="r6 room type-sps">607<br>SPS</div><div class="r7 room type-condo">608 <br>BYD (K.Hans)</div><div class="r8 room type-sps">609 <br>SPS</div><div class="r9 room type-sps">610<br>SPS</div><div class="r10 room type-sps">611<br>SPS</div><div class="r11 room type-sdl">612<br>SDL</div><div class="r12 room type-fam">614 615<br>FAM</div></div>
+                <div class="floor level5"><div class="r1 room type-fam">501 502<br>FAM</div><div class="r2 room type-sdl">503<br>SDL</div><div class="r3 room type-sps">504<br>SPS</div><div class="r4 room type-sps">505<br>SPS</div><div class="r5 room type-sps">506<br>SPS</div><div class="r6 room type-sps">507<br>SPS</div><div class="r7 room type-sps">508<br>SPS</div><div class="r8 room type-sps">509<br>SPS</div><div class="r9 room type-sps">510<br>SPS</div><div class="r10 room type-sps">511<br>SPS</div><div class="r11 room type-condo">512<br>Mr.John Ove</div><div class="r12 room type-fam">514 515<br>FAM</div></div>
+                <div class="floor level4"><div class="r1 room type-condo">401-02<br>BAM</div><div class="r2 room type-sps">403<br>SPS</div><div class="r3 room type-sps">404<br>SPS</div><div class="r4 room type-sps">405<br>SPS</div><div class="r5 room type-sps">406<br>SPS</div><div class="r6 room type-sps">407<br>SPS</div><div class="r7 room type-sps">408<br>SPS</div><div class="r8 room type-sps">409<br>SPS</div><div class="r9 room type-sps">410<br>SPS</div><div class="r10 room type-sps">411<br>SPS</div><div class="r11 room type-sps">412<br>Mr.John Ove</div><div class="r12 room type-fam">414 415<br>FAM</div></div>
+
+            </div> </div> </div> </div> 
+
+<div id="roomEditModal" class="modal-overlay hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+    <div class="w-full max-w-2xl bg-white rounded-xl shadow-2xl overflow-hidden transform transition-all">
+        <div class="px-6 py-4 flex items-center justify-between bg-gradient-to-br from-orange-500 to-orange-600">
+            <h2 id="modalRoomNumber" class="text-xl font-bold text-white tracking-wide">Edit Room 0000</h2>
+            <button id="closeIcon" class="p-1 rounded-lg text-white hover:bg-white/20 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">👤 Guest Name</label>
+                        <input type="text" id="editGuestName" class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 input-focus text-gray-700">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">🛏️ Room Type</label>
+                        <input type="hidden" id="editRoomType" value="">
+                        <div id="roomTypeSelect" class="room-type-select">
+                            <button type="button" id="roomTypeSelectBtn" class="room-type-select__btn">
+                                <span id="roomTypeSelectColor" class="room-type-select__color"></span>
+                                <span id="roomTypeSelectLabel">Select Room Type</span>
+                                <span class="room-type-select__chev">▾</span>
+                            </button>
+                            <div id="roomTypeSelectList" class="room-type-select__list hidden"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">🛠️ Maintenance Category</label>
+                        <select id="editMaintStatus" class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 input-focus text-gray-700 bg-white">
+                            <option value="">(None)</option>
+                            <option value="wifi">📶 WiFi Install / Network Repair</option>
+                            <option value="air">❄️ Aircon Cleaning / Repair</option>
+                            <option value="clean">🧹 Housekeeping</option>
+                            <option value="fix">🔧 General Maintenance</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">📝 Maintenance Note</label>
+                        <textarea id="maintNote" rows="3" placeholder="e.g., install date / assigned staff / details" class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 input-focus text-gray-700 bg-white"></textarea>
+                        <p class="text-xs text-gray-500 mt-1">This note appears when hovering the maintenance icon in the room.</p>
+                    </div>
+                    
+                    <div id="resolve-maint-container" class="hidden mt-2 mb-2">
+                        <button type="button" id="btn-resolve-maint" class="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-all duration-200 transform hover:-translate-y-0.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                            Mark as Resolved
+                        </button>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-gray-200">
+                        <label class="block text-sm font-bold text-blue-600 mb-2">📡 Access Point (AP)</label>
+                        <div class="flex items-center gap-3 mb-2">
+                            <input type="checkbox" id="hasAP" class="checkbox-custom" onchange="toggleAPDate()">
+                            <span class="text-sm font-medium text-gray-700">AP Installed</span>
+                        </div>
+                        <div id="apDateGroup" class="hidden pl-7">
+                            <label class="block text-xs text-gray-500 mb-1">Install Date</label>
+                            <input type="date" id="apInstallDate" class="w-full px-3 py-2 rounded border border-gray-300 text-sm">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
+            <button id="closeModal" class="px-6 py-2.5 rounded-lg font-medium text-gray-600 bg-gray-200 hover:bg-gray-300 transition-all">Cancel</button>
+            <button id="saveRoomInfo" class="px-6 py-2.5 rounded-lg font-medium text-white bg-green-500 hover:bg-green-600 shadow-lg shadow-green-500/30 transition-all transform hover:-translate-y-0.5">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<div id="roomInfoModal" class="hidden fixed inset-0 flex items-center justify-center p-4" style="z-index: 20000 !important;">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeInfoModal()"></div>
+    
+    <div class="modal-content-box bg-white rounded-3xl shadow-2xl w-full max-w-5xl h-[90vh] overflow-hidden flex flex-col relative z-10">
+        <div class="p-4 md:p-6 pb-0 bg-white">
+            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-6 shadow-xl">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="text-3xl">🏠</span>
+                            <h1 id="infoRoomTitle" class="text-2xl md:text-3xl font-bold text-white">Master Bedroom</h1>
+                        </div>
+                        <p class="text-white text-sm md:text-base opacity-90">Room <span id="infoRoomIdDisplay">#101</span> • <span id="itemCount">0</span> items</p>
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        <button onclick="openAddItemModal()" class="btn-primary bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-3 rounded-xl font-semibold flex items-center gap-2 shadow-lg cursor-pointer border-none">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg> 
+                            Add Item
+                        </button>
+                        <button onclick="closeInfoModal()" class="bg-white/20 hover:bg-white/30 text-white p-3 rounded-xl transition cursor-pointer border-none">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-4 md:p-6 bg-white relative">
+            <div id="room-info-note-panel" class="hidden absolute bottom-16 right-4 w-[320px] max-w-[calc(100%-2rem)] rounded-xl border border-slate-200 bg-white p-4 shadow-xl z-30">
+                <div id="room-info-note-view">
+                    <div class="text-sm font-semibold text-slate-700 mb-2">Room Note</div>
+                    <div id="room-info-note-text" class="min-h-[72px] text-sm text-slate-600 whitespace-pre-wrap break-words bg-slate-50 border border-slate-200 rounded-lg p-3">ยังไม่มีโน้ตห้อง</div>
+                    <div class="mt-3 flex justify-end gap-2">
+                        <button id="room-info-note-edit-btn" onclick="enterRoomInfoNoteEdit()" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition cursor-pointer border-none">Edit</button>
+                        <button onclick="toggleRoomInfoNotePanel(false)" class="px-3 py-1.5 rounded-lg bg-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-300 transition cursor-pointer border-none">Close</button>
+                    </div>
+                </div>
+                <div id="room-info-note-editor" class="hidden">
+                    <label for="room-info-note-input" class="block text-sm font-semibold text-slate-700 mb-2">Edit Note</label>
+                    <textarea id="room-info-note-input" rows="4" placeholder="จดได้ทุกอย่าง เช่น ความกว้างห้อง, ตำแหน่งเตียง, จุดสังเกตพิเศษ ฯลฯ" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition bg-white"></textarea>
+                    <div class="mt-3 flex justify-end gap-2">
+                        <button id="room-info-note-save-btn" onclick="saveRoomInfoNote()" class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition cursor-pointer border-none">Save</button>
+                        <button onclick="cancelRoomInfoNoteEdit()" class="px-3 py-1.5 rounded-lg bg-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-300 transition cursor-pointer border-none">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-2 overflow-x-auto pb-4" id="category-filters"></div>
+
+            <div id="items-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-10"></div>
+
+            <div id="empty-state" class="hidden text-center py-16">
+                <div class="text-6xl mb-4">📭</div>
+                <h3 class="text-slate-700 text-xl font-semibold mb-2">No items yet</h3>
+                <p class="text-slate-500 mb-6">Start adding items for this room.</p>
+                <button onclick="openAddItemModal()" class="btn-primary bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-semibold inline-flex items-center gap-2 cursor-pointer border-none">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg> 
+                    Add First Item 
+                </button>
+            </div>
+
+            <button id="room-info-note-toggle-btn" onclick="toggleRoomInfoNotePanel()" class="absolute bottom-4 right-4 h-10 w-10 rounded-full bg-amber-100 text-amber-700 hover:bg-amber-200 transition cursor-pointer border-none text-base font-bold shadow-md z-20" title="Room Note">
+                📌
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="addItemModal" class="hidden fixed inset-0 flex items-center justify-center p-4" style="z-index: 21000 !important;">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeAddItemModal()"></div>
+    
+    <div class="modal-content-box bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl relative z-10">
+        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4 flex justify-between items-center">
+            <h2 class="text-xl font-bold text-white">Add New Item</h2>
+            <button onclick="closeAddItemModal()" class="text-white/90 hover:text-white p-1 cursor-pointer bg-transparent border-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+
+        <div class="p-6 max-h-[80vh] overflow-y-auto">
+            <div class="space-y-4">
+                <div class="mb-5">
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Image</label>
+                    <div id="image-dropzone" class="image-preview image-dropzone relative w-full h-40 rounded-xl border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden bg-slate-50" tabindex="0" role="button" aria-label="Select image file">
+                        <div id="image-placeholder" class="text-center">
+                            <span class="text-4xl mb-2 block">📷</span>
+                            <span class="text-slate-500 text-sm">Drag an image here or click to choose a file.</span>
+                            <div class="drop-hint mt-1">Supports JPG, PNG, GIF, WEBP</div>
+                            <button type="button" id="image-pick-btn" class="mt-3 px-4 py-2 text-sm font-semibold rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 transition">Choose Image</button>
+                        </div>
+                        <img id="preview-img" class="hidden absolute inset-0 w-full h-full object-cover" alt="Preview">
+                        <input type="file" id="item-image-file" accept="image/*" class="hidden">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Item Name <span class="text-red-500">*</span></label> 
+                    <input type="text" id="item-name-input" placeholder="e.g., Bed" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+    <div>
+        <label class="block text-sm font-semibold text-slate-700 mb-2">Width (ความกว้าง)</label> 
+        <div class="flex">
+            <input type="text" id="item-width-input" placeholder="55" class="w-full px-4 py-3 rounded-l-xl border border-slate-300 focus:border-emerald-500 outline-none transition">
+            <select id="item-width-unit" class="bg-slate-50 border border-l-0 border-slate-300 rounded-r-xl px-2 text-xs font-bold text-slate-600 outline-none cursor-pointer">
+                <option value="cm">cm</option>
+                <option value="m">m</option>
+                <option value="mm">mm</option>
+             <option value="Inch">Inch</option>
+             <option value="ft">ft</option>
+             <option value="Sq.m.">Sq.m.</option>
+            </select>
+        </div>
+    </div>
+    <div>
+        <label class="block text-sm font-semibold text-slate-700 mb-2">Length (ความยาว)</label> 
+        <div class="flex">
+            <input type="text" id="item-height-input" placeholder="55" class="w-full px-4 py-3 rounded-l-xl border border-slate-300 focus:border-emerald-500 outline-none transition">
+            <select id="item-height-unit" class="bg-slate-50 border border-l-0 border-slate-300 rounded-r-xl px-2 text-xs font-bold text-slate-600 outline-none cursor-pointer">
+                <option value="cm">cm</option>
+                <option value="m">m</option>
+                <option value="mm">mm</option>
+             <option value="Inch">Inch</option>
+             <option value="ft">ft</option>
+             <option value="Sq.m.">Sq.m.</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Note</label>
+                    <textarea id="item-note-input" rows="3" placeholder="เช่น ห้องกว้าง 4 เมตร, หัวเตียงชิดผนังด้านซ้าย, ใช้เก็บรายละเอียดอื่นๆ ได้ทั้งหมด" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Category</label> 
+                    <select id="item-category-input" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition bg-white"> 
+                        <option value="เฟอร์นิเจอร์">🛋️ Furniture</option> 
+                        <option value="เครื่องใช้ไฟฟ้า">💡 Appliances</option> 
+                        <option value="ของตกแต่ง">🖼️ Decor</option> 
+                        <option value="อื่นๆ">📦 Other</option> 
+                    </select>
+                </div>
+            </div>
+
+            <button onclick="saveCanvaItem()" class="w-full btn-primary bg-emerald-500 hover:bg-emerald-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg mt-6 cursor-pointer border-none"> 
+                Save Item 
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleAPDate() {
+    const hasAP = document.getElementById('hasAP');
+    const dateInput = document.getElementById('apDateGroup');
+    if (!hasAP || !dateInput) return;
+    const isChecked = !!hasAP.checked;
+    if(isChecked) dateInput.classList.remove('hidden'); else dateInput.classList.add('hidden');
+}
+</script>
+
+<div id="admin-modal-canva" class="hidden fixed inset-0 z-[9999] flex items-center justify-center p-4 font-['Inter',sans-serif]">
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="modal-backdrop-canva"></div>
+  
+  <div class="relative w-full max-w-[780px] h-[85vh] bg-white rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.3)] overflow-hidden flex flex-col animate-[popIn_0.25s_cubic-bezier(0.175,0.885,0.32,1.275)]">
+    
+    <div class="px-6 py-4 flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-slate-800 to-slate-700">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg>
+        </div>
+        <div>
+          <h2 class="text-lg font-extrabold text-white tracking-wide m-0">Settings</h2>
+          <p class="text-xs text-slate-400 m-0">Manage system configuration</p>
+        </div>
+      </div>
+      <button id="close-modal-canva" class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-colors border-none cursor-pointer bg-transparent">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="flex flex-1 min-h-0">
+      
+      <div class="w-[200px] bg-slate-50 border-r border-slate-200 py-3 flex-shrink-0">
+        <button data-target="tab-room-types" class="settings-tab-btn w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold text-left border-none cursor-pointer transition-all bg-white text-slate-800 shadow-sm border-r-2 border-r-blue-500">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+          Room Types
+        </button>
+        <button data-target="tab-maintenance" class="settings-tab-btn w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold text-left border-none cursor-pointer transition-all bg-transparent text-slate-500 hover:bg-white/60 hover:text-slate-700">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          Maintenance
+        </button>
+        <button data-target="tab-admin" class="settings-tab-btn w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold text-left border-none cursor-pointer transition-all bg-transparent text-slate-500 hover:bg-white/60 hover:text-slate-700">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18v3c0 .6.4 1 1 1h4v-3h3v-3h2l1.4-1.4a6.5 6.5 0 1 0-4-4Z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/></svg>
+          Admin Password
+        </button>
+        <button data-target="tab-general" class="settings-tab-btn w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold text-left border-none cursor-pointer transition-all bg-transparent text-slate-500 hover:bg-white/60 hover:text-slate-700">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg>
+          General
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-6 bg-white relative">
+        
+        <div id="tab-room-types" class="settings-tab-content block">
+            <h3 class="text-base font-extrabold text-slate-800 mb-1">Room Types</h3>
+            <p class="text-sm text-slate-500 mb-5">จัดการประเภทห้องพัก เลือกสีและชื่อได้ตามต้องการ</p>
+            <div id="room-types-list" class="space-y-2 mb-5 h-[40vh] overflow-y-auto pr-2"></div>
+            <form id="room-type-form" class="flex items-end gap-3 p-4 bg-blue-50/50 rounded-xl border border-blue-100 mt-auto">
+              <div class="flex-1">
+                <label class="block text-xs font-bold text-slate-600 mb-1">Label</label>
+                <input type="text" id="room-type-name" placeholder="e.g. Penthouse" required class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-blue-400 bg-white">
+              </div>
+              <div class="w-20">
+                <label class="block text-xs font-bold text-slate-600 mb-1">Color</label>
+                <input type="color" id="room-type-color" value="#3b82f6" class="w-full h-9 p-0 rounded-lg border border-slate-200 cursor-pointer overflow-hidden bg-white">
+              </div>
+              <button type="submit" class="h-9 px-4 rounded-lg bg-blue-600 text-white text-sm font-bold border-none cursor-pointer hover:bg-blue-700 transition-colors flex items-center gap-1.5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg> Add
+              </button>
+            </form>
+        </div>
+
+        <div id="tab-maintenance" class="settings-tab-content hidden">
+            <h3 class="text-base font-extrabold text-slate-800 mb-1">🛠️ Maintenance Categories</h3>
+            <p class="text-sm text-slate-500 mb-5">จัดการหมวดหมู่งานซ่อมบำรุง — ไอคอนจะแสดงใน Service Status</p>
+            <div id="maintenance-list" class="space-y-2 mb-5 h-[35vh] overflow-y-auto pr-2"></div>
+            <form id="maintenance-form" class="p-4 bg-purple-50/50 rounded-xl border border-purple-100 space-y-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Category Name</label>
+                <input type="text" id="maintenance-name" placeholder="e.g., Electrical System" required class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-purple-400 bg-white">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-2">Select Icon</label>
+                <div class="flex flex-wrap gap-2" id="icon-selector">
+                  <button type="button" class="icon-btn w-10 h-10 rounded-xl flex items-center justify-center border-2 border-purple-500 bg-purple-100 shadow-md scale-110 cursor-pointer text-xl transition-all" data-icon="📶">📶</button>
+                  <button type="button" class="icon-btn w-10 h-10 rounded-xl flex items-center justify-center border-2 border-slate-200 bg-white hover:border-purple-300 hover:bg-purple-50 cursor-pointer text-xl transition-all" data-icon="❄️">❄️</button>
+                  <button type="button" class="icon-btn w-10 h-10 rounded-xl flex items-center justify-center border-2 border-slate-200 bg-white hover:border-purple-300 hover:bg-purple-50 cursor-pointer text-xl transition-all" data-icon="🧹">🧹</button>
+                  <button type="button" class="icon-btn w-10 h-10 rounded-xl flex items-center justify-center border-2 border-slate-200 bg-white hover:border-purple-300 hover:bg-purple-50 cursor-pointer text-xl transition-all" data-icon="🔧">🔧</button>
+                  <button type="button" class="icon-btn w-10 h-10 rounded-xl flex items-center justify-center border-2 border-slate-200 bg-white hover:border-purple-300 hover:bg-purple-50 cursor-pointer text-xl transition-all" data-icon="⚡">⚡</button>
+                  <button type="button" class="icon-btn w-10 h-10 rounded-xl flex items-center justify-center border-2 border-slate-200 bg-white hover:border-purple-300 hover:bg-purple-50 cursor-pointer text-xl transition-all" data-icon="💡">💡</button>
+                  <button type="button" class="icon-btn w-10 h-10 rounded-xl flex items-center justify-center border-2 border-slate-200 bg-white hover:border-purple-300 hover:bg-purple-50 cursor-pointer text-xl transition-all" data-icon="💧">💧</button>
+                  <button type="button" class="icon-btn w-10 h-10 rounded-xl flex items-center justify-center border-2 border-slate-200 bg-white hover:border-purple-300 hover:bg-purple-50 cursor-pointer text-xl transition-all" data-icon="🛏️">🛏️</button>
+                  <input type="hidden" id="selected-icon" value="📶">
+                </div>
+              </div>
+              <button type="submit" class="w-full py-2.5 rounded-xl bg-purple-600 text-white text-sm font-bold border-none cursor-pointer hover:bg-purple-700 transition-colors flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg> Add Category
+              </button>
+            </form>
+        </div>
+
+        <div id="tab-admin" class="settings-tab-content hidden">
+            <h3 class="text-base font-extrabold text-slate-800 mb-1">Admin Password</h3>
+            <p class="text-sm text-slate-500 mb-5">เปลี่ยนรหัสผ่านสำหรับ Staff Login</p>
+            <div class="max-w-sm space-y-4">
+                <div>
+                  <label class="block text-sm font-bold text-slate-700 mb-1.5">🔑 รหัสปัจจุบัน</label>
+                  <input type="password" placeholder="••••" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all bg-white">
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-slate-700 mb-1.5">🔐 รหัสใหม่</label>
+                  <input type="password" placeholder="อย่างน้อย 4 ตัว" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all bg-white">
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-slate-700 mb-1.5">🔐 ยืนยันรหัสใหม่</label>
+                  <input type="password" placeholder="••••" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all bg-white">
+                </div>
+                <button onclick="alert('Demo: Changed Password');" class="w-full py-3 rounded-xl border-none text-white font-extrabold text-sm cursor-pointer bg-blue-600 hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/25">
+                  เปลี่ยนรหัสผ่าน
+                </button>
+            </div>
+        </div>
+
+        <div id="tab-general" class="settings-tab-content hidden">
+            <h3 class="text-base font-extrabold text-slate-800 mb-1">General Settings</h3>
+            <p class="text-sm text-slate-500 mb-5">ตั้งค่าทั่วไปของระบบ</p>
+            <div class="max-w-sm space-y-5">
+                <div>
+                  <label class="block text-sm font-bold text-slate-700 mb-1.5">🏨 Hotel Name</label>
+                  <input type="text" value="Andaman Beach Suites" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all bg-white">
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-slate-700 mb-1.5">Language (ภาษา)</label>
+                  <select class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 text-sm bg-white outline-none focus:border-blue-500 cursor-pointer">
+                    <option value="en">🇬🇧 English</option>
+                    <option value="th">🇹🇭 ภาษาไทย</option>
+                  </select>
+                </div>
+                <div class="pt-4 border-t border-slate-200">
+                  <h4 class="text-sm font-bold text-slate-700 mb-3">ℹ️ System Info</h4>
+                  <div class="space-y-2 text-sm text-slate-500">
+                    <div class="flex justify-between"><span>Version</span><span class="font-mono font-bold text-slate-700">2.0.0</span></div>
+                    <div class="flex justify-between"><span>Buildings</span><span class="font-bold text-slate-700">A, B</span></div>
+                    <div class="flex justify-between"><span>Framework</span><span class="font-mono font-bold text-slate-700">Vanilla JS / Tailwind</span></div>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <style>
+    @keyframes popIn { 
+      from { transform: scale(0.9); opacity: 0; } 
+      to { transform: scale(1); opacity: 1; } 
+    }
+  </style>
+</div>
+
+<div id="adminModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="mb-6">
+        <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-inner">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+        </div>
+        <h2 class="text-xl font-bold text-slate-800">Staff Login</h2>
+        <p class="text-sm text-slate-500 mt-1">Please enter passcode to access</p>
+    </div>
+    
+    <input type="password" id="adminPassword" placeholder="Passcode (1234)" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl mb-5 outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-center text-lg tracking-widest transition-all" />
+    
+    <div class="modal-actions flex gap-3">
+      <button id="loginCancel" class="flex-1 bg-white border border-slate-200 text-slate-600 px-4 py-3 rounded-xl hover:bg-slate-50 font-semibold transition-colors">Cancel</button>
+      <button id="loginConfirm" class="flex-1 bg-blue-600 text-white px-4 py-3 rounded-xl hover:bg-blue-700 font-semibold shadow-lg shadow-blue-500/30 transition-all transform active:scale-95">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div id="dashboardModal" class="dashboard-modal hidden">
+  <div class="dashboard-modal__panel">
+    <div class="dashboard-modal__header">
+      <div>
+      <h3 class="dashboard-modal__title">Summary (Building A)</h3>
+      <p class="dashboard-modal__subtitle">Maintenance categories and room types with print support</p>
+      </div>
+      <div class="dashboard-modal__actions">
+        <button id="dashboardPrint" class="dashboard-btn dashboard-btn--primary" aria-label="Print report">
+          <svg xmlns="http://www.w3.org/2000/svg" class="dashboard-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 9V2h12v7" />
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+            <path d="M6 14h12v8H6z" />
+          </svg>
+        </button>
+        <button id="dashboardClose" class="dashboard-btn">Close</button>
+      </div>
+    </div>
+    <div id="dashboardContent" class="dashboard-modal__content">
+    <div class="dashboard-analytics">
+        
+        <div id="dynamicSummaryRow" class="dashboard-summary-row"></div>
+
+        <div class="dashboard-analytic-card dashboard-analytic-card--wide mt-6">
+                <div class="dashboard-card__header flex justify-between items-center">
+                    <span>📋 Active Maintenance Tasks (รายการแจ้งซ่อม)</span>
+                    <span id="maintTaskCount" class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs font-bold">0 Pending</span>
+                </div>
+                <div class="dashboard-table-wrap mt-4 max-h-60 overflow-y-auto">
+                    <table class="dashboard-table w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 text-gray-600 text-sm border-b">
+                                <th class="p-3 font-semibold rounded-tl-lg">Type (ประเภท)</th>
+                                <th class="p-3 font-semibold">Room (ห้อง)</th>
+                                <th class="p-3 font-semibold">Details (รายละเอียด)</th>
+                                <th class="p-3 font-semibold rounded-tr-lg">Status (สถานะ)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="maintTaskTableBody">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+        <div class="dashboard-grid mt-6">
+            <div class="dashboard-analytic-card">
+                <div class="dashboard-card__header">Room Occupancy</div>
+                <div class="dashboard-chart-wrap">
+                    <canvas id="occupancyChart" class="dashboard-chart"></canvas>
+                </div>
+                <div class="dashboard-legend">
+                    <div><span class="dashboard-legend__dot" style="background:#7c3aed"></span>Occupied</div>
+                    <div><span class="dashboard-legend__dot" style="background:#e2e8f0"></span>Vacant</div>
+                </div>
+            </div>
+            
+            <div class="dashboard-analytic-card">
+                <div class="dashboard-card__header">Maintenance Issues</div>
+                <div class="dashboard-chart-wrap">
+                    <canvas id="maintenanceChart" class="dashboard-chart"></canvas>
+                </div>
+            </div>
+            
+            <div class="dashboard-analytic-card dashboard-analytic-card--wide">
+                <div class="dashboard-card__header">Room Type Summary</div>
+                <div id="roomTypeSummary" class="dashboard-table-wrap"></div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    const REAL_ROOM_TYPES = [];
+
+    const REAL_MAINTENANCE = [
+        { name: 'WiFi Install / Network Repair', icon: '📶' },
+        { name: 'Aircon Cleaning / Repair',       icon: '❄️' },
+        { name: 'Housekeeping',                   icon: '🧹' },
+        { name: 'General Maintenance',            icon: '🔧' }
+    ];
+
+    async function apiRequest(action, payload = {}) {
+        try {
+            const res = await fetch('api.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action, ...payload })
+            });
+            const data = await res.json();
+            if (!data || data.ok !== true) {
+                throw new Error((data && data.error) ? data.error : 'API error');
+            }
+            return data;
+        } catch (err) {
+            console.warn('API request failed:', err);
+            return null;
+        }
+    }
+
+    function loadData(key, defaultData) {
+        const stored = localStorage.getItem(key);
+        if (stored) return JSON.parse(stored);
+        return defaultData;
+    }
+
+    let roomTypes = [];
+
+    function slugifyTypeName(name) {
+        return name
+            .toLowerCase()
+            .replace(/\([^)]*\)/g, '')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '') || 'custom';
+    }
+
+    function ensureRoomTypeIds() {
+        let changed = false;
+        roomTypes = roomTypes.map(item => {
+            if (item.id) return item;
+            const codeMatch = item.name.match(/\(([^)]+)\)/);
+            const code = codeMatch ? codeMatch[1].toLowerCase() : slugifyTypeName(item.name);
+            changed = true;
+            return { ...item, id: `type-${code}` };
+        });
+        if (changed) {
+            localStorage.setItem('room_types_final_v1', JSON.stringify(roomTypes));
+        }
+    }
+    let maintenanceCats = [];
+
+    async function syncFromDb() {
+        const [typesRes, maintRes] = await Promise.all([
+            apiRequest('get_room_types'),
+            apiRequest('get_maintenance_categories')
+        ]);
+
+        if (typesRes && Array.isArray(typesRes.room_types) && typesRes.room_types.length) {
+            roomTypes = typesRes.room_types;
+            localStorage.setItem('room_types_final_v1', JSON.stringify(roomTypes));
+        }
+
+        if (maintRes && Array.isArray(maintRes.maintenance_categories) && maintRes.maintenance_categories.length) {
+            maintenanceCats = maintRes.maintenance_categories;
+            localStorage.setItem('maint_cats_final_v1', JSON.stringify(maintenanceCats));
+        }
+
+        ensureRoomTypeIds();
+        renderRoomTypes();
+        renderRoomLegend();
+        renderRoomTypeSelect();
+        renderMaintenance();
+        if (typeof window.applyRoomStatesFromDb === 'function') {
+            window.applyRoomStatesFromDb();
+        }
+    }
+
+
+function refreshServiceSidebar() {
+    if (typeof window.renderServiceSidebar === 'function') {
+        window.renderServiceSidebar();
+    }
+}
+    function renderRoomTypes() {
+    const list = document.getElementById('room-types-list');
+    list.innerHTML = ''; 
+    roomTypes.forEach((item, index) => {
+        list.innerHTML += `
+            <div class="flex items-center gap-3 px-4 py-3 bg-slate-50 rounded-xl group hover:bg-slate-100 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-300"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></svg>
+                <span class="w-5 h-5 rounded-full flex-shrink-0 shadow-inner" style="background: ${item.color}"></span>
+                <span class="flex-1 text-sm font-semibold text-slate-700">${item.name}</span>
+                <button onclick="deleteItem('room', ${index})" class="opacity-0 group-hover:opacity-100 w-7 h-7 rounded-lg flex items-center justify-center text-red-400 hover:bg-red-50 hover:text-red-600 transition-all border-none bg-transparent cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                </button>
+            </div>`;
+    });
+}
+
+    function renderRoomLegend() {
+        const legend = document.getElementById('room-type-legend');
+        if (!legend) return;
+        legend.innerHTML = '';
+        roomTypes.forEach((item) => {
+            const row = document.createElement('div');
+            row.className = 'legend-row';
+            row.innerHTML = `
+                <span class="legend-box" style="background:${item.color}; border:1px solid rgba(0,0,0,0.25);"></span>
+                ${item.name}
+            `;
+            legend.appendChild(row);
+        });
+    }
+
+    function renderRoomTypeSelect() {
+        const select = document.getElementById('editRoomType');
+        const list = document.getElementById('roomTypeSelectList');
+        const label = document.getElementById('roomTypeSelectLabel');
+        const colorBox = document.getElementById('roomTypeSelectColor');
+        if (!select) return;
+        select.innerHTML = '';
+        if (list) list.innerHTML = '';
+
+        roomTypes.forEach((item, idx) => {
+            const value = item.id || 'type-condo';
+            const text = item.name.replace(/\s*\([^)]*\)\s*/g, '').trim();
+
+            if (list) {
+                const row = document.createElement('button');
+                row.type = 'button';
+                row.className = 'room-type-select__item';
+                row.dataset.value = value;
+                row.innerHTML = `
+                    <span class="room-type-select__color" style="background:${item.color};"></span>
+                    <span class="room-type-select__text">${text}</span>
+                `;
+                row.addEventListener('click', () => {
+                    select.value = value;
+                    if (label) label.textContent = text;
+                    if (colorBox) colorBox.style.background = item.color;
+                    list.classList.add('hidden');
+                });
+                list.appendChild(row);
+            }
+
+            if (idx === 0 && !select.value) {
+                select.value = value;
+                if (label) label.textContent = text;
+                if (colorBox) colorBox.style.background = item.color;
+            }
+        });
+    }
+
+   function renderMaintenance() {
+    const list = document.getElementById('maintenance-list');
+    list.innerHTML = ''; 
+    maintenanceCats.forEach((item, index) => {
+        list.innerHTML += `
+            <div class="flex items-center gap-3 px-4 py-3 bg-slate-50 rounded-xl group hover:bg-slate-100 transition-colors">
+                <span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-slate-200 border-2 border-slate-300 text-sm">
+                    ${item.icon}
+                </span>
+                <span class="flex-1 text-sm font-semibold text-slate-700">${item.name}</span>
+                <button onclick="deleteItem('maint', ${index})" class="opacity-0 group-hover:opacity-100 w-7 h-7 rounded-lg flex items-center justify-center text-red-400 hover:bg-red-50 hover:text-red-600 transition-all border-none bg-transparent cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                </button>
+            </div>`;
+    });
+}
+
+    // --- 4. Admin & Modal Logic (Updated for Sync) ---
+    document.getElementById('room-type-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const nameInput = document.getElementById('room-type-name');
+        const colorInput = document.getElementById('room-type-color');
+        
+        if (nameInput.value.trim()) {
+            const newName = nameInput.value.trim();
+            const codeMatch = newName.match(/\(([^)]+)\)/);
+            const code = codeMatch ? codeMatch[1].toLowerCase() : slugifyTypeName(newName);
+            const newItem = { id: `type-${code}`, name: newName, color: colorInput.value };
+
+            apiRequest('add_room_type', newItem).then(() => {
+                syncFromDb(); 
+                nameInput.value = '';
+                showToast('Room type saved!');
+            });
+        }
+    });
+
+    document.getElementById('maintenance-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const nameInput = document.getElementById('maintenance-name');
+        const iconInput = document.getElementById('selected-icon');
+        
+        if (nameInput.value.trim()) {
+            const newItem = { name: nameInput.value.trim(), icon: iconInput.value };
+
+            apiRequest('add_maintenance_category', newItem).then(res => {
+                syncFromDb(); 
+                nameInput.value = '';
+                showToast('Category saved!');
+            });
+        }
+    });
+
+    // --- สคริปต์สลับแท็บ Settings แบบ React ---
+    document.querySelectorAll('.settings-tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.settings-tab-btn').forEach(b => {
+                b.className = "settings-tab-btn w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold text-left border-none cursor-pointer transition-all bg-transparent text-slate-500 hover:bg-white/60 hover:text-slate-700";
+            });
+            this.className = "settings-tab-btn w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold text-left border-none cursor-pointer transition-all bg-white text-slate-800 shadow-sm border-r-2 border-r-blue-500";
+            
+            document.querySelectorAll('.settings-tab-content').forEach(content => {
+                content.classList.add('hidden');
+                content.classList.remove('block');
+            });
+            const targetId = this.getAttribute('data-target');
+            document.getElementById(targetId).classList.remove('hidden');
+            document.getElementById(targetId).classList.add('block');
+        });
+    });
+
+    const iconBtns = document.querySelectorAll('.icon-btn');
+    const selectedIconInput = document.getElementById('selected-icon');
+    iconBtns.forEach(btn => {
+        btn.onclick = () => {
+            iconBtns.forEach(b => b.className = 'icon-btn w-10 h-10 rounded-xl flex items-center justify-center border-2 border-slate-200 bg-white hover:border-purple-300 hover:bg-purple-50 cursor-pointer text-xl transition-all');
+            btn.className = 'icon-btn w-10 h-10 rounded-xl flex items-center justify-center border-2 border-purple-500 bg-purple-100 shadow-md scale-110 cursor-pointer text-xl transition-all';
+            selectedIconInput.value = btn.dataset.icon;
+        };
+    });
+
+    // --- 5. Utils (Updated for Sync) ---
+    window.deleteItem = function(type, index) {
+        if (!confirm('Confirm delete?')) return;
+        
+        if (type === 'room') {
+            const item = roomTypes[index];
+            if (item && item.id) {
+                apiRequest('delete_room_type', { id: item.id }).then(() => syncFromDb());
+            }
+        } else {
+            const item = maintenanceCats[index];
+            if (item) {
+                const payload = item.id ? { id: item.id } : { name: item.name };
+                apiRequest('delete_maintenance_category', payload).then(() => syncFromDb());
+            }
+        }
+    };
+
+    const adminBtn = document.getElementById('admin-btn-canva');
+    const adminModal = document.getElementById('admin-modal-canva');
+    const closeModal = document.getElementById('close-modal-canva');
+    const backdrop = document.getElementById('modal-backdrop-canva');
+
+    adminBtn.onclick = () => {
+        if (localStorage.getItem("isAdmin") !== "true") {
+            alert("🔒 Staff only");
+            return;
+        }
+        // โหลดข้อมูลล่าสุดจาก DB ก่อนเปิด Modal
+        syncFromDb().then(() => {
+            adminModal.classList.remove('hidden');
+        });
+    };
+    
+    const hideModal = () => adminModal.classList.add('hidden');
+    closeModal.onclick = hideModal;
+    backdrop.onclick = hideModal;
+
+    function showToast(msg) {
+        const t = document.getElementById('toast-canva');
+        const msgEl = document.getElementById('toast-message-canva');
+        if (msgEl) msgEl.innerText = msg;
+        if (t) {
+            t.classList.remove('hidden');
+            setTimeout(() => t.classList.add('hidden'), 3000);
+        }
+    }
+
+    const selectBtn = document.getElementById('roomTypeSelectBtn');
+    const selectList = document.getElementById('roomTypeSelectList');
+    if (selectBtn && selectList) {
+        selectBtn.addEventListener('click', () => selectList.classList.toggle('hidden'));
+        document.addEventListener('click', (e) => {
+            if (!document.getElementById('roomTypeSelect')?.contains(e.target)) {
+                selectList.classList.add('hidden');
+            }
+        });
+    }
+
+    window.updateRoomTypeDisplay = function(value) {
+        const list = document.getElementById('roomTypeSelectList');
+        const label = document.getElementById('roomTypeSelectLabel');
+        const colorBox = document.getElementById('roomTypeSelectColor');
+        if (!list || !label || !colorBox) return;
+        
+        const select = document.getElementById('editRoomType');
+        if (select) select.value = value;
+        
+        const target = Array.from(list.children).find(btn => btn.dataset?.value === value);
+        if (target) {
+            const text = target.querySelector('.room-type-select__text')?.textContent || label.textContent;
+            const color = target.querySelector('.room-type-select__color')?.style.background || colorBox.style.background;
+            label.textContent = text;
+            colorBox.style.background = color;
+        }
+    };
+
+    // --- Start Initialization ---
+    ensureRoomTypeIds();
+    syncFromDb(); // ดึงข้อมูลจากฐานข้อมูลมาแสดงผลตั้งแต่เริ่มโหลดหน้า
+});
+</script>
+<script src="js/datepicker.js"></script>
+<script>
+    // Initialize the reusable DatePicker and wire the header button
+    (function(){
+        try {
+            const picker = new DatePicker();
+            const btn = document.getElementById('open-date-picker-btn');
+            if (btn) picker.attachTo(btn);
+
+            document.addEventListener('date-selected', (e) => {
+                console.log('Selected date:', e.detail);
+                const sel = document.getElementById('dateSelected');
+                const selectedDisplay = document.getElementById('selected-date');
+                const placeholder = document.getElementById('placeholder-text');
+                const selectedDate = e?.detail?.date ? new Date(e.detail.date) : null;
+                const englishDate = selectedDate && !isNaN(selectedDate.getTime())
+                    ? selectedDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+                    : (e?.detail?.formatted || '');
+                if (placeholder) placeholder.classList.add('hidden');
+                if (selectedDisplay) {
+                    selectedDisplay.classList.remove('hidden');
+                    selectedDisplay.textContent = englishDate;
+                }
+                if (sel) sel.textContent = englishDate;
+            });
+        } catch (err) {
+            console.warn('DatePicker init failed', err);
+        }
+    })();
+</script>
+<script src="js/app.js?v=20260210"></script>
+</body>
+</html>
